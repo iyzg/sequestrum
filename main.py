@@ -1,4 +1,4 @@
-#! /usr/bin/python
+#!/usr/bin/python
 #
 # Sequestrum - Dotfile Manager
 
@@ -55,5 +55,49 @@ if arguments[0] in {"-i", "--install"}:
                         destFile = newDirectoryPath + value
                         if symMod.symlinkSourceExists(sourceFile):
                             symMod.createSymlink(sourceFile, destFile)
+    else:
+        print("Invalid Directory")
+
+elif arguments[0] in {"-u", "--update"}:
+    if arguments[1] == "all":
+        for key, value in configDict['options'].items():
+            if key.endswith("Directory"):
+                directoryPath = dotfilePath + configDict['options'][key]['directoryName'] + "/"
+                if dirMod.isFolder(directoryPath):
+                    for link in configDict['options'][key]['links']:
+                        for key, value in link.items():
+                            sourceFile = homePath + key
+                            destFile = directoryPath + value
+                            if symMod.symlinkSourceExists(sourceFile):
+                                if symMod.symlinkSourceExists(destFile):
+                                    if dirMod.isFolder(destFile):
+                                        dirMod.deleteFolder(destFile)
+                                        symMod.createSymlink(sourceFile, destFile)
+                                    elif dirMod.isFile(destFile):
+                                        dirMod.deleteFile(destFile)
+                                        symMod.createSymlink(sourceFile, destFile)
+                                    else:
+                                        print("ERROR")
+
+    elif arguments[1] in directoryList:
+        for key, value in configDict['options'].items():
+            if key == arguments[1] + "Directory":
+                directoryPath = dotfilePath + configDict['options'][key]['directoryName'] + "/"
+                if dirMod.isFolder(directoryPath):
+                    for link in configDict['options'][key]['links']:
+                        for key, value in link.items():
+                            sourceFile = homePath + key
+                            destFile = directoryPath + value
+                            if symMod.symlinkSourceExists(sourceFile):
+                                if symMod.symlinkSourceExists(destFile):
+                                    if dirMod.isFolder(destFile):
+                                        dirMod.deleteFolder(destFile)
+                                        symMod.createSymlink(sourceFile, destFile)
+                                    elif dirMod.isFile(destFile):
+                                        dirMod.deleteFile(destFile)
+                                        symMod.createSymlink(sourceFile, destFile)
+                                    else:
+                                        print("ERROR")
+
     else:
         print("Invalid Directory")

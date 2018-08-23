@@ -3,7 +3,9 @@
 # Directory Module
 
 # Libraries
-import os 
+import os
+import sys
+import shutil
 
 # Create Folder
 def createFolder(path):
@@ -17,11 +19,20 @@ def createFolder(path):
 # Delete Folder
 def deleteFolder(path):
     try:
-        os.rmdir(path)
+        shutil.rmtree(path)
     except OSError:
         print("Sequestrum: Deletion of folder failed")
     else:
         print("Sequestrum: Deleted successfully!")
+
+# Delete File 
+def deleteFile(path):
+    try:
+        os.remove(path)
+    except OSError:
+        print("REmoving of file failed")
+    else:
+        print("Successfully removed file")
 
 # Check If Folder
 def isFolder(path):
@@ -33,3 +44,12 @@ def isFolder(path):
     except OSError:
         print("Sequestum: Folder checking failed")
 
+# Check If File
+def isFile(path):
+    try: 
+        if os.path.isfile(path):
+            return True
+        else:
+            return False
+    except OSError:
+        print("Sequestrum: File check failed")
