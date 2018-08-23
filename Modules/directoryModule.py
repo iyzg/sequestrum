@@ -53,3 +53,41 @@ def isFile(path):
             return False
     except OSError:
         print("Sequestrum: File check failed")
+
+def setupDirectory(directoryKey, dotfilePath, homePath):
+    newDirectoryPath = dotfilePath + configDict['options'][directoryKey]['directoryName'] + "/"
+    dirMod.createFolder(newDirectoryPath)
+
+    for link in configDict['options'][directoryKey]['links']:
+        for key, value in links.items():
+            sourceFile = homePath + value
+            destFile = newDirectoryPath + key
+            if symMod.symlinkSourceExists(sourceFile):
+                if dirMod.isFolder(sourceFile):
+                    symMod.copyFolder(sourceFile, destFile)
+                elif dirMod.isFile(sourceFile):
+                    symMod.copyFile(sourceFile, destFile)
+                else:
+                    return False
+            else:
+                return False
+    return True
+   
+def installDirectory(directoryKey, dotfilePath, homePath):
+    directoryPath = dotfilePath + configDict['options'][directoryKey]['directoryName'] + "/"
+    for link in configDict['options'][directoryKey]['links']:
+        for key, value in link.items():
+            sourceFile = directoryPath + key
+            destFile = homePath + value
+ 
+            if symMod.symlinkSourceExists(sourceFile):
+                if dirMod.isFolder(sourceFile):
+                    symMod.createSymlink(sourceFile, destFile)
+                elif dirMod.isFile(sourceFile):
+                    symMod.createSymlink(sourceFile, destFile)
+                else:
+                    return False
+            else:
+                return False
+    return True
+
