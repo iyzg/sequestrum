@@ -13,3 +13,10 @@ options:
         directoryName: bin
         links:
             - .scripts: bin
+
+    zshDirectory:
+        <<: *base
+        directoryName: zsh
+        links:
+            - .zshrc: zshrc
+            - .oh-my-zsh/themes/clair.zsh-theme: zsh-theme

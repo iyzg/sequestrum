@@ -26,9 +26,10 @@ def deleteFolder(path):
 # Check If Folder
 def isFolder(path):
     try:
-        if(os.path.isdir(path)):
+        if os.path.isdir(path):
             return True
         else:
             return False
     except OSError:
         print("Sequestum: Folder checking failed")
+

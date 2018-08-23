@@ -13,3 +13,6 @@ def createSymlink(source, destination):
         print("Sequestrum: Symlink failed")
     else:
         print("Sequestrum: Symlink success")
+
+def symlinkSourceExists(sourcePath):
+    return os.path.exists(sourcePath)
