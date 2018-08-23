@@ -1,0 +1,15 @@
+options:
+    base: &base
+        dotfileDirectory: test-dotfiles
+    
+    vimDirectory:
+        <<: *base
+        directoryName: vim
+        links:
+            - .vimrc: vimrc
+
+    binDirectory:
+        <<: *base
+        directoryName: bin
+        links:
+            - .scripts: bin
