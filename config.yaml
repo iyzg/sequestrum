@@ -6,17 +6,17 @@ options:
         <<: *base
         directoryName: vim
         links:
-            - .vimrc: vimrc
+            - vimrc: .vimrc
 
     binDirectory:
         <<: *base
         directoryName: bin
         links:
-            - .scripts: bin
+            - bin: .scripts
 
     zshDirectory:
         <<: *base
         directoryName: zsh
         links:
-            - .zshrc: zshrc
-            - .oh-my-zsh/themes/clair.zsh-theme: zsh-theme
+            - zshrc: .zshrc
+            - zsh-theme: .oh-my-zsh/themes/clair.zsh-theme

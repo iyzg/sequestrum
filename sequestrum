@@ -1,0 +1,88 @@
+#!/usr/bin/python
+#
+# Sequestrum - Dotfile Manager
+
+# Libraries
+import sys
+import yaml
+from pathlib import Path
+
+sys.path.insert(0, '/home/plasma/Sequestrum/Modules')
+
+# Modules
+import directoryModule as dirMod
+import symlinkModule as symMod
+import argumentsModule as argMod
+
+# Variables
+homePath = str(Path.home()) + "/"
+arguments = argMod.getArguments()
+
+# Main Program
+configFile = open("config.yaml", "r")
+configDict = yaml.load(configFile)
+directoryList = []
+
+for key,value in configDict['options'].items():
+    if key.endswith("Directory"):
+        directoryList.append(key[:-9])
+
+dotfilePath = homePath + configDict['options']['base']['dotfileDirectory'] + "/"
+
+# Setup- Only 1st time! 
+if arguments[0] in {"-s", "--setup"}:
+    if arguments[1] == "all":
+        for key, value in configDict['options'].items():
+            if key.endswith("Directory"):
+                newDirectoryPath = dotfilePath + configDict['options'][key]['directoryName'] + "/"
+                dirMod.createFolder(newDirectoryPath)
+
+                for link in configDict['options'][key]['links']:
+                    for key, value in link.items():
+                        sourceFile = homePath + value
+                        destFile = newDirectoryPath + key
+                        if symMod.symlinkSourceExists(sourceFile):
+                            if dirMod.isFolder(sourceFile):
+                                symMod.copyFolder(sourceFile, destFile)
+                            elif dirMod.isFile(sourceFile):
+                                symMod.copyFile(sourceFile, destFile)
+                            else:
+                                print("ERROR")
+    else:
+        print("Valid Usage: sequestrum -s")
+
+elif arguments[0] in {"-i", "--install"}:
+    if arguments[1] == "all":
+        for key, value in configDict['options'].items():
+            if key.endswith("Directory"):
+                directoryPath = dotfilePath + configDict['options'][key]['directoryName'] + "/"
+                for link in configDict['options'][key]['links']:
+                    for key, value in link.items():
+                        sourceFile = directoryPath + key
+                        destFile = homePath + value
+
+                        if symMod.symlinkSourceExists(sourceFile):
+                            if dirMod.isFolder(sourceFile):
+                                symMod.createSymlink(sourceFile, destFile)
+                            elif dirMod.isFile(sourceFile):
+                                symMod.createSymlink(sourceFile, destFile)
+                            else:
+                                print("ERROR")
+    elif arguments[1] in directoryList:
+        for key, value in configDict['options'].items():
+            if key == arguement[1] + "Directory":
+                directoryPath = dotfilePath + configDict['options'][key]['directoryName'] + "/"
+                for link in configDict['options'][key]['links']:
+                    for key, value in link.items():
+                        sourceFile = directoryPath + key
+                        destFile = homePath + value
+
+                        if symMod.symlinkSourceExists(sourceFile):
+                            if dirMod.isFolder(sourceFile):
+                                symMod.createSymlink(sourceFile, destFile)
+                            elif dirMod.isFile(sourceFile):
+                                symMod.createSymlink(sourceFile, destFile)
+                            else:
+                                print("PLACEHOLDER ERROR")
+else:
+    print("Invalid Command")
