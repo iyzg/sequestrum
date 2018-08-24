@@ -16,28 +16,33 @@ import symlinkModule as symMod
 import argumentsModule as argMod
 import commandsModule as comMod
 
-# Variables
+# Grab Arguments
 arguments = argMod.getArguments()
 
-# Functions
-# Setup Directory
+# Creates a new directory. It creates a new folder path using the config
+# then creates a new folder using that path. It then loops through each
+# link in the links list and **copies** (not symlinking) the original file
+# on the source system over to the dotfiles.
 def setupDirectory(directoryKey):
     """
         Setup package directory on dotfile
     """
-    # Create new dicectory for package in dotfiles
+    # Make a path for the new directory path using the name specified in the
+    # config then make the folder using the path.
     newDirectoryPath = dotfilePath + \
         configDict['options'][directoryKey]['directoryName'] + "/"
     dirMod.createFolder(newDirectoryPath)
 
-    # Loop through all the files to copy
+    # Loop through all the links set in the config. For each one, grab the
+    # path for both the source file on the computer and the file that it will
+    # be copied to within the dotfiles. After that, make sure the source file
+    # exists. If it does, check to see if it is either a file of a folder then
+    # use the appropriate copying method.
     for link in configDict['options'][directoryKey]['links']:
-        # Copy files to dotfile folder
         for key, value in link.items():
             sourceFile = homePath + value
             destFile = newDirectoryPath + key
 
-            # Make sure source file exits
             if symMod.symlinkSourceExists(sourceFile):
                 if dirMod.isFolder(sourceFile):
                     symMod.copyFolder(sourceFile, destFile)
@@ -121,7 +126,7 @@ elif arguments[0] in {"-i", "--install"}:
                 if "commandsAfter" in value:
                     comMod.runCommands(
                         configDict['options'][key]["commandsBefore"])
-    
+
     # Only install specified package
     elif arguments[1] in directoryList:
         for key, value in configDict['options'].items():
