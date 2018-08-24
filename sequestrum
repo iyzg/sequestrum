@@ -16,13 +16,15 @@ import symlinkModule as symMod
 import argumentsModule as argMod
 import commandsModule as comMod
 
-# Grab Arguments
+# Grab user inputted arguments from the module.
 arguments = argMod.getArguments()
 
 # Creates a new directory. It creates a new folder path using the config
 # then creates a new folder using that path. It then loops through each
 # link in the links list and **copies** (not symlinking) the original file
 # on the source system over to the dotfiles.
+
+
 def setupDirectory(directoryKey):
     """
         Setup package directory on dotfile
@@ -33,11 +35,6 @@ def setupDirectory(directoryKey):
         configDict['options'][directoryKey]['directoryName'] + "/"
     dirMod.createFolder(newDirectoryPath)
 
-    # Loop through all the links set in the config. For each one, grab the
-    # path for both the source file on the computer and the file that it will
-    # be copied to within the dotfiles. After that, make sure the source file
-    # exists. If it does, check to see if it is either a file of a folder then
-    # use the appropriate copying method.
     for link in configDict['options'][directoryKey]['links']:
         for key, value in link.items():
             sourceFile = homePath + value
@@ -55,7 +52,12 @@ def setupDirectory(directoryKey):
     return True
 
 
-# Install Directory
+# Grabs the directory of the key. For each item in the dotfile directory,
+# properly symlink the file to the right place. If the file on the local
+# system already exists. Delete the existing file before symlinking to
+# prevent issues.
+
+
 def installDirectory(directoryKey):
     """
         Install package to local system
@@ -84,21 +86,23 @@ def installDirectory(directoryKey):
     return True
 
 
-# Main Program
 configFile = open("config.yaml", "r")
 configDict = yaml.load(configFile)
 directoryList = []
 
-# Grab list of directories
+# Grab list of directories from the config.
 for key, value in configDict['options'].items():
     if key.endswith("Directory"):
         directoryList.append(key[:-9])
 
-# Dotfile directory
+# Grab the path of the dotfile directory
 dotfilePath = homePath + \
     configDict['options']['base']['dotfileDirectory'] + "/"
 
-# Setup- Sets up dotfiles (Only run once)
+# Setups up the dotfiles accordingly to the config. This should only be
+# ran once to setup your dotfiles with the right directories. After this,
+# users should use the update argument to update their dotfiles with new
+# packages.
 if arguments[0] in {"-s", "--setup"}:
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
@@ -113,7 +117,10 @@ if arguments[0] in {"-s", "--setup"}:
     else:
         print("Valid Usage: sequestrum -s")
 
-# Install- Symlink dotfiles to local files
+# Install the files from the dotfiles. Symlinks the files from the
+# specified packages to the local system files. If the file or folder
+# already exists on the local system, delete it then symlink properly to
+# avoid errors.
 elif arguments[0] in {"-i", "--install"}:
     # Install all packages
     if arguments[1] == "all":
@@ -127,7 +134,7 @@ elif arguments[0] in {"-i", "--install"}:
                     comMod.runCommands(
                         configDict['options'][key]["commandsBefore"])
 
-    # Only install specified package
+    # The option to only install one package instead of all your dotfiles.
     elif arguments[1] in directoryList:
         for key, value in configDict['options'].items():
             if key == arguement[1] + "Directory":
