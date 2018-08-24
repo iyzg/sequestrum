@@ -1,0 +1,26 @@
+options:
+    base: &base
+        dotfileDirectory: test-dotfiles
+
+    vimDirectory: 
+        <<: *base
+        directoryName: vim
+        commandsBefore:
+            - ls
+        commandsAfter:
+            - echo Testing!
+        links:
+            - vimrc: .vimrc
+
+    binDirectory:
+        <<: *base
+        directoryName: bin
+        links:
+            - bin: .scripts
+
+    zshDirectory:
+        <<: *base
+        directoryName: zsh
+        links:
+            - zshrc: .zshrc
+            - zsh-theme: .oh-my-zsh/themes/clair.zsh-theme

@@ -8,6 +8,9 @@ import sys
 arguments = len(sys.argv) - 1
 
 def getArguments():
+    """
+        Returns arguments
+    """
     numberOfArguments = len(sys.argv) - 1
 
     if numberOfArguments == 1:

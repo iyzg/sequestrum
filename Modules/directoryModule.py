@@ -9,6 +9,9 @@ import shutil
 
 # Create Folder
 def createFolder(path):
+    """
+        Creates a folder
+    """
     try:
         os.makedirs(path)
     except OSError:
@@ -18,6 +21,9 @@ def createFolder(path):
 
 # Delete Folder
 def deleteFolder(path):
+    """
+        Deletes a folder
+    """
     try:
         shutil.rmtree(path)
     except OSError:
@@ -27,6 +33,9 @@ def deleteFolder(path):
 
 # Delete File 
 def deleteFile(path):
+    """
+        Deletes file
+    """
     try:
         os.remove(path)
     except OSError:
@@ -36,6 +45,9 @@ def deleteFile(path):
 
 # Check If Folder
 def isFolder(path):
+    """
+        Checks to see if path is a folder
+    """
     try:
         if os.path.isdir(path):
             return True
@@ -46,6 +58,9 @@ def isFolder(path):
 
 # Check If File
 def isFile(path):
+    """
+        Checks to see if path is a file
+    """
     try: 
         if os.path.isfile(path):
             return True
@@ -55,6 +70,9 @@ def isFile(path):
         print("Sequestrum: File check failed")
 
 def setupDirectory(directoryKey, dotfilePath, homePath):
+    """
+        Setup dotfiles with all directories
+    """
     newDirectoryPath = dotfilePath + configDict['options'][directoryKey]['directoryName'] + "/"
     dirMod.createFolder(newDirectoryPath)
 
@@ -74,6 +92,9 @@ def setupDirectory(directoryKey, dotfilePath, homePath):
     return True
    
 def installDirectory(directoryKey, dotfilePath, homePath):
+    """
+        Install all directories from dotfiles
+    """
     directoryPath = dotfilePath + configDict['options'][directoryKey]['directoryName'] + "/"
     for link in configDict['options'][directoryKey]['links']:
         for key, value in link.items():

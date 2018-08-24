@@ -8,6 +8,9 @@ from shutil import copytree, copyfile
 
 # Functions
 def createSymlink(source, destination):
+    """
+        Creates symlink from source to destination
+    """
     try:
         os.symlink(source, destination)
     except OSError:
@@ -16,6 +19,9 @@ def createSymlink(source, destination):
         print("Sequestrum: Symlink success")
 
 def copyFile(source, destination):
+    """
+        Copys file from source to destination
+    """
     try: 
         copyfile(source, destination)
     except IOError:
@@ -24,6 +30,9 @@ def copyFile(source, destination):
         print("Success copying file")
 
 def copyFolder(source, destination):
+    """
+        Copies frolder from source to destination
+    """
     try: 
         copytree(source, destination)
     except IOError: 
