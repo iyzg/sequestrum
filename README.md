@@ -15,7 +15,7 @@ error handling, dotfile repo setup, and more!
 First thing is first, your dotfiles need to be setup to work with Sequestrum. If you have used something like
 stow or dotbot to manage your dotfiles, it's highly recommeneded testing this in a test directory before converting
 your main dotfiles. You'll want to create a config file in your dotfiles so Sequestrum knows how to setup and install.
-I've included an example below with all options available. 
+I've included an example below with all options available. This should be called config.yaml and put in your dotfiles.
 ```
 options:
     base: &base
