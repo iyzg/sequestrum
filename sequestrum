@@ -14,40 +14,124 @@ sys.path.insert(0, homePath + "/Sequestrum/Modules")
 import directoryModule as dirMod
 import symlinkModule as symMod
 import argumentsModule as argMod
+import commandsModule as comMod
 
 # Variables
 arguments = argMod.getArguments()
+
+# Functions
+# Setup Directory
+def setupDirectory(directoryKey):
+    """
+        Setup package directory on dotfile
+    """
+    # Create new dicectory for package in dotfiles
+    newDirectoryPath = dotfilePath + \
+        configDict['options'][directoryKey]['directoryName'] + "/"
+    dirMod.createFolder(newDirectoryPath)
+
+    # Loop through all the files to copy
+    for link in configDict['options'][directoryKey]['links']:
+        # Copy files to dotfile folder
+        for key, value in link.items():
+            sourceFile = homePath + value
+            destFile = newDirectoryPath + key
+
+            # Make sure source file exits
+            if symMod.symlinkSourceExists(sourceFile):
+                if dirMod.isFolder(sourceFile):
+                    symMod.copyFolder(sourceFile, destFile)
+                elif dirMod.isFile(sourceFile):
+                    symMod.copyFile(sourceFile, destFile)
+                else:
+                    return False
+            else:
+                return False
+    return True
+
+
+# Install Directory
+def installDirectory(directoryKey):
+    """
+        Install package to local system
+    """
+    # Grab dotfile package directory
+    directoryPath = dotfilePath + \
+        configDict['options'][directoryKey]['directoryName'] + "/"
+
+    # Loop through files to link
+    for link in configDict['options'][directoryKey]['links']:
+        # Symlink files to local files
+        for key, value in link.items():
+            sourceFile = directoryPath + key
+            destFile = homePath + value
+
+            # Make sure file exists in dotfiles
+            if symMod.symlinkSourceExists(sourceFile):
+                if dirMod.isFolder(sourceFile):
+                    symMod.createSymlink(sourceFile, destFile)
+                elif dirMod.isFile(sourceFile):
+                    symMod.createSymlink(sourceFile, destFile)
+                else:
+                    return False
+            else:
+                return False
+    return True
+
 
 # Main Program
 configFile = open("config.yaml", "r")
 configDict = yaml.load(configFile)
 directoryList = []
 
-for key,value in configDict['options'].items():
+# Grab list of directories
+for key, value in configDict['options'].items():
     if key.endswith("Directory"):
         directoryList.append(key[:-9])
 
-dotfilePath = homePath + configDict['options']['base']['dotfileDirectory'] + "/"
+# Dotfile directory
+dotfilePath = homePath + \
+    configDict['options']['base']['dotfileDirectory'] + "/"
 
-# Setup- Only 1st time! 
+# Setup- Sets up dotfiles (Only run once)
 if arguments[0] in {"-s", "--setup"}:
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
             if key.endswith("Directory"):
-                dirMod.setupDirectory(key, dotfilePath, homePath)
+                if "commandsBefore" in value:
+                    comMod.runCommands(
+                        configDict['options'][key]["commandsBefore"])
+                setupDirectory(key)
+                if "commandsAfter" in value:
+                    comMod.runCommands(
+                        configDict['options'][key]["commandsBefore"])
     else:
         print("Valid Usage: sequestrum -s")
 
+# Install- Symlink dotfiles to local files
 elif arguments[0] in {"-i", "--install"}:
+    # Install all packages
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
             if key.endswith("Directory"):
-                dirMod.installDirectory(key, dotfilePath, homePath)
-
+                if "commandsBefore" in value:
+                    comMod.runCommands(
+                        configDict['options'][key]["commandsBefore"])
+                dirMod.installDirectory(key)
+                if "commandsAfter" in value:
+                    comMod.runCommands(
+                        configDict['options'][key]["commandsBefore"])
+    
+    # Only install specified package
     elif arguments[1] in directoryList:
         for key, value in configDict['options'].items():
             if key == arguement[1] + "Directory":
-                dirMod.installDirectory(key, dotfilePath, homePath)
-
+                if "commandsBefore" in value:
+                    comMod.runCommands(
+                        configDict['options'][key]["commandsBefore"])
+                dirMod.installDirectory(key)
+                if "commandsAfter" in value:
+                    comMod.runCommands(
+                        configDict['options'][key]["commandsBefore"])
 else:
     print("Invalid Command")

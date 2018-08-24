@@ -7,6 +7,8 @@ import os
 from shutil import copytree, copyfile
 
 # Functions
+
+
 def createSymlink(source, destination):
     """
         Creates symlink from source to destination
@@ -18,27 +20,30 @@ def createSymlink(source, destination):
     else:
         print("Sequestrum: Symlink success")
 
+
 def copyFile(source, destination):
     """
         Copys file from source to destination
     """
-    try: 
+    try:
         copyfile(source, destination)
     except IOError:
         print("Location must be writable")
     else:
         print("Success copying file")
 
+
 def copyFolder(source, destination):
     """
         Copies frolder from source to destination
     """
-    try: 
+    try:
         copytree(source, destination)
-    except IOError: 
+    except IOError:
         print("Location must be writable")
     else:
         print("Sucess copying folder ")
+
 
 def symlinkSourceExists(sourcePath):
     return os.path.exists(sourcePath)

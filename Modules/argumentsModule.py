@@ -7,6 +7,7 @@ import sys
 
 arguments = len(sys.argv) - 1
 
+
 def getArguments():
     """
         Returns arguments
