@@ -13,8 +13,8 @@ First, you'll need a Sequestrum Config in your dotfiles so it knows how to prope
 your own custom config along with an exampe config are down included down below. After you're done writing your config,
 you can come back to finish setup! 
 
-**Note:** Your dotfiles should be empty of all config files to make sure they're sorted correctly. If it's already set up
-as a GitHub repository, you should be leaving your README.md.
+**Note:** Your dotfiles should be empty of all config files to keep from having duplicate files unless for some reason you
+would want that.
 
 Now they you're all setup with your config file, time for the fun to begin! If your configuration file is setup correctly, you
 should be able to run `sequestrum --setup` (full list of commands below) to finish setting up your dotfiles. If something goes 
