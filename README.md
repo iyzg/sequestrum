@@ -69,9 +69,6 @@ request. C:
 3. -u, --unlink: Unlink a package from your system
 4. -d, --delete: Delete a repository from your dotfiles
 
-Note: All directory headers have to end in Directory (ex. vimDirectory, binDirectory). This is a W.I.P i can't write docs
-so if anyone wants to help C:
-
 ## Feature Requests
 - [X] Modularity
 - [ ] Proper Guide (Yes this is a feature)
