@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # Directory Module
 
 # Libraries

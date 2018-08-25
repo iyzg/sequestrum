@@ -1,24 +1,21 @@
-#!/usr/bin/python
-#
-# Arguments Module
+# Arguments Modules
 
-# Libraries
-import sys
-
-arguments = len(sys.argv) - 1
-
+# Imports
+import argparse
 
 def getArguments():
     """
-        Returns arguments
+        Return the arguments in the form of a tuple
     """
-    numberOfArguments = len(sys.argv) - 1
+    parser = argparse.ArgumentParser()
+    group = parser.add_mutually_exclusive_group()
 
-    if numberOfArguments == 1:
-        return (sys.argv[1], "all")
-    elif numberOfArguments == 2:
-        return (sys.argv[1], sys.argv[2])
-    else:
-        print("Pass Arguments F0ol.")
-        sys.exit()
-        return None
+    group.add_argument("-i", "--install", help="Install packages onto local system. Use all to install all packages.")
+    group.add_argument("-s", "--setup", help="Setup dotfile directory.")
+
+    args = parser.parse_args()
+
+    if args.install != None:
+        return ("Install", args.install)
+    elif args.setup != None:
+        return ("Setup", args.setup)

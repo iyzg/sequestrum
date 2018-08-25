@@ -4,6 +4,9 @@ A modern, lightweight dotfile manager for the masses. Now you may be wondering, 
 Well for starters, the name is better. Do you need any other reasons? Fine, fine.. some real reasons.
 This is specifically made for dotfile management and provides features like modulatarity, dotfile repository setup, and more!
 
+## Dependencies
+1. Pyyaml: pip install pyyaml
+
 ## Install Guide
 `Currently in the workings`
 

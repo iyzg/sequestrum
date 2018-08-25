@@ -1,5 +1,3 @@
-#!/usr/bin/python
-#
 # Symlink Module
 
 # Libraries
@@ -46,4 +44,7 @@ def copyFolder(source, destination):
 
 
 def symlinkSourceExists(sourcePath):
+    """
+        Checks to see if symlink source exists
+    """
     return os.path.exists(sourcePath)

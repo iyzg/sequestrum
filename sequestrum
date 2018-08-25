@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 #
 # Sequestrum - Dotfile Manager
 
@@ -16,8 +16,12 @@ import symlinkModule as symMod
 import argumentsModule as argMod
 import commandsModule as comMod
 
-# Grab user inputted arguments from the module.
+# Grab user inputted arguments from the module and make sure they entered some.
 arguments = argMod.getArguments()
+
+if arguments == None:
+    print("Sequestrum: Must enter arguments")
+    sys.exit()
 
 # Creates a new directory. It creates a new folder path using the config
 # then creates a new folder using that path. It then loops through each
@@ -103,7 +107,7 @@ dotfilePath = homePath + \
 # ran once to setup your dotfiles with the right directories. After this,
 # users should use the update argument to update their dotfiles with new
 # packages.
-if arguments[0] in {"-s", "--setup"}:
+if arguments[0] == "Setup":
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
             if key.endswith("Directory"):
@@ -121,7 +125,7 @@ if arguments[0] in {"-s", "--setup"}:
 # specified packages to the local system files. If the file or folder
 # already exists on the local system, delete it then symlink properly to
 # avoid errors.
-elif arguments[0] in {"-i", "--install"}:
+elif arguments[0] == "Install":
     # Install all packages
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
@@ -145,5 +149,14 @@ elif arguments[0] in {"-i", "--install"}:
                 if "commandsAfter" in value:
                     comMod.runCommands(
                         configDict['options'][key]["commandsBefore"])
+    else:
+        print("Invalid Directory")
+elif arguments[0] in {"-u", "--unlink"}:
+    if arguments[1] == "all":
+        print("PLACEHOLDER")
+    elif arguments[1] in directoryList:
+        print("PLACEHOLDER")
+    else:
+        print("PLACEHOLDEr")
 else:
     print("Invalid Command")
