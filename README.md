@@ -80,9 +80,9 @@ request. C:
 - [X] Modularity
 - [ ] Proper Guide (Yes this is a feature)
 - [ ] Documentation
-- [ ] Commands before and after symlink
+- [X] Commands before and after symlink
 - [ ] Uninstall
-- [ ] Proper handling of when symlink fails because file already exists
+- [X] Proper handling of when symlink fails because file already exists
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
