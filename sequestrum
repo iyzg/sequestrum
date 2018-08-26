@@ -19,7 +19,7 @@ import commandsModule as comMod
 # Grab user inputted arguments from the module and make sure they entered some.
 arguments = argMod.getArguments()
 
-if arguments == None:
+if arguments is None:
     print("Sequestrum: Must enter arguments")
     sys.exit()
 
@@ -93,14 +93,18 @@ def installPackage(packageKey):
     return True
 
 
-## TODO
+# TODO
 def unlinkPackage(packageKey):
     """
         Unlink package from local system
     """
     print(packageKey + "is a placeholder")
 
-# Goes through all the file locations that need to be empty for the symlinking to work and checks to see if they're empty. If they're not, it will return false. If it is clean, it'll return true.
+# Goes through all the file locations that need to be empty for the
+# symlinking to work and checks to see if they're empty. If they're not,
+# it will return false. If it is clean, it'll return true.
+
+
 def checkInstallLocations(packageKey):
     """
         Checks to see if link locations are clean
@@ -110,15 +114,20 @@ def checkInstallLocations(packageKey):
             destPath = homePath + value
             if symMod.symlinkLocationExists(destPath):
                 return False
-    
+
     return True
 
-# Checks to see if the file locations in the dotfile repository exist. If they do, return false. If they don't, return true. This is to prevent overwriting of file that may or may not be importtant to the user.
+# Checks to see if the file locations in the dotfile repository exist. If
+# they do, return false. If they don't, return true. This is to prevent
+# overwriting of file that may or may not be importtant to the user.
+
+
 def checkSourceLocations(packageKey):
     """
         Check to see if dotfile locations are clean
     """
-    directoryPath = dotfilePath + configDict['options'][packageKey]['directoryName'] + "/"
+    directoryPath = dotfilePath + \
+        configDict['options'][packageKey]['directoryName'] + "/"
 
     for link in configDict['options'][packageKey]['links']:
         for key, value in link.items():
@@ -128,6 +137,7 @@ def checkSourceLocations(packageKey):
                 return False
 
     return True
+
 
 configFile = open("config.yaml", "r")
 configDict = yaml.load(configFile)
@@ -151,7 +161,8 @@ if arguments[0] == "Setup":
         for key, value in configDict['options'].items():
             if key.endswith("Package"):
                 if not checkSourceLocations(key):
-                    print("Sequestrum: Dotfile location is occupied. Please check config file.")
+                    print(
+                        "Sequestrum: Dotfile location is occupied. Please check config file.")
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -176,7 +187,8 @@ elif arguments[0] == "Install":
         for key, value in configDict['options'].items():
             if key.endswith("Package"):
                 if not checkInstallLocations(key):
-                    print("Sequestrum: Install locations are occupied. Check config file.")
+                    print(
+                        "Sequestrum: Install locations are occupied. Check config file.")
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -194,7 +206,8 @@ elif arguments[0] == "Install":
         for key, value in configDic['options'].items():
             if key == arguments[1] + "Package":
                 if not checkInstallLocations(key):
-                    print("Sequestrum: Install locations are occupied. Check config file.")
+                    print(
+                        "Sequestrum: Install locations are occupied. Check config file.")
                     sys.exit()
 
         for key, value in configDict['options'].items():
