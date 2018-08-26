@@ -82,7 +82,7 @@ request. C:
 - [X] Proper Guide (Yes this is a feature)
 - [X] Documentation
 - [X] Commands before and after symlink
-- [ ] Uninstall
+- [X] Uninstall
 - [X] Proper handling of when symlink fails because file already exists
 - [ ] Port README.md to a wiki
 
