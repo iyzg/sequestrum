@@ -1,6 +1,6 @@
 options:
     base: &base
-        dotfileDirectory: test-dotfiles
+        dotfileDirectory: test-dotfiles2
 
     vimPackage: 
         <<: *base
