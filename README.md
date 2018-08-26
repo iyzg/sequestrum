@@ -79,11 +79,12 @@ request. C:
 
 ## Feature Requests
 - [X] Modularity
-- [ ] Proper Guide (Yes this is a feature)
-- [ ] Documentation
+- [X] Proper Guide (Yes this is a feature)
+- [X] Documentation
 - [X] Commands before and after symlink
 - [ ] Uninstall
 - [X] Proper handling of when symlink fails because file already exists
+- [ ] Port README.md to a wiki
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
