@@ -30,17 +30,17 @@ if arguments == None:
 # on the source system over to the dotfiles.
 
 
-def setupPackage(directoryKey):
+def setupPackage(packageKey):
     """
         Setup package directory on dotfile
     """
     # Make a path for the new directory path using the name specified in the
     # config then make the folder using the path.
     newPackagePath = dotfilePath + \
-        configDict['options'][directoryKey]['directoryName'] + "/"
+        configDict['options'][packageKey]['directoryName'] + "/"
     dirMod.createFolder(newPackagePath)
 
-    for link in configDict['options'][directoryKey]['links']:
+    for link in configDict['options'][packageKey]['links']:
         for key, value in link.items():
             sourceFile = homePath + value
             destFile = newPackagePath + key
@@ -63,16 +63,16 @@ def setupPackage(directoryKey):
 # prevent issues.
 
 
-def installPackage(directoryKey):
+def installPackage(packageKey):
     """
         Install package to local system
     """
     # Grab dotfile package directory
     directoryPath = dotfilePath + \
-        configDict['options'][directoryKey]['directoryName'] + "/"
+        configDict['options'][packageKey]['directoryName'] + "/"
 
     # Loop through files to link
-    for link in configDict['options'][directoryKey]['links']:
+    for link in configDict['options'][packageKey]['links']:
         # Symlink files to local files
         for key, value in link.items():
             sourceFile = directoryPath + key
