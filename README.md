@@ -31,7 +31,7 @@ options:
     base: &base
         dotfileDirectory: .dotfiles
     
-    vimDirectory:
+    vimPackage:
         <<: *base
         directoryName: vim
         commandsBefore:
@@ -51,11 +51,11 @@ within your dotfile repository.
 ### Config Guide
 As you can notice, all config files have to begin with `options:`. After that, you need to add a base, just take the one off the
 example configuration but change the name of the dotfileDirectory to wherever your dotfiles are located. For each set of files you
-want to package you'll need a seperate package declaration (ex. vimDirectory in the example).
+want to package you'll need a seperate package declaration (ex. vimPackage in the example).
 
 #### Directories
 As you'll notice the each set of links you want to group will need their own package. You can name these whatever you like as long 
-as they end in "Directory" (ex. vimDirectory or binDirectory). In each package, you must include `<<: *base`, the directory name, and 
+as they end in "Package" (ex. vimPackage or binPackage). In each package, you must include `<<: *base`, the directory name, and 
 links. Directory name is whatever you'd like the directory holding all the links to be called, and the links are the files getting linked.
 Each link is formatted like so: `dotfileFileName: localFilePath`. So in the example config, the file vimrc within my dotfiles would be 
 linked to ~/.vimrc.

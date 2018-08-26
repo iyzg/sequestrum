@@ -2,62 +2,62 @@ options:
     base: &base
         dotfileDirectory: test-dotfiles
 
-    vimDirectory: 
+    vimPackage: 
         <<: *base
         directoryName: vim
         links:
             - vimrc: .vimrc
 
-    binDirectory:
+    binPackage:
         <<: *base
         directoryName: bin
         links:
             - bin: .scripts
 
-    zshDirectory:
+    zshPackage:
         <<: *base
         directoryName: zsh
         links:
             - zshrc: .zshrc
             - zsh-theme: .oh-my-zsh/themes/clair.zsh-theme
 
-    discordDirectory:
+    discordPackage:
         <<: *base
         directoryName: discord
         links: 
             - discordtheme: DiscordThemes/NordenLights.css
 
-    comptonDirectory:
+    comptonPackage:
         <<: *base
         directoryName: compton
         links:
             - compton.conf: .config/compton.conf
 
-    dunstDirectory:
+    dunstPackage:
         <<: *base
         directoryName: dunst
         links:
             - dunstrc: .config/dunst/dunstrc
 
-    mpdDirectory:
+    mpdPackage:
         <<: *base
         directoryName: mpd
         links:
             - conf: .mpd/mpd.conf
 
-    ncmpcppDirectory:
+    ncmpcppPackage:
         <<: *base
         directoryName: ncmpcpp
         links:
             - config: .ncmpcpp/config
 
-    obthemesDirectory:
+    obthemesPackage:
         <<: *base
         directoryName: obthemes
         links:
             - themes: .themes
 
-    openboxDirectory:
+    openboxPackage:
         <<: *base
         directoryName: openbox
         links:
@@ -65,13 +65,13 @@ options:
             - rc: .config/openbox/rc.xml
             - autostart: .config/openbox/autostart
 
-    urxvtDirectory:
+    urxvtPackage:
         <<: *base
         directoryName: urxvt
         links:
             - xresources: .Xresources
 
-    wallpaperDirectory:
+    wallpaperPackage:
         <<: *base
         directoryName: wallpaper
         links:

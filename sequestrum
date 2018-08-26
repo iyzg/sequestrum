@@ -110,7 +110,7 @@ dotfilePath = homePath + \
 if arguments[0] == "Setup":
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
-            if key.endswith("Directory"):
+            if key.endswith("Package"):
                 if "commandsBefore" in value:
                     comMod.runCommands(
                         configDict['options'][key]["commandsBefore"])
@@ -129,7 +129,7 @@ elif arguments[0] == "Install":
     # Install all packages
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
-            if key.endswith("Directory"):
+            if key.endswith("Package"):
                 if "commandsBefore" in value:
                     comMod.runCommands(
                         configDict['options'][key]["commandsBefore"])
@@ -141,7 +141,7 @@ elif arguments[0] == "Install":
     # The option to only install one package instead of all your dotfiles.
     elif arguments[1] in directoryList:
         for key, value in configDict['options'].items():
-            if key == arguement[1] + "Directory":
+            if key == arguement[1] + "Package":
                 if "commandsBefore" in value:
                     comMod.runCommands(
                         configDict['options'][key]["commandsBefore"])
