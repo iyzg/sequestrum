@@ -43,7 +43,7 @@ def copyFolder(source, destination):
         print("Sucess copying folder ")
 
 
-def symlinkSourceExists(sourcePath):
+def symlinkLocationExists(sourcePath):
     """
         Checks to see if symlink source exists
     """

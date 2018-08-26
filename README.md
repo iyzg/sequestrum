@@ -60,6 +60,10 @@ links. Directory name is whatever you'd like the directory holding all the links
 Each link is formatted like so: `dotfileFileName: localFilePath`. So in the example config, the file vimrc within my dotfiles would be 
 linked to ~/.vimrc.
 
+### Installing
+Installing dotfiles onto your system is as easy as pie. Simple run sequestrum -i <package>. Make sure that the location on your system doesn't
+exist yet or it'll toss you an error. You can use all to install all your dotfiles.
+
 #### Additonal Options
 On top of the three required includes (base, directoryName, and links), you also have to option to add a commandsBefore and commandsAfter.
 The names are pretty self explanatory, commandsBefore is a list of commands to run before the symlinking, and commandsAfter is a list 
