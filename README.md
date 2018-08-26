@@ -21,7 +21,8 @@ would want that.
 
 Now they you're all setup with your config file, time for the fun to begin! If your configuration file is setup correctly, you
 should be able to run `sequestrum --setup` (full list of commands below) to finish setting up your dotfiles. If something goes 
-wrong, be sure to check your configuration file to make sure everything is correct.
+wrong, be sure to check your configuration file to make sure everything is correct. Run `-sequestrum --install` after to symlink 
+your dotfiles to your system. Setup will delete all local system files and move them to the dotfile repository.
 
 ### Example Config
 Here is an example of a finished config file.
