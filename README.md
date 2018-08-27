@@ -8,7 +8,9 @@ This is specifically made for dotfile management and provides features like modu
 1. Pyyaml: pip install pyyaml
 
 ## Install Guide
-`Currently in the workings`
+1. Clone Repository: `git clone https://github.com/iiPlasma/sequestrum.git`
+2. Add To Path
+3. Enjoy!
 
 ## Usage
 ### Getting Started
