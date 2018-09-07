@@ -74,10 +74,11 @@ of commands to run after the symlinking. More of custom options will be added in
 request. C:
 
 ### List of Commands
-1. -s, --setup: Setup your dotfile repository
+1. -s, --setup  : Setup your dotfile repository
 2. -i, --install: Installs your dotfiles onto the system
-3. -u, --unlink: Unlink a package from your system
-4. -d, --delete: Delete a repository from your dotfiles
+3. -u, --unlink : Unlink a package from your system
+4. -d, --delete : Delete a repository from your dotfiles
+5. -r, --refresh: Refresh your dotfiles based on your config
 
 ## Feature Requests
 - [X] Modularity
