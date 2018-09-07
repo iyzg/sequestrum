@@ -36,7 +36,6 @@ options:
         dotfileDirectory: .dotfiles
     
     vimPackage:
-        <<: *base
         directoryName: vim
         commandsBefore:
             - ufetch
@@ -59,7 +58,7 @@ want to package you'll need a seperate package declaration (ex. vimPackage in th
 
 #### Directories
 As you'll notice the each set of links you want to group will need their own package. You can name these whatever you like as long 
-as they end in "Package" (ex. vimPackage or binPackage). In each package, you must include `<<: *base`, the directory name, and 
+as they end in "Package" (ex. vimPackage or binPackage). In each package, you must include the directory nameand 
 links. Directory name is whatever you'd like the directory holding all the links to be called, and the links are the files getting linked.
 Each link is formatted like so: `dotfileFileName: localFilePath`. So in the example config, the file vimrc within my dotfiles would be 
 linked to ~/.vimrc.
@@ -69,7 +68,7 @@ Installing dotfiles onto your system is as easy as pie. Simple run sequestrum -i
 exist yet or it'll toss you an error. You can use all to install all your dotfiles.
 
 #### Additonal Options
-On top of the three required includes (base, directoryName, and links), you also have to option to add a commandsBefore and commandsAfter.
+On top of the two required includes (directoryName and links), you also have to option to add a commandsBefore and commandsAfter.
 The names are pretty self explanatory, commandsBefore is a list of commands to run before the symlinking, and commandsAfter is a list 
 of commands to run after the symlinking. More of custom options will be added in the future. If you have any ideas, just leave a feature
 request. C:

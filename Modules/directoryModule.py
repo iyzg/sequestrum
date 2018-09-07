@@ -76,3 +76,12 @@ def isFile(path):
             return False
     except OSError:
         print("Sequestrum: File check failed")
+
+# Grab all package names
+def grabPackageNames(path):
+    packageList = []
+    for name in os.listdir(path):
+        if os.path.isdir(path):
+            packageList.append(name)
+
+    return packageList

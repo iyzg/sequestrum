@@ -11,7 +11,8 @@ def getArguments():
     group = parser.add_mutually_exclusive_group()
 
     group.add_argument("-i", "--install", help="Install packages onto local system. Use all to install all packages.")
-    group.add_argument("-s", "--setup", help="Setup dotfile directory.", action="store_true")
+    group.add_argument("-r", "--refresh", help="Refresh your dotfiles based on your config.")
+    group.add_argument("-s", "--setup", help="Setup dotfile directory. Only run this once.", action="store_true")
     group.add_argument("-u", "--unlink", help="Unlink packages from local system. Use all to unlink all packages.")
 
     args = parser.parse_args()
@@ -20,5 +21,7 @@ def getArguments():
         return ("Install", args.install)
     elif args.setup:
         return ("Setup", "all")
+    elif args.refresh != None:
+        return ("Refresh", "all")
     elif args.unlink != None:
         return ("Unlink", args.unlink)
