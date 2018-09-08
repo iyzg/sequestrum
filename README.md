@@ -58,7 +58,7 @@ want to package you'll need a seperate package declaration (ex. vimPackage in th
 
 #### Directories
 As you'll notice the each set of links you want to group will need their own package. You can name these whatever you like as long 
-as they end in "Package" (ex. vimPackage or binPackage). In each package, you must include the directory nameand 
+as they end in "Package" (ex. vimPackage or binPackage). In each package, you must include the directory name and 
 links. Directory name is whatever you'd like the directory holding all the links to be called, and the links are the files getting linked.
 Each link is formatted like so: `dotfileFileName: localFilePath`. So in the example config, the file vimrc within my dotfiles would be 
 linked to ~/.vimrc.
