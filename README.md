@@ -79,6 +79,7 @@ request. C:
 3. -u, --unlink : Unlink a package from your system
 4. -d, --delete : Delete a repository from your dotfiles
 5. -r, --refresh: Refresh your dotfiles based on your config
+6. -b, --backup : Backup your system and check your config
 
 ## Feature Requests
 - [X] Modularity
