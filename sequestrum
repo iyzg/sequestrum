@@ -11,6 +11,7 @@ homePath = str(Path.home()) + "/"
 sys.path.insert(0, homePath + "/Sequestrum/Modules")
 
 # Modules
+import errorsModule as errMod
 import directoryModule as dirMod
 import symlinkModule as symMod
 import argumentsModule as argMod
@@ -23,7 +24,7 @@ packagesToUnlink = []
 arguments = argMod.getArguments()
 
 if arguments is None:
-    print("Sequestrum: Must enter arguments")
+    print(errMod.formatError("Arguments", "Must pass arguments"))
     sys.exit()
 
 
@@ -119,7 +120,7 @@ def UnlinkPackages():
         elif dirMod.isFile(path):
             dirMod.deleteFile(path)
         else:
-            print("[Sequestrum] HOW THE FUCK DID THIS HAPPEN")
+            print(errMod.formatError("Sequestrum", "uwu This was not supposed to happen... uwu"))
 
 # Goes through all the file locations that need to be empty for the
 # symlinking to work and checks to see if they're empty. If they're not,
@@ -160,14 +161,18 @@ def checkSourceLocations(packageKey):
     return True
 
 
-configFile = open("config.yaml", "r")
+try:
+    configFile = open("config.yaml", "r")
+except:
+    print(errMod.formatError("Core", "No configuration found."))
+    sys.exit()
+
 configDict = yaml.load(configFile)
 directoryList = []
 
 # Grab list of directories from the config.
 for key, value in configDict['options'].items():
     if key.endswith("Package"):
-        print(key[:-7])
         directoryList.append(key[:-7])
         
 
@@ -184,8 +189,7 @@ if arguments[0] == "Setup":
         for key, value in configDict['options'].items():
             if key.endswith("Package"):
                 if not checkSourceLocations(key):
-                    print(
-                        "Sequestrum: Dotfile location is occupied. Please check config file.")
+                    print(errMod.formatError("Sequestrum", "Source location occupied."))
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -198,7 +202,7 @@ if arguments[0] == "Setup":
                     comMod.runCommands(
                         configDict['options'][key]["commandsAfter"])
     else:
-        print("Valid Usage: sequestrum -s")
+        print(errMod.formatError("Sequestrum", "uwu Another Impossible Safety Net owo"))
 
 # Install the files from the dotfiles. Symlinks the files from the
 # specified packages to the local system files. If the file or folder
@@ -210,8 +214,7 @@ elif arguments[0] == "Install":
         for key, value in configDict['options'].items():
             if key.endswith("Package"):
                 if not checkInstallLocations(key):
-                    print(
-                        "Sequestrum: Install locations are occupied. Check config file.")
+                    print(errMod.formatError("Sequestrum", "Source location occupied."))
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -229,8 +232,7 @@ elif arguments[0] == "Install":
         for key, value in configDict['options'].items():
             if key == arguments[1] + "Package":
                 if not checkInstallLocations(key):
-                    print(
-                        "Sequestrum: Install locations are occupied. Check config file.")
+                    print(errMod.formatError("Sequestrum", "Source location occupied."))
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -243,7 +245,7 @@ elif arguments[0] == "Install":
                     comMod.runCommands(
                         configDict['options'][key]["commandsAfter"])
     else:
-        print("Invalid Package")
+        print(errMod.formatError("Sequstrum", "Invalid Package."))
 
 elif arguments[0] == "Refresh":
     if arguments[1] == "all":
@@ -257,8 +259,7 @@ elif arguments[0] == "Refresh":
                     if "commandsAfter" in value:
                         comMod.runCommands(configDict['options'][key]["commandsAfter"])
     else:
-        print("[Sequestrum] Source code compromised.")
-
+        print(errMod.formatError("Sequestrum", "Source code compromised."))
 
 elif arguments[0] == "Unlink":
     if arguments[1] == "all":
@@ -272,6 +273,6 @@ elif arguments[0] == "Unlink":
                 GetPackagesToUnlink(key)
         UnlinkPackages()
     else:
-        print("Sequestrum: Invalid Package")
+        print(errMod.formatError("Sequestrum", "Invalid Package."))
 else:
-    print("Invalid Command")
+    print(errMod.formatError("Sequestrum", "Invalid Command"))

@@ -6,7 +6,7 @@ other reasons? Fine, fine.. some real reasons.This is specifically made for dotf
 dotfile repository setup, and more!
 
 ## Dependencies
-1. Pyyaml: pip install pyyaml
+1. Pyyaml: ``pip install pyyaml``
 
 ## Install Guide
 1. Clone Repository: `git clone https://github.com/iiPlasma/sequestrum.git`
@@ -20,7 +20,7 @@ your own custom config along with an exampe config are down included down below.
 you can come back to finish setup! 
 
 **Note:** Your dotfiles should be empty of all config files to keep from having duplicate files unless for some reason you
-would want that.
+would want that. Never edit your config when you have packages installed. Unlink then edit your config to prevent lost files.
 
 Now they you're all setup with your config file, time for the fun to begin! If your configuration file is setup correctly, you
 should be able to run `sequestrum --setup` (full list of commands below) to finish setting up your dotfiles. If something goes 
