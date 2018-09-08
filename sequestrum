@@ -262,6 +262,9 @@ elif arguments[0] == "Refresh":
     else:
         print(errMod.formatError("Sequestrum", "Source code compromised."))
 
+# Backs up your local files before you setup your dotfiles. This is also a 
+# good way to check if your config files aer correct. If they aren't they won't 
+# be backed up to your backup folder and throw an error instead.
 elif arguments[0] == "Backup":
     if arguments[1] == "all":
         backupPath = homePath + "sequestrum-backup/"
@@ -283,6 +286,9 @@ elif arguments[0] == "Backup":
     else:
         print(errMod.formatError("Sequestrum", "Source code compromised."))
 
+# Unlink the source files. This doesn't really "unlink", instead it actually just
+# deletes the files. It collects a list of files to unlink then it goes through and 
+# unlinks them all. 
 elif arguments[0] == "Unlink":
     if arguments[1] == "all":
         for key, value in configDict['options'].items():
