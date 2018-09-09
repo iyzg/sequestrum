@@ -9,7 +9,7 @@ def getArguments():
     """
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
-    
+
     group.add_argument("-b", "--backup", help="Backup files and tests your config.", action="store_true")
     group.add_argument("-i", "--install", help="Install packages onto local system. Use all to install all packages.")
     group.add_argument("-r", "--refresh", help="Refresh your dotfiles based on your config.", action="store_true")
