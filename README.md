@@ -81,14 +81,11 @@ request. C:
 5. -r, --refresh: Refresh your dotfiles based on your config
 6. -b, --backup : Backup your system and check your config
 
-## Feature Requests
-- [X] Modularity
-- [X] Proper Guide (Yes this is a feature)
-- [X] Documentation
-- [X] Commands before and after symlink
-- [X] Uninstall
-- [X] Proper handling of when symlink fails because file already exists
-- [ ] Port README.md to a wiki
+## TODOS
+- [ ] Dual way safety checks for install and setup
+- [ ] Safety checks before backup
+- [ ] Fix Refresh
+- [ ] Commands to modify config
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
