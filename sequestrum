@@ -280,12 +280,10 @@ elif arguments[0] == "Backup":
                         sourceFile = homePath + value
                         destFile = backupPath + key
                         symMod.copyFile(sourceFile, destFile)
-
-    print(errMod.formatError("Backup", "All files backed up"))
-
     else:
         print(errMod.formatError("Sequestrum", "Source code compromised."))
 
+    print(errMod.formatError("Backup", "All files backed up"))
 # Unlink the source files. This doesn't really "unlink", instead it actually just
 # deletes the files. It collects a list of files to unlink then it goes through and 
 # unlinks them all. 
