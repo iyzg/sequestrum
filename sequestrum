@@ -279,7 +279,12 @@ elif arguments[0] == "Backup":
                     for key, value in link.items():
                         sourceFile = homePath + value
                         destFile = backupPath + key
-                        symMod.copyFile(sourceFile, destFile)
+                        
+                        if dirMod.pathExists(sourceFile):
+                            symMod.copyFile(sourceFile, destFile):
+                        else:
+                            print(errMod.formatError("Backup", "{} doesn't exist."))
+                            sys.exit()
 
     print(errMod.formatError("Backup", "All files backed up"))
 

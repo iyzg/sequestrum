@@ -26,9 +26,9 @@ def copyFile(source, destination):
     try:
         copyfile(source, destination)
     except IOError:
-        print("Location must be writable")
+        return False
     else:
-        print("Success copying file")
+        return True
 
 
 def copyFolder(source, destination):
