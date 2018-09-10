@@ -135,13 +135,14 @@ def checkInstallLocations(packageKey):
         for key, value in link.items():
             destPath = homePath + value
             if symMod.symlinkLocationExists(destPath):
+                print(errMod.formatError("Safety", "{} already exists.".format(destPath)))
                 return False
 
     return True
 
 # Checks to see if the file locations in the dotfile repository exist. If
 # they do, return false. If they don't, return true. This is to prevent
-# overwriting of file that may or may not be importtant to the user.
+# overwriting of file that may or may not be important to the user.
 
 
 def checkSourceLocations(packageKey):
@@ -156,6 +157,7 @@ def checkSourceLocations(packageKey):
             sourcePath = directoryPath + key
 
             if symMod.symlinkLocationExists(sourcePath):
+                print(errMod.formatError("Safety", "{} already exists.".format(sourcePath)))
                 return False
 
     return True
@@ -189,7 +191,6 @@ if arguments[0] == "Setup":
         for key, value in configDict['options'].items():
             if key.endswith("Package"):
                 if not checkSourceLocations(key):
-                    print(errMod.formatError("Sequestrum", "Source location occupied."))
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -214,7 +215,6 @@ elif arguments[0] == "Install":
         for key, value in configDict['options'].items():
             if key.endswith("Package"):
                 if not checkInstallLocations(key):
-                    print(errMod.formatError("Sequestrum", "Source location occupied."))
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -232,7 +232,6 @@ elif arguments[0] == "Install":
         for key, value in configDict['options'].items():
             if key == arguments[1] + "Package":
                 if not checkInstallLocations(key):
-                    print(errMod.formatError("Sequestrum", "Source location occupied."))
                     sys.exit()
 
         for key, value in configDict['options'].items():
@@ -279,11 +278,20 @@ elif arguments[0] == "Backup":
                     for key, value in link.items():
                         sourceFile = homePath + value
                         destFile = backupPath + key
-                        symMod.copyFile(sourceFile, destFile)
+
+                        if dirMod.pathExists(sourceFile):
+                            symMod.copyFile(sourceFile, destFile):
+                        else:
+                            print(errMod.formatError("Backup", "{} doesn't exist."))
+                            sys.exit()
+
+    print(errMod.formatError("Backup", "All files backed up"))
+
     else:
         print(errMod.formatError("Sequestrum", "Source code compromised."))
 
     print(errMod.formatError("Backup", "All files backed up"))
+
 # Unlink the source files. This doesn't really "unlink", instead it actually just
 # deletes the files. It collects a list of files to unlink then it goes through and 
 # unlinks them all. 
