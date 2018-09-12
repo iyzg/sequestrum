@@ -8,7 +8,7 @@ setup(
     setup_requires=['setuptools_scm'],
     url='http://github.com/iiPlasma/sequestrum',
     author='Ivy Zhang',
-    author_email="ZIvy042003@gmail.com"
+    author_email="ZIvy042003@gmail.com",
     license='MIT',
     packages=['sequestrum'],
     install_requires=[
