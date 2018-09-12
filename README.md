@@ -83,6 +83,7 @@ request. C:
 - [ ] Safety checks before backup
 - [ ] Fix Refresh
 - [ ] Commands to modify config
+- [ ] Add support for more directories than home
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
