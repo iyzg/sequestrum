@@ -115,6 +115,7 @@ def UnlinkPackages():
         Unlink all files in packagesToUnlink
     """
     for path in packagesToUnlink:
+        print(path)
         if dirMod.isFolder(path):
             dirMod.deleteFolder(path)
         elif dirMod.isFile(path):
@@ -280,12 +281,10 @@ elif arguments[0] == "Backup":
                         destFile = backupPath + key
 
                         if dirMod.pathExists(sourceFile):
-                            symMod.copyFile(sourceFile, destFile):
+                            symMod.copyFile(sourceFile, destFile)
                         else:
                             print(errMod.formatError("Backup", "{} doesn't exist."))
                             sys.exit()
-
-    print(errMod.formatError("Backup", "All files backed up"))
 
     else:
         print(errMod.formatError("Sequestrum", "Source code compromised."))
