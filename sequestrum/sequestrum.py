@@ -7,14 +7,15 @@ import sys
 from pathlib import Path
 import yaml
 
-# Modules
-import sequestrum.errorsModule as errMod
-import sequestrum.directoryModule as dirMod
-import sequestrum.symlinkModule as symMod
-import sequestrum.argumentsModule as argMod
-import sequestrum.commandsModule as comMod
-
 homePath = str(Path.home()) + "/"
+
+# Modules
+import errorsModule as errMod
+import directoryModule as dirMod
+import symlinkModule as symMod
+import argumentsModule as argMod
+import commandsModule as comMod
+
 
 # For Later
 packagesToUnlink = []
