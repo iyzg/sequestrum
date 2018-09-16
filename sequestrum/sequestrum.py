@@ -10,11 +10,11 @@ import yaml
 homePath = str(Path.home()) + "/"
 
 # Modules
-import errorsModule as errMod
-import directoryModule as dirMod
-import symlinkModule as symMod
-import argumentsModule as argMod
-import commandsModule as comMod
+import sequestrum.errorsModule as errMod
+import sequestrum.edirectoryModule as dirMod
+import sequestrum.esymlinkModule as symMod
+import sequestrum.eargumentsModule as argMod
+import sequestrum.ecommandsModule as comMod
 
 
 # For Later
