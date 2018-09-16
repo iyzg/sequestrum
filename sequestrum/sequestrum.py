@@ -2,7 +2,7 @@
 #
 # Sequestrum - Dotfile Manager
 
-# Adding to Upload to PyPi cause forgot to tag
+# Adding to Upload to PyPi cause forgot to tag, second time is the charm
 
 # Libraries
 import sys
