@@ -2,6 +2,8 @@
 #
 # Sequestrum - Dotfile Manager
 
+# Adding to Upload to PyPi cause forgot to tag
+
 # Libraries
 import sys
 from pathlib import Path
