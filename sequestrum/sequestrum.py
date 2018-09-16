@@ -195,8 +195,11 @@ def main():
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
                     if not checkSourceLocations(key, configDict, dotfilePath):
+                        print(errMod.formatError("Sequestrum", "Dotfile Path Missing")
                         sys.exit()
-
+                    if not checkInstallLocations(key, configDict):
+                        print(errMod.formatError("Sequestrum", "Home Path Occupied"))
+                        sys.exit()
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
