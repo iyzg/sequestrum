@@ -2,7 +2,8 @@
 #
 # Sequestrum - Dotfile Manager
 
-# Adding to Upload to PyPi cause forgot to tag, second time is the charm
+# Hotfix 3
+# Please work PIP T^T
 
 # Libraries
 import sys
