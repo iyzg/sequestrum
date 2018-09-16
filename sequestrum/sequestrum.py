@@ -11,10 +11,10 @@ homePath = str(Path.home()) + "/"
 
 # Modules
 import sequestrum.errorsModule as errMod
-import sequestrum.edirectoryModule as dirMod
-import sequestrum.esymlinkModule as symMod
-import sequestrum.eargumentsModule as argMod
-import sequestrum.ecommandsModule as comMod
+import sequestrum.directoryModule as dirMod
+import sequestrum.symlinkModule as symMod
+import sequestrum.argumentsModule as argMod
+import sequestrum.commandsModule as comMod
 
 
 # For Later
