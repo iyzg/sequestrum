@@ -4,6 +4,7 @@ setup(
     name='sequestrum',
     description='Modern Dotfile Manager',
     long_description=open('README.md').read(),
+    long_description_content_type='text/markdown',
     use_scm_version=True,
     setup_requires=['setuptools_scm'],
     url='http://github.com/iiPlasma/sequestrum',
