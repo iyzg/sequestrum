@@ -76,15 +76,18 @@ def installPackage(packageKey, configDict, dotfilePath):
             destFile = homePath + value
 
             # Make sure file exists in dotfiles
+            # TODO(nawuko): Clean this up, also log errors
             if symMod.symlinkLocationExists(sourceFile):
-                if dirMod.isFolder(sourceFile):
-                    symMod.createSymlink(sourceFile, destFile)
-                elif dirMod.isFile(sourceFile):
-                    symMod.createSymlink(sourceFile, destFile)
+                if dirMod.isFolder(sourceFile) or dirMod.isFile(sourceFile):
+                    if dirMod.createBaseFolder(destFile):
+                        symMod.createSymlink(sourceFile, destFile)
+                    else:
+                        return False
                 else:
                     return False
             else:
                 return False
+
     return True
 
 
@@ -111,7 +114,7 @@ def UnlinkPackages():
         elif dirMod.isFile(path):
             dirMod.deleteFile(path)
         else:
-            print(errMod.formatError("Sequestrum", "uwu This was not supposed to happen... uwu"))
+            print(errMod.formatError("Sequestrum", "Nothing to unlink!"))
 
 # Goes through all the file locations that need to be empty for the
 # symlinking to work and checks to see if they're empty. If they're not,
