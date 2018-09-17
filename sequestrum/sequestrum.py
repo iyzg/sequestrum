@@ -2,10 +2,6 @@
 #
 # Sequestrum - Dotfile Manager
 
-# Hotfix 5
-# Attempt like 101
-# Please work PIP T^T
-
 # Libraries
 import sys
 from pathlib import Path
