@@ -4,6 +4,7 @@
 import os
 import sys
 import shutil
+import pathlib
 
 # Create Folder
 
@@ -26,10 +27,20 @@ def deleteFolder(path):
     """
         Deletes a folder
     """
+
+    basePath = pathlib.Path(path)
+    
+    if not basePath.exists():
+        print("Sequestrum: Folder already deleted!")
+        return
+
     try:
-        shutil.rmtree(path)
-    except OSError:
-        print("Sequestrum: Deletion of folder failed")
+        if basePath.is_symlink():
+            basePath.unlink()
+        else:
+            shutil.rmtree(basePath)
+    except OSError as e:
+        print("Sequestrum: Deletion of folder failed: {}".format(e))
     else:
         print("Sequestrum: Deleted successfully!")
 
