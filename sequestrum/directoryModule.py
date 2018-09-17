@@ -14,8 +14,8 @@ def createFolder(path):
     """
     try:
         os.makedirs(path)
-    except OSError:
-        print("Sequestrum: Creation of folder failed")
+    except OSError as e:
+        print(str(e))
     else:
         print("Sequestrum: Created successfully!")
 
