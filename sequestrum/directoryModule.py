@@ -28,8 +28,8 @@ def deleteFolder(path):
     """
     try:
         shutil.rmtree(path)
-    except OSError:
-        print("Sequestrum: Deletion of folder failed")
+    except OSError as e:
+        print(str(e))
     else:
         print("Sequestrum: Deleted successfully!")
 
