@@ -2,13 +2,15 @@
 #
 # Sequestrum - Dotfile Manager
 
-# Hotfix 3
+# Hotfix 4
+# Attempt like 100
 # Please work PIP T^T
 
 # Libraries
 import sys
 from pathlib import Path
 import yaml
+import math
 
 homePath = str(Path.home()) + "/"
 
