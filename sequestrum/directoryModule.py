@@ -5,6 +5,7 @@ import os
 import sys
 import shutil
 import pathlib
+import sequestrum.loggingModule as logMod
 
 # Create Folder
 
@@ -23,7 +24,7 @@ def createFolder(path):
 # Create Base Folder
 
 
-def createBaseFolder(path):
+def createBaseFolder(path, pkgName):
     """
         Create Base directory if needed
     """
@@ -31,7 +32,7 @@ def createBaseFolder(path):
 
     # Check if the base folder is a file
     if basePath.exists() and basePath.is_file():
-        print("Sequestrum: Base directory is a file: {}".format(basePath))
+        logMod.printError("Base directory is a file: {}".format(basePath), pkgName)
         return False
 
     # Create path and parents (or ignore if folder already exists)
