@@ -5,12 +5,9 @@ Promise. Now you may be wondering, why use this over Stow or Dotbot. Simple.Well
 other reasons? Fine, fine.. some real reasons.This is specifically made for dotfile management and provides features like modulatarity, 
 dotfile repository setup, and more!
 
-## Dependencies
-1. Pyyaml: ``pip install pyyaml``
-
 ## Install Guide
-1. Clone Repository: `git clone https://github.com/iiPlasma/sequestrum.git`
-2. Add To Path
+1. `sudo pip install sequestrum`
+2. Leave a star on this repo
 3. Enjoy!
 
 ## Usage
@@ -86,6 +83,7 @@ request. C:
 - [ ] Safety checks before backup
 - [ ] Fix Refresh
 - [ ] Commands to modify config
+- [ ] Add support for more directories than home
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,

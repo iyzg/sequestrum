@@ -2,10 +2,16 @@
 #
 # Sequestrum - Dotfile Manager
 
+# Hotfix 5
+# Attempt like 101
+# Please work PIP T^T
+
 # Libraries
 import sys
 from pathlib import Path
 import yaml
+
+homePath = str(Path.home()) + "/"
 
 # Modules
 import sequestrum.errorsModule as errMod
@@ -15,7 +21,6 @@ import sequestrum.argumentsModule as argMod
 import sequestrum.commandsModule as comMod
 import sequestrum.loggingModule as logMod
 
-homePath = str(Path.home()) + "/"
 
 # For Later
 packagesToUnlink = []
@@ -194,6 +199,11 @@ def main():
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
                     if not checkSourceLocations(key, configDict, dotfilePath):
+                        print(errMod.formatError("Sequestrum", "Dotfile Path Missing"))
+                        sys.exit()
+
+                    if not checkInstallLocations(key, configDict):
+                        print(errMod.formatError("Sequestrum", "Home Path Occupied"))
                         sys.exit()
 
             for key, value in configDict['options'].items():
