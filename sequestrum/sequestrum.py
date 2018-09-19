@@ -37,26 +37,25 @@ def setupPackage(packageKey, configDict, dotfilePath):
     """
     # Make a path for the new directory path using the name specified in the
     # config then make the folder using the path.
-    newPackagePath = dotfilePath + \
-        configDict['options'][packageKey]['directoryName'] + "/"
-    dirMod.createFolder(newPackagePath)
+    pkgConfig = configDict['options'][packageKey]
+    pkgName = pkgConfig['pkgName']
+    newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
+    dirMod.createFolder(newPackagePath, pkgName)
 
-    for link in configDict['options'][packageKey]['links']:
+    for link in pkgConfig['links']:
         for key, value in link.items():
             sourceFile = homePath + value
             destFile = newPackagePath + key
 
-            if symMod.symlinkSourceExists(sourceFile):
-                if dirMod.isFolder(sourceFile):
-                    symMod.copyFolder(sourceFile, destFile)
-                    dirMod.deleteFolder(sourceFile)
-                elif dirMod.isFile(sourceFile):
-                    symMod.copyFile(sourceFile, destFile)
-                    dirMod.deleteFile(sourceFile)
-                else:
-                    return False
+            if dirMod.isFolder(sourceFile):
+                symMod.copyFolder(sourceFile, destFile)
+                dirMod.deleteFolder(sourceFile)
+            elif dirMod.isFile(sourceFile):
+                symMod.copyFile(sourceFile, destFile)
+                dirMod.deleteFile(sourceFile)
             else:
                 return False
+
     return True
 
 
@@ -71,19 +70,18 @@ def installPackage(packageKey, configDict, dotfilePath):
         Install package to local system
     """
     # Grab dotfile package directory
-    directoryPath = dotfilePath + \
-        configDict['options'][packageKey]['directoryName'] + "/"
+    pkgConfig = configDict['options'][packageKey]
+    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
 
     # Loop through files to link
-    for link in configDict['options'][packageKey]['links']:
-        pkgName = configDict['options'][packageKey]['pkgName']
+    for link in pkgConfig['links']:
         # Symlink files to local files
         for key, value in link.items():
             sourceFile = directoryPath + key
             destFile = homePath + value
 
-            if dirMod.createBaseFolder(destFile, pkgName):
-                symMod.createSymlink(sourceFile, destFile, pkgName)
+            if dirMod.createBaseFolder(destFile, pkgConfig['pkgName']):
+                symMod.createSymlink(sourceFile, destFile, pkgConfig['pkgName'])
             else:
                 return False
 
@@ -94,11 +92,10 @@ def GetPackagesToUnlink(packageKey, configDict, dotfilePath):
     """
         Grab packages and put them into a list ( NO DUPES )
     """
-    directoryPath = dotfilePath + \
-        configDict['options'][packageKey]['directoryName'] + "/"
+    pkgConfig = configDict['options'][packageKey]
 
-    for link in configDict['options'][packageKey]['links']:
-        for key, value in link.items():
+    for link in pkgConfig['links']:
+        for _, value in link.items():
             fileToGrab = homePath + value
 
             if fileToGrab not in packagesToUnlink:
