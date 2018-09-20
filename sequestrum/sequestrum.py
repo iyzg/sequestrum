@@ -9,9 +9,7 @@ import yaml
 
 # Modules
 import sequestrum.directoryModule as dirMod
-import sequestrum.symlinkModule as symMod
 import sequestrum.argumentsModule as argMod
-import sequestrum.commandsModule as comMod
 import sequestrum.loggingModule as logMod
 import sequestrum.packageModule as pkgMod
 
@@ -49,54 +47,6 @@ def setupPackage(packageKey, configDict, dotfilePath):
                 return False
 
     return True
-
-
-# Goes through all the file locations that need to be empty for the
-# symlinking to work and checks to see if they're empty. If they're not,
-# it will return false. If it is clean, it'll return true.
-
-
-def checkInstallLocations(pkgConfig):
-    """
-        Checks to see if link locations are clean
-    """
-
-    noErrors = True
-
-    for link in pkgConfig['links']:
-        for _, value in link.items():
-            destPath = homePath + value
-
-            if symMod.symlinkSourceExists(destPath):
-                logMod.printError("File already exists: {}"
-                                  .format(destPath), pkgConfig['pkgName'])
-                noErrors = False
-
-    return noErrors
-
-# Checks to see if the file locations in the dotfile repository exist. If
-# they do, return false. If they don't, return true. This is to prevent
-# overwriting of file that may or may not be important to the user.
-
-
-def checkSourceLocations(pkgConfig, dotfilePath):
-    """
-        Check to see if dotfile locations are clean
-    """
-    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
-
-    noErrors = True
-
-    for link in pkgConfig['links']:
-        for key, _ in link.items():
-            sourcePath = directoryPath + key
-
-            if not symMod.symlinkSourceExists(sourcePath):
-                logMod.printError("File dosen't exists: {}"
-                                  .format(sourcePath), pkgConfig['pkgName'])
-                noErrors = False
-
-    return noErrors
 
 
 def main():
@@ -144,10 +94,10 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not checkSourceLocations(value, dotfilePath):
+                    if not pkgMod.checkSourceLocations(value, dotfilePath):
                         errorOccured = True
 
-                    if not checkInstallLocations(value):
+                    if not pkgMod.checkInstallLocations(value):
                         errorOccured = True
 
             if errorOccured:
@@ -173,10 +123,10 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not checkSourceLocations(value, dotfilePath):
+                    if not pkgMod.checkSourceLocations(value, dotfilePath):
                         errorOccured = True
 
-                    if not checkInstallLocations(value):
+                    if not pkgMod.checkInstallLocations(value):
                         errorOccured = True
 
             if errorOccured:
@@ -201,7 +151,7 @@ def main():
             fullPackageName = arguments[1] + "Package"
             pkgConfig = configDict['options'][fullPackageName]
 
-            if not checkInstallLocations(pkgConfig):
+            if not pkgMod.checkInstallLocations(pkgConfig):
                 sys.exit()
 
             if not pkgMod.install(pkgConfig, dotfilePath):
@@ -216,17 +166,7 @@ def main():
     # TODO: Fix
     elif arguments[0] == "Refresh":
         if arguments[1] == "all":
-            dotfilePackageList = dirMod.grabPackageNames(dotfilePath)
-            for key, value in configDict['options'].items():
-                if key.endswith("Package"):
-                    if key[:-7] not in dotfilePackageList:
-                        if "commandsBefore" in value:
-                            comMod.runCommands(
-                                configDict['options'][key]["commandsBefore"])
-                        # InstallPackage(key, configDict, dotfilePath)
-                        if "commandsAfter" in value:
-                            comMod.runCommands(
-                                configDict['options'][key]["commandsAfter"])
+            logMod.printFatal("NYI")
 
     # Backs up your local files before you setup your dotfiles. This is also a
     # good way to check if your config files aer correct
@@ -246,7 +186,7 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not checkSourceLocations(value, dotfilePath):
+                    if not pkgMod.checkSourceLocations(value, dotfilePath):
                         errorOccured = True
 
             if errorOccured:

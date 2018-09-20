@@ -1,6 +1,33 @@
 # Logging module
-
+import os
 import sys
+
+VERBOSE = True
+COLORS = dict(
+    list(zip([
+        'grey',
+        'red',
+        'green',
+        'yellow',
+        'blue',
+        'magenta',
+        'cyan',
+        'white',
+    ],
+        list(range(30, 38))
+    ))
+)
+COLOR_RESET = '\033[0m'
+
+
+def printColor(text, color=None):
+    if os.getenv('ANSI_COLORS_DISABLED') is None:
+        fmt_str = '\033[%dm%s'
+        if color is not None:
+            text = fmt_str % (COLORS[color], text)
+
+        text += COLOR_RESET
+    print(text)
 
 
 def formatOutput(errorType, errorMessage, pkgName=None):
@@ -11,21 +38,22 @@ def formatOutput(errorType, errorMessage, pkgName=None):
 
 
 def printFatal(errorMessage, pkgName=None):
-    print(formatOutput("FATAL", errorMessage, pkgName))
+    printColor(formatOutput("FATAL", errorMessage, pkgName), 'red')
     sys.exit()
 
 
 def printError(errorMessage, pkgName=None):
-    print(formatOutput("ERROR", errorMessage, pkgName))
+    printColor(formatOutput("ERROR", errorMessage, pkgName), 'red')
 
 
 def printWarn(errorMessage, pkgName=None):
-    print(formatOutput("WARN", errorMessage, pkgName))
+    printColor(formatOutput("WARN", errorMessage, pkgName), 'yellow')
 
 
 def printInfo(errorMessage, pkgName=None):
-    print(formatOutput("INFO", errorMessage, pkgName))
+    printColor(formatOutput("INFO", errorMessage, pkgName), 'white')
 
 
 def printVerbose(errorMessage, pkgName=None):
-    print(formatOutput("VERBOSE", errorMessage, pkgName))
+    if VERBOSE:
+        printColor(formatOutput("VERBOSE", errorMessage, pkgName), 'cyan')
