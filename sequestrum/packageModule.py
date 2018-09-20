@@ -2,7 +2,7 @@ from subprocess import run
 
 import sequestrum.loggingModule as logMod
 import sequestrum.symlinkModule as symMod
-import sequestrum.commandsModule as comMod
+# import sequestrum.commandsModule as comMod
 import sequestrum.directoryModule as dirMod
 
 from pathlib import Path
@@ -32,11 +32,13 @@ def runCommands(pkgConfig, after):
             runner = run(parsedCommand)
         except Exception as error:
             logMod.printError(
-                "Error occured during command \"{}\": {}".format(command, error), pkgConfig['pkgName'])
+                "Error occured during command \"{}\": {}"
+                .format(command, error), pkgConfig['pkgName'])
             return False
         else:
-            logMod.printVerbose("Command \"{}\" finished with exit code: {}".format(
-                command, runner.returncode), pkgConfig['pkgName'])
+            logMod.printVerbose(
+                "Command \"{}\" finished with exit code: {}"
+                .format(command, runner.returncode), pkgConfig['pkgName'])
 
     return True
 
@@ -54,11 +56,12 @@ def symlinkPackage(pkgConfig, dotfilePath):
         for key, value in link.items():
             sourceFile = directoryPath + key
             destFile = homePath + value
+            pkgName = pkgConfig['pkgName']
 
             # Create base folder if it dosent exist
-            if dirMod.createBaseFolder(destFile, pkgConfig['pkgName']):
+            if dirMod.createBaseFolder(destFile, pkgName):
                 # Create symlink, if it fails return false
-                if not symMod.createSymlink(sourceFile, destFile, pkgConfig['pkgName']):
+                if not symMod.createSymlink(sourceFile, destFile, pkgName):
                     return False
             else:
                 return False
@@ -69,17 +72,20 @@ def symlinkPackage(pkgConfig, dotfilePath):
 def installPackage(pkgConfig, dotfilePath):
     if not runCommands(pkgConfig, after=False):
         logMod.printError(
-            "Abort installation of package due to \"commandsBefore\" Errors", pkgConfig['pkgName'])
+            "Abort installation of package due to \"commandsBefore\" Errors",
+            pkgConfig['pkgName'])
         return False
 
     if not symlinkPackage(pkgConfig, dotfilePath):
         logMod.printError(
-            "Abort installation of package due to Symlink Errors", pkgConfig['pkgName'])
+            "Abort installation of package due to Symlink Errors",
+            pkgConfig['pkgName'])
         return False
 
     if not runCommands(pkgConfig, after=True):
         logMod.printError(
-            "Abort installation of package due to \"commandsAfter\" Errors", pkgConfig['pkgName'])
+            "Abort installation of package due to \"commandsAfter\" Errors",
+            pkgConfig['pkgName'])
         return False
     else:
         logMod.printInfo("Package was installed successfully",

@@ -8,7 +8,7 @@ import sequestrum.loggingModule as logMod
 # Run Commands
 
 
-def runCommands(unparsedCommandList, pkgName = None):
+def runCommands(unparsedCommandList, pkgName=None):
     """
         Runs commands passed in
     """
@@ -20,7 +20,9 @@ def runCommands(unparsedCommandList, pkgName = None):
             runner = run(parsedCommand)
         except Exception as error:
             logMod.printFatal(
-                "Error occured during command \"{}\": {}".format(command, error), pkgName)
+                "Error occured during command \"{}\": {}"
+                .format(command, error), pkgName)
         else:
-            logMod.printVerbose("Command \"{}\" finished with exit code: {}".format(
-                command, runner.returncode), pkgName)
+            logMod.printVerbose(
+                "Command \"{}\" finished with exit code: {}"
+                .format(command, runner.returncode), pkgName)

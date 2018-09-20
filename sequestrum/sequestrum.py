@@ -7,8 +7,6 @@ import sys
 from pathlib import Path
 import yaml
 
-homePath = str(Path.home()) + "/"
-
 # Modules
 import sequestrum.errorsModule as errMod
 import sequestrum.directoryModule as dirMod
@@ -18,6 +16,7 @@ import sequestrum.commandsModule as comMod
 import sequestrum.loggingModule as logMod
 import sequestrum.packageModule as pkgMod
 
+homePath = str(Path.home()) + "/"
 
 # For Later
 packagesToUnlink = []
@@ -128,7 +127,8 @@ def checkSourceLocations(packageKey, configDict, dotfilePath):
 
 def main():
 
-    # Grab user inputted arguments from the module and make sure they entered some.
+    # Grab user inputted arguments from the module
+    # and make sure they entered some.
     arguments = argMod.getArguments()
 
     if arguments is None:
@@ -244,7 +244,7 @@ def main():
                         if "commandsBefore" in value:
                             comMod.runCommands(
                                 configDict['options'][key]["commandsBefore"])
-                        #installPackage(key, configDict, dotfilePath)
+                        # InstallPackage(key, configDict, dotfilePath)
                         if "commandsAfter" in value:
                             comMod.runCommands(
                                 configDict['options'][key]["commandsAfter"])
@@ -252,13 +252,15 @@ def main():
             print(errMod.formatError("Sequestrum", "Source code compromised."))
 
     # Backs up your local files before you setup your dotfiles. This is also a
-    # good way to check if your config files aer correct. If they aren't they won't
-    # be backed up to your backup folder and throw an error instead.
+    # good way to check if your config files aer correct
+    # If they aren't they won't be backed up to your backup folder
+    # and throw an error instead.
     elif arguments[0] == "Backup":
         if arguments[1] == "all":
             backupPath = homePath + "sequestrum-backup/"
             if dirMod.isFolder(backupPath):
-                print(errMod.formatError("Backup", "{} Exists".format(backupPath)))
+                print(errMod.formatError("Backup", "{} Exists"
+                                         .format(backupPath)))
                 sys.exit()
             else:
                 dirMod.createFolder(backupPath, "lol")
@@ -279,9 +281,10 @@ def main():
         else:
             print(errMod.formatError("Sequestrum", "Source code compromised."))
 
-    # Unlink the source files. This doesn't really "unlink", instead it actually just
-    # deletes the files. It collects a list of files to unlink then it goes through and
-    # unlinks them all.
+    # Unlink the source files. This doesn't really "unlink",
+    # instead it actually just deletes the files.
+    # It collects a list of files to unlink then
+    # it goes through and unlinks them all.
     elif arguments[0] == "Unlink":
         if arguments[1] == "all":
             for key, value in configDict['options'].items():
