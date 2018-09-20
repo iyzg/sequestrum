@@ -143,7 +143,7 @@ def main():
                 logMod.printWarn(
                     "Errors occured during installation, please check above")
             else:
-                logMod.printInfo("Packages got installed successfully!")
+                logMod.printSuccess("Packages got installed successfully!")
 
         # The option to only install one package instead of all your dotfiles.
         elif arguments[1] in packageList:
@@ -158,7 +158,7 @@ def main():
                 logMod.printWarn(
                     "Errors occured during installation, please check above")
             else:
-                logMod.printInfo("Package got installed successfully!")
+                logMod.printSuccess("Package got installed successfully!")
         else:
             logMod.printError("Package {} was not found in config"
                               .format(arguments[1] + "Package"))
@@ -203,7 +203,7 @@ def main():
                 logMod.printWarn(
                     "Errors occured during backup, please check above")
             else:
-                logMod.printInfo("Packages got backuped successfully!")
+                logMod.printSuccess("Packages got backuped successfully!")
 
     # Unlink the source files. This doesn't really "unlink",
     # instead it actually just deletes the files.
@@ -225,7 +225,7 @@ def main():
             if errorOccured:
                 logMod.printError("Could not unlink all files.")
             else:
-                logMod.printInfo("All packages got successfully unlinked.")
+                logMod.printSuccess("All packages got successfully unlinked.")
 
         elif arguments[1] in packageList:
             pkgConfig = configDict['options'][arguments[1] + "Package"]
@@ -233,7 +233,7 @@ def main():
             if not pkgMod.uninstall(pkgConfig):
                 logMod.printError("Could not unlink all files.")
             else:
-                logMod.printInfo("All packages got successfully unlinked.")
+                logMod.printSuccess("All packages got successfully unlinked.")
 
         else:
             logMod.printError("Package {} was not found in config"

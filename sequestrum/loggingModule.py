@@ -54,6 +54,10 @@ def printInfo(errorMessage, pkgName=None):
     printColor(formatOutput("INFO", errorMessage, pkgName), 'white')
 
 
+def printSuccess(errorMessage, pkgName=None):
+    printColor(formatOutput("INFO", errorMessage, pkgName), 'green')
+
+
 def printVerbose(errorMessage, pkgName=None):
     if VERBOSE:
         printColor(formatOutput("VERBOSE", errorMessage, pkgName), 'cyan')
