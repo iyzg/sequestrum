@@ -15,6 +15,7 @@ import sequestrum.directoryModule as dirMod
 import sequestrum.symlinkModule as symMod
 import sequestrum.argumentsModule as argMod
 import sequestrum.commandsModule as comMod
+import sequestrum.loggingModule as logMod
 
 
 # For Later
@@ -32,26 +33,33 @@ def setupPackage(packageKey, configDict, dotfilePath):
     """
     # Make a path for the new directory path using the name specified in the
     # config then make the folder using the path.
-    newPackagePath = dotfilePath + \
-        configDict['options'][packageKey]['directoryName'] + "/"
-    dirMod.createFolder(newPackagePath)
+    pkgConfig = configDict['options'][packageKey]
+    pkgName = pkgConfig['pkgName']
+    newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
+    if dirMod.isFile(newPackagePath) == False:
+        dirMod.createFolder(newPackagePath, pkgName)
 
-    for link in configDict['options'][packageKey]['links']:
+    for link in pkgConfig['links']:
         for key, value in link.items():
             sourceFile = homePath + value
             destFile = newPackagePath + key
+            
+            # Checks
+            if dirMod.isFolder(destFile):
+                continue
+            elif dirmod.isFile(destFile):
+                continue
 
-            if symMod.symlinkLocationExists(sourceFile):
-                if dirMod.isFolder(sourceFile):
-                    symMod.copyFolder(sourceFile, destFile)
-                    dirMod.deleteFolder(sourceFile)
-                elif dirMod.isFile(sourceFile):
-                    symMod.copyFile(sourceFile, destFile)
-                    dirMod.deleteFile(sourceFile)
-                else:
-                    return False
+            # Setup
+            if dirMod.isFolder(sourceFile):
+                symMod.copyFolder(sourceFile, destFile)
+                dirMod.deleteFolder(sourceFile)
+            elif dirMod.isFile(sourceFile):
+                symMod.copyFile(sourceFile, destFile)
+                dirMod.deleteFile(sourceFile)
             else:
                 return False
+
     return True
 
 
@@ -66,26 +74,18 @@ def installPackage(packageKey, configDict, dotfilePath):
         Install package to local system
     """
     # Grab dotfile package directory
-    directoryPath = dotfilePath + \
-        configDict['options'][packageKey]['directoryName'] + "/"
+    pkgConfig = configDict['options'][packageKey]
+    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
 
     # Loop through files to link
-    for link in configDict['options'][packageKey]['links']:
+    for link in pkgConfig['links']:
         # Symlink files to local files
         for key, value in link.items():
             sourceFile = directoryPath + key
             destFile = homePath + value
 
-            # Make sure file exists in dotfiles
-            # TODO(nawuko): Clean this up, also log errors
-            if symMod.symlinkLocationExists(sourceFile):
-                if dirMod.isFolder(sourceFile) or dirMod.isFile(sourceFile):
-                    if dirMod.createBaseFolder(destFile):
-                        symMod.createSymlink(sourceFile, destFile)
-                    else:
-                        return False
-                else:
-                    return False
+            if dirMod.createBaseFolder(destFile, pkgConfig['pkgName']):
+                symMod.createSymlink(sourceFile, destFile, pkgConfig['pkgName'])
             else:
                 return False
 
@@ -96,14 +96,15 @@ def GetPackagesToUnlink(packageKey, configDict, dotfilePath):
     """
         Grab packages and put them into a list ( NO DUPES )
     """
-    directoryPath = dotfilePath + configDict['options'][packageKey]['directoryName'] + "/"
+    pkgConfig = configDict['options'][packageKey]
 
-    for link in configDict['options'][packageKey]['links']:
-        for key, value in link.items():
+    for link in pkgConfig['links']:
+        for _, value in link.items():
             fileToGrab = homePath + value
 
             if fileToGrab not in packagesToUnlink:
                 packagesToUnlink.append(fileToGrab)
+
 
 def UnlinkPackages():
     """
@@ -129,8 +130,9 @@ def checkInstallLocations(packageKey, configDict):
     for link in configDict['options'][packageKey]['links']:
         for key, value in link.items():
             destPath = homePath + value
-            if symMod.symlinkLocationExists(destPath):
-                print(errMod.formatError("Safety", "{} already exists.".format(destPath)))
+            if symMod.symlinkSourceExists(destPath):
+                print(errMod.formatError(
+                    "Safety", "{} already exists.".format(destPath)))
                 return False
 
     return True
@@ -151,10 +153,9 @@ def checkSourceLocations(packageKey, configDict, dotfilePath):
         for key, value in link.items():
             sourcePath = directoryPath + key
 
-            if symMod.symlinkLocationExists(sourcePath):
-                return False
+            if symMod.symlinkSourceExists(sourcePath):
+                logMod.printFatal("File dosent exists: {}".format(sourcePath))
 
-    return True
 
 def main():
 
@@ -165,8 +166,6 @@ def main():
         print(errMod.formatError("Arguments", "Must pass arguments"))
         sys.exit()
 
-
-
     try:
         configFile = open("config.yaml", "r")
     except:
@@ -174,13 +173,19 @@ def main():
         sys.exit()
 
     configDict = yaml.load(configFile)
-    directoryList = []
+    packageList = []
 
     # Grab list of directories from the config.
     for key, value in configDict['options'].items():
         if key.endswith("Package"):
-            directoryList.append(key[:-7])
+            friendlyName = key[:-7]
+            configDict['options'][key]['pkgName'] = friendlyName
+            packageList.append(friendlyName)
 
+    # We need to have a base package
+    if "base" not in configDict['options']:
+        logMod.printFatal(
+            "Invalid config file, a base package needs to be defined")
 
     # Grab the path of the dotfile directory
     dotfilePath = homePath + \
@@ -207,12 +212,13 @@ def main():
                     if "commandsBefore" in value:
                         comMod.runCommands(
                             configDict['options'][key]["commandsBefore"])
-                    setupPackage(key, configDict,dotfilePath)
+                    setupPackage(key, configDict, dotfilePath)
                     if "commandsAfter" in value:
                         comMod.runCommands(
                             configDict['options'][key]["commandsAfter"])
         else:
-            print(errMod.formatError("Sequestrum", "uwu Another Impossible Safety Net owo"))
+            print(errMod.formatError("Sequestrum",
+                                     "uwu Another Impossible Safety Net owo"))
 
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
@@ -230,14 +236,16 @@ def main():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
                         comMod.runCommands(
-                            configDict['options'][key]["commandsBefore"])
+                            configDict['options'][key]['commandsBefore'], configDict['options'][key]['pkgName'])
                     installPackage(key, configDict, dotfilePath)
                     if "commandsAfter" in value:
                         comMod.runCommands(
-                            configDict['options'][key]["commandsAfter"])
+                            configDict['options'][key]['commandsAfter'], configDict['options'][key]['pkgName'])
+
+            logMod.printInfo("We are done!")
 
         # The option to only install one package instead of all your dotfiles.
-        elif arguments[1] in directoryList:
+        elif arguments[1] in packageList:
             for key, value in configDict['options'].items():
                 if key == arguments[1] + "Package":
                     if not checkInstallLocations(key, configDict):
@@ -261,12 +269,14 @@ def main():
             dotfilePackageList = dirMod.grabPackageNames(dotfilePath)
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if key[:-7] not in dotfilePackageList:
-                        if "commandsBefore" in value:
-                            comMod.runCommands(configDict['options'][key]["commandsBefore"])
-                        installPackage(key, configDict, dotfilePath)
-                        if "commandsAfter" in value:
-                            comMod.runCommands(configDict['options'][key]["commandsAfter"])
+                    if "commandsBefore" in value:
+                        comMod.runCommands(
+                            configDict['options'][key]["commandsBefore"])
+                    setupPackage(key, configDict, dotfilePath)
+                    installPackage(key, configDict, dotfilePath)
+                    if "commandsAfter" in value:
+                        comMod.runCommands(
+                            configDict['options'][key]["commandsAfter"])
         else:
             print(errMod.formatError("Sequestrum", "Source code compromised."))
 
@@ -291,12 +301,12 @@ def main():
                             if dirMod.isFile(sourceFile):
                                 symMod.copyFile(sourceFile, destFile)
                             else:
-                                print(errMod.formatError("Backup", "{} doesn't exist."))
+                                print(errMod.formatError(
+                                    "Backup", "{} doesn't exist."))
                                 sys.exit()
             print(errMod.formatError("Backup", "All files backed up"))
         else:
             print(errMod.formatError("Sequestrum", "Source code compromised."))
-
 
     # Unlink the source files. This doesn't really "unlink", instead it actually just
     # deletes the files. It collects a list of files to unlink then it goes through and
@@ -307,7 +317,7 @@ def main():
                 if key.endswith("Package"):
                     GetPackagesToUnlink(key, configDict, dotfilePath)
             UnlinkPackages()
-        elif arguments[1] in directoryList:
+        elif arguments[1] in packageList:
             for key, value in configDict['options'].items():
                 if key == arguments[1] + "Package":
                     GetPackagesToUnlink(key, configDict, dotfilePath)
@@ -317,5 +327,5 @@ def main():
     else:
         print(errMod.formatError("Sequestrum", "Invalid Command"))
 
+
 if __name__ == '__main__':
-    main()

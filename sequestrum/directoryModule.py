@@ -5,37 +5,55 @@ import os
 import sys
 import shutil
 import pathlib
+import sequestrum.loggingModule as logMod
 
 # Create Folder
 
 
-def createFolder(path):
+def createFolder(path, pkgName):
     """
         Creates a folder
     """
     try:
         os.makedirs(path)
-    except OSError as e:
-        print(str(e))
+    except OSError as error:
+        logMod.printError(
+            "Could not create folder \"{}\" due to following error: {}".format(path, error), pkgName)
     else:
-        print("Sequestrum: Created successfully!")
+        logMod.printVerbose(
+            "Folder dosent exist and was created: {}".format(path), pkgName)
 
 # Create Base Folder
 
 
-def createBaseFolder(path):
+def createBaseFolder(path, pkgName):
     """
         Create Base directory if needed
     """
     basePath = pathlib.Path(path).parent
 
     # Check if the base folder is a file
-    if basePath.exists() and basePath.is_file():
-        print("Sequestrum: Base directory is a file: {}".format(basePath))
-        return False
+    if basePath.exists():
+        # Check if the parent is a file or if its a symlink
+        if basePath.is_file() or basePath.is_symlink():
+            logMod.printError(
+                "Base directory is a file or link: {}".format(basePath), pkgName)
+            return False
+        # If not, it must be a directory, so we are ok
+        else:
+            return True
 
     # Create path and parents (or ignore if folder already exists)
-    basePath.mkdir(parents=True, exist_ok=True)
+    try:
+        basePath.mkdir(parents=True, exist_ok=True)
+    except Exception as error:
+        logMod.printError(
+            "Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), pkgName)
+        return False
+    else:
+        logMod.printVerbose(
+            "Parent folder dosent exist and was created: {}".format(basePath), pkgName)
+
     return True
 
 # Delete Folder
@@ -47,7 +65,7 @@ def deleteFolder(path):
     """
 
     basePath = pathlib.Path(path)
-    
+
     if not basePath.exists():
         print("Sequestrum: Folder already deleted!")
         return
@@ -57,8 +75,8 @@ def deleteFolder(path):
             basePath.unlink()
         else:
             shutil.rmtree(basePath)
-    except OSError as e:
-        print("Sequestrum: Deletion of folder failed: {}".format(e))
+    except OSError as error:
+        print("Sequestrum: Deletion of folder failed: {}".format(error))
     else:
         print("Sequestrum: Deleted successfully!")
 
@@ -107,6 +125,8 @@ def isFile(path):
         print("Sequestrum: File check failed")
 
 # Grab all package names
+
+
 def grabPackageNames(path):
     packageList = []
     for name in os.listdir(path):
