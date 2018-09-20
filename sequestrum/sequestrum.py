@@ -199,7 +199,7 @@ def main():
         elif arguments[1] in packageList:
 
             fullPackageName = arguments[1] + "Package"
-            pkgConfig = configDict['options'].items()[fullPackageName]
+            pkgConfig = configDict['options'][fullPackageName]
 
             if not checkInstallLocations(pkgConfig):
                 sys.exit()
@@ -288,7 +288,7 @@ def main():
                 logMod.printInfo("All packages got successfully unlinked.")
 
         elif arguments[1] in packageList:
-            pkgConfig = configDict['options'].items()[arguments[1] + "Package"]
+            pkgConfig = configDict['options'][arguments[1] + "Package"]
 
             if not pkgMod.uninstall(pkgConfig):
                 logMod.printError("Could not unlink all files.")
