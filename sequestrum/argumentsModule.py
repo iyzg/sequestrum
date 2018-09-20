@@ -30,10 +30,10 @@ def getArguments():
     if args.install is not None:
         return ("Install", args.install)
     elif args.backup:
-        return ("Backup", "all")
+        return ("Backup", None)
     elif args.setup:
-        return ("Setup", "all")
+        return ("Setup", None)
     elif args.refresh:
-        return ("Refresh", "all")
+        return ("Refresh", None)
     elif args.unlink is not None:
         return ("Unlink", args.unlink)

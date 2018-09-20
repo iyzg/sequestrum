@@ -179,3 +179,31 @@ def backup(pkgConfig, dotfilePath, backupPath):
                     noErrors = False
 
     return noErrors
+
+
+def setup(packageKey, configDict, dotfilePath):
+    """
+        Setup package directory on dotfile
+    """
+    # Make a path for the new directory path using the name specified in the
+    # config then make the folder using the path.
+    pkgConfig = configDict['options'][packageKey]
+    pkgName = pkgConfig['pkgName']
+    newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
+    dirMod.createFolder(newPackagePath, pkgName)
+
+    for link in pkgConfig['links']:
+        for key, value in link.items():
+            sourceFile = homePath + value
+            destFile = newPackagePath + key
+
+            if dirMod.isFolder(sourceFile):
+                dirMod.copyFolder(sourceFile, destFile, pkgName)
+                dirMod.deleteFolder(sourceFile, pkgName)
+            elif dirMod.isFile(sourceFile):
+                dirMod.copyFile(sourceFile, destFile, pkgName)
+                dirMod.deleteFile(sourceFile, pkgName)
+            else:
+                return False
+
+    return True
