@@ -56,7 +56,8 @@ def main():
     arguments = argMod.getArguments()
 
     if arguments is None:
-        logMod.printFatal("Must pass arguments")
+        argMod.PARSER.print_usage()
+        sys.exit(0)
 
     try:
         configFile = open("config.yaml", "r")
@@ -94,10 +95,11 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not pkgMod.checkSourceLocations(value, dotfilePath):
+                    if not pkgMod.checkSourceLocations(value, dotfilePath,
+                                                       inverted=True):
                         errorOccured = True
 
-                    if not pkgMod.checkInstallLocations(value):
+                    if not pkgMod.checkInstallLocations(value, inverted=True):
                         errorOccured = True
 
             if errorOccured:

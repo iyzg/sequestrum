@@ -39,7 +39,7 @@ def formatOutput(errorType, errorMessage, pkgName=None):
 
 def printFatal(errorMessage, pkgName=None):
     printColor(formatOutput("FATAL", errorMessage, pkgName), 'red')
-    sys.exit()
+    sys.exit(1)
 
 
 def printError(errorMessage, pkgName=None):

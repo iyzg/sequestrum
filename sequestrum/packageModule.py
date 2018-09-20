@@ -8,12 +8,8 @@ import sequestrum.directoryModule as dirMod
 from pathlib import Path
 homePath = str(Path.home()) + "/"
 
-# Goes through all the file locations that need to be empty for the
-# symlinking to work and checks to see if they're empty. If they're not,
-# it will return false. If it is clean, it'll return true.
 
-
-def checkInstallLocations(pkgConfig):
+def checkLocation(pkgConfig, path, useSource=True, inverted=False):
     """
         Checks to see if link locations are clean
     """
@@ -21,39 +17,40 @@ def checkInstallLocations(pkgConfig):
     noErrors = True
 
     for link in pkgConfig['links']:
-        for _, value in link.items():
-            destPath = homePath + value
+        for key, value in link.items():
+            destLink = key if useSource else value
+            direction = "Source" if useSource else "Dest"
+            destPath = path + destLink
+            pkgName = pkgConfig['pkgName']
 
-            if symMod.symlinkSourceExists(destPath):
-                logMod.printError("File already exists: {}"
-                                  .format(destPath), pkgConfig['pkgName'])
+            exists = symMod.symlinkSourceExists(destPath)
+
+            if symMod.symlinkSourceExists(destPath) and not inverted:
+                logMod.printError("{} file already exists: {}"
+                                  .format(direction, destPath), pkgName)
+                noErrors = False
+            elif not exists and inverted:
+                logMod.printError("{} file dosen't exists: {}"
+                                  .format(direction, destPath), pkgName)
                 noErrors = False
 
     return noErrors
 
-# Checks to see if the file locations in the dotfile repository exist. If
-# they do, return false. If they don't, return true. This is to prevent
-# overwriting of file that may or may not be important to the user.
+
+def checkInstallLocations(pkgConfig, inverted=False):
+    """
+        Checks to see if link locations are clean
+    """
+
+    return checkLocation(pkgConfig, homePath, False, inverted)
 
 
-def checkSourceLocations(pkgConfig, dotfilePath):
+def checkSourceLocations(pkgConfig, dotfilePath, inverted=False):
     """
         Check to see if dotfile locations are clean
     """
     directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
-
-    noErrors = True
-
-    for link in pkgConfig['links']:
-        for key, _ in link.items():
-            sourcePath = directoryPath + key
-
-            if not symMod.symlinkSourceExists(sourcePath):
-                logMod.printError("File dosen't exists: {}"
-                                  .format(sourcePath), pkgConfig['pkgName'])
-                noErrors = False
-
-    return noErrors
+    return checkLocation(pkgConfig, directoryPath, True, not inverted)
 
 
 def runCommands(pkgConfig, after):
