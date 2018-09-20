@@ -43,6 +43,8 @@ def main():
         logMod.printFatal(
             "Invalid config file, a base package needs to be defined")
 
+    # TODO(nawuko): This looks ugly, 
+    # maybe use dictionary mapping?
     if arguments[0] == "Setup":
         cmdMod.commandSetup(arguments, configDict)
     elif arguments[0] == "Install":
