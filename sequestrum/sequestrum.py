@@ -44,10 +44,10 @@ def setupPackage(packageKey, configDict, dotfilePath):
             destFile = newPackagePath + key
 
             if dirMod.isFolder(sourceFile):
-                symMod.copyFolder(sourceFile, destFile)
+                dirMod.copyFolder(sourceFile, destFile, pkgName)
                 dirMod.deleteFolder(sourceFile)
             elif dirMod.isFile(sourceFile):
-                symMod.copyFile(sourceFile, destFile)
+                dirMod.copyFile(sourceFile, destFile, pkgName)
                 dirMod.deleteFile(sourceFile)
             else:
                 return False
@@ -95,15 +95,18 @@ def checkInstallLocations(packageKey, configDict):
     """
         Checks to see if link locations are clean
     """
+
+    errorOccured = False
+
     for link in configDict['options'][packageKey]['links']:
         for _, value in link.items():
             destPath = homePath + value
-            if symMod.symlinkSourceExists(destPath):
-                print(errMod.formatError(
-                    "Safety", "{} already exists.".format(destPath)))
-                return False
 
-    return True
+            if symMod.symlinkSourceExists(destPath):
+                logMod.printError("File already exists: {}".format(destPath))
+                errorOccured = True
+
+    return errorOccured
 
 # Checks to see if the file locations in the dotfile repository exist. If
 # they do, return false. If they don't, return true. This is to prevent
@@ -171,27 +174,28 @@ def main():
     # packages.
     if arguments[0] == "Setup":
         if arguments[1] == "all":
+
+            errorOccured = False
+
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
                     if not checkSourceLocations(key, configDict, dotfilePath):
-                        print(errMod.formatError(
-                            "Sequestrum", "Dotfile Path Missing"))
-                        sys.exit()
+                        errorOccured = True
 
                     if not checkInstallLocations(key, configDict):
-                        print(errMod.formatError(
-                            "Sequestrum", "Home Path Occupied"))
-                        sys.exit()
+                        errorOccured = True
+
+            if errorOccured:
+                logMod.printFatal("Could not backup due to missing files.")
+
+            errorOccured = False
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if "commandsBefore" in value:
-                        comMod.runCommands(
-                            configDict['options'][key]["commandsBefore"])
-                    setupPackage(key, configDict, dotfilePath)
-                    if "commandsAfter" in value:
-                        comMod.runCommands(
-                            configDict['options'][key]["commandsAfter"])
+                    if pkgMod.runCommands(value, after=False):
+                        if setupPackage(key, configDict, dotfilePath):
+                            pkgMod.runCommands(value, after=True)
+
         else:
             print(errMod.formatError("Sequestrum",
                                      "uwu Another Impossible Safety Net owo"))

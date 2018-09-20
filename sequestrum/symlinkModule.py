@@ -36,4 +36,4 @@ def symlinkSourceExists(sourcePath):
     if os.path.islink(sourcePath):
         return False
 
-    return os.path.exists(sourcePath)
+    return True
