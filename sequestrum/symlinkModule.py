@@ -2,8 +2,6 @@
 
 # Libraries
 import os
-from shutil import copytree, copyfile
-
 import sequestrum.loggingModule as logMod
 
 # Functions
@@ -23,30 +21,6 @@ def createSymlink(source, destination, pkgName=None):
         logMod.printVerbose("Linking {} <-> {}"
                             .format(source, destination), pkgName)
         return True
-
-
-def copyFile(source, destination):
-    """
-        Copys file from source to destination
-    """
-    try:
-        copyfile(source, destination)
-    except IOError:
-        return False
-    else:
-        return True
-
-
-def copyFolder(source, destination):
-    """
-        Copies frolder from source to destination
-    """
-    try:
-        copytree(source, destination)
-    except IOError:
-        print("Location must be writable")
-    else:
-        print("Sucess copying folder ")
 
 
 def symlinkSourceExists(sourcePath):

@@ -2,7 +2,6 @@
 
 # Libraries
 import os
-import sys
 import shutil
 import pathlib
 import sequestrum.loggingModule as logMod
@@ -10,7 +9,7 @@ import sequestrum.loggingModule as logMod
 # Create Folder
 
 
-def createFolder(path, pkgName):
+def createFolder(path, pkgName=None):
     """
         Creates a folder
     """
@@ -18,7 +17,8 @@ def createFolder(path, pkgName):
         os.makedirs(path)
     except OSError as error:
         logMod.printError(
-            "Could not create folder \"{}\" due to following error: {}".format(path, error), pkgName)
+            "Could not create folder \"{}\" due to following error: {}"
+            .format(path, error), pkgName)
     else:
         logMod.printVerbose(
             "Folder dosent exist and was created: {}".format(path), pkgName)
@@ -37,7 +37,8 @@ def createBaseFolder(path, pkgName):
         # Check if the parent is a file or if its a symlink
         if basePath.is_file() or basePath.is_symlink():
             logMod.printError(
-                "Base directory is a file or link: {}".format(basePath), pkgName)
+                "Base directory is a file or link: {}"
+                .format(basePath), pkgName)
             return False
         # If not, it must be a directory, so we are ok
         else:
@@ -48,13 +49,48 @@ def createBaseFolder(path, pkgName):
         basePath.mkdir(parents=True, exist_ok=True)
     except Exception as error:
         logMod.printError(
-            "Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), pkgName)
+            "Could not create parent folder \"{}\" due to following error: {}"
+            .format(basePath, error), pkgName)
         return False
     else:
         logMod.printVerbose(
-            "Parent folder dosent exist and was created: {}".format(basePath), pkgName)
+            "Parent folder dosent exist and was created: {}"
+            .format(basePath), pkgName)
 
     return True
+
+
+def copyFile(source, destination, pkgName):
+    """
+        Copys file from source to destination
+    """
+    try:
+        shutil.copyfile(source, destination)
+    except OSError as error:
+        logMod.printError("Unable to copy file: {}"
+                          .format(error), pkgName)
+        return False
+    else:
+        logMod.printVerbose("Copy file {} -> {}"
+                            .format(source, destination), pkgName)
+        return True
+
+
+def copyFolder(source, destination, pkgName):
+    """
+        Copies frolder from source to destination
+    """
+    try:
+        shutil.copytree(source, destination)
+    except OSError as error:
+        logMod.printError("Unable to copy directory: {}"
+                          .format(error), pkgName)
+        return False
+    else:
+        logMod.printVerbose("Copy folder {} -> {}"
+                            .format(source, destination), pkgName)
+        return True
+
 
 # Delete Folder
 

@@ -117,12 +117,17 @@ def checkSourceLocations(packageKey, configDict, dotfilePath):
     directoryPath = dotfilePath + \
         configDict['options'][packageKey]['directoryName'] + "/"
 
+    errorOccured = False
+
     for link in configDict['options'][packageKey]['links']:
         for key, _ in link.items():
             sourcePath = directoryPath + key
 
             if symMod.symlinkSourceExists(sourcePath):
-                logMod.printFatal("File dosent exists: {}".format(sourcePath))
+                logMod.printError("File dosent exists: {}".format(sourcePath))
+                errorOccured = True
+
+    return errorOccured
 
 
 def main():
@@ -207,7 +212,7 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not pkgMod.installPackage(value, dotfilePath):
+                    if not pkgMod.install(value, dotfilePath):
                         errorOccured = True
 
             if errorOccured:
@@ -225,7 +230,7 @@ def main():
             if not checkInstallLocations(fullPackageName, configDict):
                 sys.exit()
 
-            if not pkgMod.installPackage(pkgConfig, dotfilePath):
+            if not pkgMod.install(pkgConfig, dotfilePath):
                 logMod.printWarn(
                     "Errors occured during installation, please check above")
             else:
@@ -258,26 +263,35 @@ def main():
     elif arguments[0] == "Backup":
         if arguments[1] == "all":
             backupPath = homePath + "sequestrum-backup/"
+
             if dirMod.isFolder(backupPath):
-                print(errMod.formatError("Backup", "{} Exists"
-                                         .format(backupPath)))
-                sys.exit()
+                logMod.printFatal("Backup folder {} already exists"
+                                  .format(backupPath))
             else:
-                dirMod.createFolder(backupPath, "lol")
+                dirMod.createFolder(backupPath)
+
+            errorOccured = False
+
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    for link in configDict['options'][key]['links']:
-                        for key, value in link.items():
-                            sourceFile = homePath + value
-                            destFile = backupPath + key
+                    if not checkSourceLocations(key, configDict, dotfilePath):
+                        errorOccured = True
 
-                            if dirMod.isFile(sourceFile):
-                                symMod.copyFile(sourceFile, destFile)
-                            else:
-                                print(errMod.formatError(
-                                    "Backup", "{} doesn't exist."))
-                                sys.exit()
-            print(errMod.formatError("Backup", "All files backed up"))
+            if errorOccured:
+                logMod.printFatal("Could not backup due to missing files.")
+
+            errorOccured = False
+
+            for key, value in configDict['options'].items():
+                if key.endswith("Package"):
+                    if not pkgMod.backup(value, dotfilePath, backupPath):
+                        errorOccured = True
+
+            if errorOccured:
+                logMod.printWarn(
+                    "Errors occured during backup, please check above")
+            else:
+                logMod.printInfo("Packages got backuped successfully!")
         else:
             print(errMod.formatError("Sequestrum", "Source code compromised."))
 

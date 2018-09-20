@@ -69,7 +69,7 @@ def symlinkPackage(pkgConfig, dotfilePath):
     return True
 
 
-def installPackage(pkgConfig, dotfilePath):
+def install(pkgConfig, dotfilePath):
     if not runCommands(pkgConfig, after=False):
         logMod.printError(
             "Abort installation of package due to \"commandsBefore\" Errors",
@@ -90,3 +90,24 @@ def installPackage(pkgConfig, dotfilePath):
     else:
         logMod.printInfo("Package was installed successfully",
                          pkgConfig['pkgName'])
+
+
+def backup(pkgConfig, dotfilePath, backupPath):
+
+    errorOccured = False
+
+    for link in pkgConfig['links']:
+        for key, value in link.items():
+            sourceFile = homePath + value
+            destFile = backupPath + key
+
+            if dirMod.isFile(sourceFile):
+                if not dirMod.copyFile(sourceFile, destFile,
+                                       pkgConfig['pkgName']):
+                    errorOccured = True
+            else:
+                if not dirMod.copyFolder(sourceFile, destFile,
+                                         pkgConfig['pkgName']):
+                    errorOccured = True
+
+    return errorOccured
