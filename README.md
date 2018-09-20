@@ -44,7 +44,7 @@ options:
 
 ```
 
-The name of your config file should be config.yaml, and should be placed within your dotfiles. In theory, the config file
+The name of your config file should be **config.yaml**, and should be placed within your dotfiles. In theory, the config file
 could be placed anywhere as long as you get your dotfileDirectory correct, but for cleanliness, it's recommneded to be placed
 within your dotfile repository.
 
