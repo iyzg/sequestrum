@@ -8,7 +8,6 @@ from pathlib import Path
 import yaml
 
 # Modules
-import sequestrum.errorsModule as errMod
 import sequestrum.directoryModule as dirMod
 import sequestrum.symlinkModule as symMod
 import sequestrum.argumentsModule as argMod
@@ -83,8 +82,8 @@ def UnlinkPackages():
             dirMod.deleteFolder(path)
         elif dirMod.isFile(path):
             dirMod.deleteFile(path)
-        else:
-            print(errMod.formatError("Sequestrum", "Nothing to unlink!"))
+        # else:
+        #    print(errMod.formatError("Sequestrum", "Nothing to unlink!"))
 
 # Goes through all the file locations that need to be empty for the
 # symlinking to work and checks to see if they're empty. If they're not,
@@ -126,8 +125,8 @@ def checkSourceLocations(pkgConfig, dotfilePath):
         for key, _ in link.items():
             sourcePath = directoryPath + key
 
-            if symMod.symlinkSourceExists(sourcePath):
-                logMod.printError("File dosent exists: {}"
+            if not symMod.symlinkSourceExists(sourcePath):
+                logMod.printError("File dosen't exists: {}"
                                   .format(sourcePath), pkgConfig['pkgName'])
                 noErrors = False
 
@@ -141,14 +140,13 @@ def main():
     arguments = argMod.getArguments()
 
     if arguments is None:
-        print(errMod.formatError("Arguments", "Must pass arguments"))
-        sys.exit()
+        logMod.printFatal("Must pass arguments")
 
     try:
         configFile = open("config.yaml", "r")
-    except:
-        print(errMod.formatError("Core", "No configuration found."))
-        sys.exit()
+    except Exception as error:
+        logMod.printFatal("Could not open any configuration file: {}"
+                          .format(error))
 
     configDict = yaml.load(configFile)
     packageList = []
@@ -156,9 +154,9 @@ def main():
     # Grab list of directories from the config.
     for key, value in configDict['options'].items():
         if key.endswith("Package"):
-            friendlyName = key[:-7]
-            configDict['options'][key]['pkgName'] = friendlyName
-            packageList.append(friendlyName)
+            pkgName = key[:-7]
+            configDict['options'][key]['pkgName'] = pkgName
+            packageList.append(pkgName)
 
     # We need to have a base package
     if "base" not in configDict['options']:
@@ -187,7 +185,7 @@ def main():
                         errorOccured = True
 
             if errorOccured:
-                logMod.printFatal("Could not backup due to missing files.")
+                logMod.printFatal("Could not setup due errors.")
 
             errorOccured = False
 
@@ -197,10 +195,6 @@ def main():
                         if setupPackage(key, configDict, dotfilePath):
                             pkgMod.runCommands(value, after=True)
 
-        else:
-            print(errMod.formatError("Sequestrum",
-                                     "uwu Another Impossible Safety Net owo"))
-
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
     # already exists on the local system, delete it then symlink properly to
@@ -208,10 +202,19 @@ def main():
     elif arguments[0] == "Install":
         # Install all packages
         if arguments[1] == "all":
+
+            errorOccured = False
+
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
+                    if not checkSourceLocations(value, dotfilePath):
+                        errorOccured = True
+
                     if not checkInstallLocations(value):
-                        sys.exit()
+                        errorOccured = True
+
+            if errorOccured:
+                logMod.printFatal("Could not install due errors.")
 
             errorOccured = False
 
@@ -258,8 +261,6 @@ def main():
                         if "commandsAfter" in value:
                             comMod.runCommands(
                                 configDict['options'][key]["commandsAfter"])
-        else:
-            print(errMod.formatError("Sequestrum", "Source code compromised."))
 
     # Backs up your local files before you setup your dotfiles. This is also a
     # good way to check if your config files aer correct
@@ -297,8 +298,6 @@ def main():
                     "Errors occured during backup, please check above")
             else:
                 logMod.printInfo("Packages got backuped successfully!")
-        else:
-            print(errMod.formatError("Sequestrum", "Source code compromised."))
 
     # Unlink the source files. This doesn't really "unlink",
     # instead it actually just deletes the files.
@@ -316,9 +315,9 @@ def main():
                     GetPackagesToUnlink(key, configDict, dotfilePath)
             UnlinkPackages()
         else:
-            print(errMod.formatError("Sequestrum", "Invalid Package."))
+            logMod.printFatal("Invalid Package.")
     else:
-        print(errMod.formatError("Sequestrum", "Invalid Command"))
+        logMod.printFatal("Invalid Command")
 
 
 if __name__ == '__main__':
