@@ -91,46 +91,47 @@ def UnlinkPackages():
 # it will return false. If it is clean, it'll return true.
 
 
-def checkInstallLocations(packageKey, configDict):
+def checkInstallLocations(pkgConfig):
     """
         Checks to see if link locations are clean
     """
 
-    errorOccured = False
+    noErrors = True
 
-    for link in configDict['options'][packageKey]['links']:
+    for link in pkgConfig['links']:
         for _, value in link.items():
             destPath = homePath + value
 
             if symMod.symlinkSourceExists(destPath):
-                logMod.printError("File already exists: {}".format(destPath))
-                errorOccured = True
+                logMod.printError("File already exists: {}"
+                                  .format(destPath), pkgConfig['pkgName'])
+                noErrors = False
 
-    return errorOccured
+    return noErrors
 
 # Checks to see if the file locations in the dotfile repository exist. If
 # they do, return false. If they don't, return true. This is to prevent
 # overwriting of file that may or may not be important to the user.
 
 
-def checkSourceLocations(packageKey, configDict, dotfilePath):
+def checkSourceLocations(pkgConfig, dotfilePath):
     """
         Check to see if dotfile locations are clean
     """
-    directoryPath = dotfilePath + \
-        configDict['options'][packageKey]['directoryName'] + "/"
+    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
 
-    errorOccured = False
+    noErrors = True
 
-    for link in configDict['options'][packageKey]['links']:
+    for link in pkgConfig['links']:
         for key, _ in link.items():
             sourcePath = directoryPath + key
 
             if symMod.symlinkSourceExists(sourcePath):
-                logMod.printError("File dosent exists: {}".format(sourcePath))
-                errorOccured = True
+                logMod.printError("File dosent exists: {}"
+                                  .format(sourcePath), pkgConfig['pkgName'])
+                noErrors = False
 
-    return errorOccured
+    return noErrors
 
 
 def main():
@@ -179,10 +180,10 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not checkSourceLocations(key, configDict, dotfilePath):
+                    if not checkSourceLocations(value, dotfilePath):
                         errorOccured = True
 
-                    if not checkInstallLocations(key, configDict):
+                    if not checkInstallLocations(value):
                         errorOccured = True
 
             if errorOccured:
@@ -209,7 +210,7 @@ def main():
         if arguments[1] == "all":
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not checkInstallLocations(key, configDict):
+                    if not checkInstallLocations(value):
                         sys.exit()
 
             errorOccured = False
@@ -231,7 +232,7 @@ def main():
             fullPackageName = arguments[1] + "Package"
             pkgConfig = configDict['options'].items()[fullPackageName]
 
-            if not checkInstallLocations(fullPackageName, configDict):
+            if not checkInstallLocations(pkgConfig):
                 sys.exit()
 
             if not pkgMod.install(pkgConfig, dotfilePath):
@@ -278,7 +279,7 @@ def main():
 
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if not checkSourceLocations(key, configDict, dotfilePath):
+                    if not checkSourceLocations(value, dotfilePath):
                         errorOccured = True
 
             if errorOccured:

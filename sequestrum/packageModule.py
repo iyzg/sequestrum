@@ -87,9 +87,10 @@ def install(pkgConfig, dotfilePath):
             "Abort installation of package due to \"commandsAfter\" Errors",
             pkgConfig['pkgName'])
         return False
-    else:
-        logMod.printInfo("Package was installed successfully",
-                         pkgConfig['pkgName'])
+
+    logMod.printInfo("Package was installed successfully",
+                     pkgConfig['pkgName'])
+    return True
 
 
 def backup(pkgConfig, dotfilePath, backupPath):
