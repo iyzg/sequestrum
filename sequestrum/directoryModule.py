@@ -95,16 +95,18 @@ def copyFolder(source, destination, pkgName):
 # Delete Folder
 
 
-def deleteFolder(path):
+def deleteFolder(path, pkgName):
     """
         Deletes a folder
     """
 
     basePath = pathlib.Path(path)
 
+    # We don't need todo anything
     if not basePath.exists():
-        print("Sequestrum: Folder already deleted!")
-        return
+        logMod.printVerbose("Cannot delete folder since it was not found: {}"
+                            .format(basePath), pkgName)
+        return True
 
     try:
         if basePath.is_symlink():
@@ -112,23 +114,37 @@ def deleteFolder(path):
         else:
             shutil.rmtree(basePath)
     except OSError as error:
-        print("Sequestrum: Deletion of folder failed: {}".format(error))
-    else:
-        print("Sequestrum: Deleted successfully!")
+        logMod.printError("Deletion of folder failed: {}"
+                          .format(error), pkgName)
+        return False
+
+    logMod.printVerbose("Deleted folder: {}".format(basePath), pkgName)
+    return True
 
 # Delete File
 
 
-def deleteFile(path):
+def deleteFile(path, pkgName):
     """
         Deletes file
     """
+    basePath = pathlib.Path(path)
+
+    # We don't need todo anything
+    if not basePath.exists():
+        logMod.printVerbose("Cannot delete file since it was not found: {}"
+                            .format(basePath), pkgName)
+        return True
+
     try:
-        os.remove(path)
-    except OSError:
-        print("REmoving of file failed")
-    else:
-        print("Successfully removed file")
+        basePath.unlink()
+    except OSError as error:
+        logMod.printError("Deletion of file failed: {}"
+                          .format(error), pkgName)
+        return False
+
+    logMod.printVerbose("Deleted file: {}".format(basePath), pkgName)
+    return True
 
 # Check If Folder
 

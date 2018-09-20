@@ -93,9 +93,34 @@ def install(pkgConfig, dotfilePath):
     return True
 
 
+def uninstall(pkgConfig):
+
+    noErrors = True
+    filesToUnlink = []
+    pkgName = pkgConfig['pkgName']
+
+    for link in pkgConfig['links']:
+        for _, value in link.items():
+            symlinkFile = homePath + value
+
+            if symlinkFile not in filesToUnlink:
+                filesToUnlink.append(symlinkFile)
+
+    for symlinkFile in filesToUnlink:
+        if dirMod.isFolder(symlinkFile):
+            if not dirMod.deleteFolder(symlinkFile, pkgName):
+                noErrors = False
+        elif dirMod.isFile(symlinkFile):
+            if not dirMod.deleteFile(symlinkFile, pkgName):
+                noErrors = False
+
+    return noErrors
+
+
 def backup(pkgConfig, dotfilePath, backupPath):
 
-    errorOccured = False
+    noErrors = True
+    pkgName = pkgConfig['pkgName']
 
     for link in pkgConfig['links']:
         for key, value in link.items():
@@ -103,12 +128,10 @@ def backup(pkgConfig, dotfilePath, backupPath):
             destFile = backupPath + key
 
             if dirMod.isFile(sourceFile):
-                if not dirMod.copyFile(sourceFile, destFile,
-                                       pkgConfig['pkgName']):
-                    errorOccured = True
+                if not dirMod.copyFile(sourceFile, destFile, pkgName):
+                    noErrors = False
             else:
-                if not dirMod.copyFolder(sourceFile, destFile,
-                                         pkgConfig['pkgName']):
-                    errorOccured = True
+                if not dirMod.copyFolder(sourceFile, destFile, pkgName):
+                    noErrors = False
 
-    return errorOccured
+    return noErrors

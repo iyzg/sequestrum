@@ -17,9 +17,6 @@ import sequestrum.packageModule as pkgMod
 
 homePath = str(Path.home()) + "/"
 
-# For Later
-packagesToUnlink = []
-
 # Creates a new directory. It creates a new folder path using the config
 # then creates a new folder using that path. It then loops through each
 # link in the links list and **copies** (not symlinking) the original file
@@ -44,46 +41,15 @@ def setupPackage(packageKey, configDict, dotfilePath):
 
             if dirMod.isFolder(sourceFile):
                 dirMod.copyFolder(sourceFile, destFile, pkgName)
-                dirMod.deleteFolder(sourceFile)
+                dirMod.deleteFolder(sourceFile, pkgName)
             elif dirMod.isFile(sourceFile):
                 dirMod.copyFile(sourceFile, destFile, pkgName)
-                dirMod.deleteFile(sourceFile)
+                dirMod.deleteFile(sourceFile, pkgName)
             else:
                 return False
 
     return True
 
-
-# Grabs the directory of the key. For each item in the dotfile directory,
-# properly symlink the file to the right place. If the file on the local
-# system already exists. Delete the existing file before symlinking to
-# prevent issues.
-
-def GetPackagesToUnlink(packageKey, configDict, dotfilePath):
-    """
-        Grab packages and put them into a list ( NO DUPES )
-    """
-    pkgConfig = configDict['options'][packageKey]
-
-    for link in pkgConfig['links']:
-        for _, value in link.items():
-            fileToGrab = homePath + value
-
-            if fileToGrab not in packagesToUnlink:
-                packagesToUnlink.append(fileToGrab)
-
-
-def UnlinkPackages():
-    """
-        Unlink all files in packagesToUnlink
-    """
-    for path in packagesToUnlink:
-        if dirMod.isFolder(path):
-            dirMod.deleteFolder(path)
-        elif dirMod.isFile(path):
-            dirMod.deleteFile(path)
-        # else:
-        #    print(errMod.formatError("Sequestrum", "Nothing to unlink!"))
 
 # Goes through all the file locations that need to be empty for the
 # symlinking to work and checks to see if they're empty. If they're not,
@@ -244,8 +210,8 @@ def main():
             else:
                 logMod.printInfo("Package got installed successfully!")
         else:
-            logMod.printError(
-                "Package {} was not found in config".format(fullPackageName))
+            logMod.printError("Package {} was not found in config"
+                              .format(arguments[1] + "Package"))
 
     # TODO: Fix
     elif arguments[0] == "Refresh":
@@ -305,17 +271,33 @@ def main():
     # it goes through and unlinks them all.
     elif arguments[0] == "Unlink":
         if arguments[1] == "all":
+
+            errorOccured = False
+
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    GetPackagesToUnlink(key, configDict, dotfilePath)
-            UnlinkPackages()
+                    if not pkgMod.uninstall(value):
+                        errorOccured = True
+                    else:
+                        logMod.printInfo("Unlinked package sucessfully.",
+                                         value['pkgName'])
+
+            if errorOccured:
+                logMod.printError("Could not unlink all files.")
+            else:
+                logMod.printInfo("All packages got successfully unlinked.")
+
         elif arguments[1] in packageList:
-            for key, value in configDict['options'].items():
-                if key == arguments[1] + "Package":
-                    GetPackagesToUnlink(key, configDict, dotfilePath)
-            UnlinkPackages()
+            pkgConfig = configDict['options'].items()[arguments[1] + "Package"]
+
+            if not pkgMod.uninstall(pkgConfig):
+                logMod.printError("Could not unlink all files.")
+            else:
+                logMod.printInfo("All packages got successfully unlinked.")
+
         else:
-            logMod.printFatal("Invalid Package.")
+            logMod.printError("Package {} was not found in config"
+                              .format(arguments[1] + "Package"))
     else:
         logMod.printFatal("Invalid Command")
 
