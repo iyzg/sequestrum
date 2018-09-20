@@ -2,10 +2,6 @@
 #
 # Sequestrum - Dotfile Manager
 
-# Hotfix 5
-# Attempt like 101
-# Please work PIP T^T
-
 # Libraries
 import sys
 from pathlib import Path
@@ -40,13 +36,21 @@ def setupPackage(packageKey, configDict, dotfilePath):
     pkgConfig = configDict['options'][packageKey]
     pkgName = pkgConfig['pkgName']
     newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
-    dirMod.createFolder(newPackagePath, pkgName)
+    if dirMod.isFile(newPackagePath) == False:
+        dirMod.createFolder(newPackagePath, pkgName)
 
     for link in pkgConfig['links']:
         for key, value in link.items():
             sourceFile = homePath + value
             destFile = newPackagePath + key
+            
+            # Checks
+            if dirMod.isFolder(destFile):
+                continue
+            elif dirmod.isFile(destFile):
+                continue
 
+            # Setup
             if dirMod.isFolder(sourceFile):
                 symMod.copyFolder(sourceFile, destFile)
                 dirMod.deleteFolder(sourceFile)
@@ -265,14 +269,14 @@ def main():
             dotfilePackageList = dirMod.grabPackageNames(dotfilePath)
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if key[:-7] not in dotfilePackageList:
-                        if "commandsBefore" in value:
-                            comMod.runCommands(
-                                configDict['options'][key]["commandsBefore"])
-                        installPackage(key, configDict, dotfilePath)
-                        if "commandsAfter" in value:
-                            comMod.runCommands(
-                                configDict['options'][key]["commandsAfter"])
+                    if "commandsBefore" in value:
+                        comMod.runCommands(
+                            configDict['options'][key]["commandsBefore"])
+                    setupPackage(key, configDict, dotfilePath)
+                    installPackage(key, configDict, dotfilePath)
+                    if "commandsAfter" in value:
+                        comMod.runCommands(
+                            configDict['options'][key]["commandsAfter"])
         else:
             print(errMod.formatError("Sequestrum", "Source code compromised."))
 
@@ -325,4 +329,3 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
