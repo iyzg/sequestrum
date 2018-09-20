@@ -2,10 +2,6 @@
 #
 # Sequestrum - Dotfile Manager
 
-# Hotfix 5
-# Attempt like 101
-# Please work PIP T^T
-
 # Libraries
 import sys
 from pathlib import Path
@@ -20,6 +16,7 @@ import sequestrum.symlinkModule as symMod
 import sequestrum.argumentsModule as argMod
 import sequestrum.commandsModule as comMod
 import sequestrum.loggingModule as logMod
+import sequestrum.packageModule as pkgMod
 
 
 # For Later
@@ -64,30 +61,6 @@ def setupPackage(packageKey, configDict, dotfilePath):
 # system already exists. Delete the existing file before symlinking to
 # prevent issues.
 
-
-def installPackage(packageKey, configDict, dotfilePath):
-    """
-        Install package to local system
-    """
-    # Grab dotfile package directory
-    pkgConfig = configDict['options'][packageKey]
-    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
-
-    # Loop through files to link
-    for link in pkgConfig['links']:
-        # Symlink files to local files
-        for key, value in link.items():
-            sourceFile = directoryPath + key
-            destFile = homePath + value
-
-            if dirMod.createBaseFolder(destFile, pkgConfig['pkgName']):
-                symMod.createSymlink(sourceFile, destFile, pkgConfig['pkgName'])
-            else:
-                return False
-
-    return True
-
-
 def GetPackagesToUnlink(packageKey, configDict, dotfilePath):
     """
         Grab packages and put them into a list ( NO DUPES )
@@ -124,7 +97,7 @@ def checkInstallLocations(packageKey, configDict):
         Checks to see if link locations are clean
     """
     for link in configDict['options'][packageKey]['links']:
-        for key, value in link.items():
+        for _, value in link.items():
             destPath = homePath + value
             if symMod.symlinkSourceExists(destPath):
                 print(errMod.formatError(
@@ -146,7 +119,7 @@ def checkSourceLocations(packageKey, configDict, dotfilePath):
         configDict['options'][packageKey]['directoryName'] + "/"
 
     for link in configDict['options'][packageKey]['links']:
-        for key, value in link.items():
+        for key, _ in link.items():
             sourcePath = directoryPath + key
 
             if symMod.symlinkSourceExists(sourcePath):
@@ -196,11 +169,13 @@ def main():
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
                     if not checkSourceLocations(key, configDict, dotfilePath):
-                        print(errMod.formatError("Sequestrum", "Dotfile Path Missing"))
+                        print(errMod.formatError(
+                            "Sequestrum", "Dotfile Path Missing"))
                         sys.exit()
 
                     if not checkInstallLocations(key, configDict):
-                        print(errMod.formatError("Sequestrum", "Home Path Occupied"))
+                        print(errMod.formatError(
+                            "Sequestrum", "Home Path Occupied"))
                         sys.exit()
 
             for key, value in configDict['options'].items():
@@ -228,36 +203,36 @@ def main():
                     if not checkInstallLocations(key, configDict):
                         sys.exit()
 
+            errorOccured = False
+
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
-                    if "commandsBefore" in value:
-                        comMod.runCommands(
-                            configDict['options'][key]['commandsBefore'], configDict['options'][key]['pkgName'])
-                    installPackage(key, configDict, dotfilePath)
-                    if "commandsAfter" in value:
-                        comMod.runCommands(
-                            configDict['options'][key]['commandsAfter'], configDict['options'][key]['pkgName'])
+                    if not pkgMod.installPackage(value, dotfilePath):
+                        errorOccured = True
 
-            logMod.printInfo("We are done!")
+            if errorOccured:
+                logMod.printWarn(
+                    "Errors occured during installation, please check above")
+            else:
+                logMod.printInfo("Packages got installed successfully!")
 
         # The option to only install one package instead of all your dotfiles.
         elif arguments[1] in packageList:
-            for key, value in configDict['options'].items():
-                if key == arguments[1] + "Package":
-                    if not checkInstallLocations(key, configDict):
-                        sys.exit()
 
-            for key, value in configDict['options'].items():
-                if key == arguments[1] + "Package":
-                    if "commandsBefore" in value:
-                        comMod.runCommands(
-                            configDict['options'][key]["commandsBefore"])
-                    installPackage(key, configDict, dotfilePath)
-                    if "commandsAfter" in value:
-                        comMod.runCommands(
-                            configDict['options'][key]["commandsAfter"])
+            fullPackageName = arguments[1] + "Package"
+            pkgConfig = configDict['options'].items()[fullPackageName]
+
+            if not checkInstallLocations(fullPackageName, configDict):
+                sys.exit()
+
+            if not pkgMod.installPackage(pkgConfig, dotfilePath):
+                logMod.printWarn(
+                    "Errors occured during installation, please check above")
+            else:
+                logMod.printInfo("Package got installed successfully!")
         else:
-            print(errMod.formatError("Sequstrum", "Invalid Package."))
+            logMod.printError(
+                "Package {} was not found in config".format(fullPackageName))
 
     # TODO: Fix
     elif arguments[0] == "Refresh":
@@ -269,7 +244,7 @@ def main():
                         if "commandsBefore" in value:
                             comMod.runCommands(
                                 configDict['options'][key]["commandsBefore"])
-                        installPackage(key, configDict, dotfilePath)
+                        #installPackage(key, configDict, dotfilePath)
                         if "commandsAfter" in value:
                             comMod.runCommands(
                                 configDict['options'][key]["commandsAfter"])
@@ -286,7 +261,7 @@ def main():
                 print(errMod.formatError("Backup", "{} Exists".format(backupPath)))
                 sys.exit()
             else:
-                dirMod.createFolder(backupPath)
+                dirMod.createFolder(backupPath, "lol")
             for key, value in configDict['options'].items():
                 if key.endswith("Package"):
                     for link in configDict['options'][key]['links']:

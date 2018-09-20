@@ -17,8 +17,10 @@ def createSymlink(source, destination, pkgName = None):
         os.symlink(source, destination)
     except OSError as error:
         logMod.printError("Unable to create symlink: {}".format(error), pkgName)
+        return False
     else:
         logMod.printVerbose("Linking {} <-> {}".format(source, destination), pkgName)
+        return True
 
 
 def copyFile(source, destination):
