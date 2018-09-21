@@ -6,7 +6,7 @@ other reasons? Fine, fine.. some real reasons.This is specifically made for dotf
 dotfile repository setup, and more!
 
 ## Install Guide
-1. `sudo pip install sequestrum`
+1. `sudo pip install (--user) sequestrum`
 2. Leave a star on this repo
 3. Enjoy!
 
