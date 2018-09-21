@@ -5,106 +5,103 @@ from sequestrum import logging
 from sequestrum import symlink
 from sequestrum import directory
 
-homePath = str(Path.home()) + "/"
+_HOME_PATH = str(Path.home()) + "/"
 
 
-def _check_location(pkgConfig, path, useSource=True, inverted=False):
+def _check_location(pkg_config, path, use_source=True, inverted=False):
     """
         Checks to see if link locations are clean
     """
+    noerrors = True
 
-    noErrors = True
-
-    for link in pkgConfig['links']:
+    for link in pkg_config['links']:
         for key, value in link.items():
-            destLink = key if useSource else value
-            direction = "Source" if useSource else "Dest"
-            destPath = path + destLink
-            pkgName = pkgConfig['pkgName']
+            dest_link = key if use_source else value
+            dest_path = path + dest_link
+            direction = "Source" if use_source else "Dest"
+            pkg_name = pkg_config['pkgName']
 
-            exists = symlink.source_exists(destPath)
+            exists = symlink.source_exists(dest_path)
 
-            if symlink.source_exists(destPath) and not inverted:
+            if symlink.source_exists(dest_path) and not inverted:
                 logging.error("{} file already exists: {}"
-                              .format(direction, destPath), pkgName)
-                noErrors = False
+                              .format(direction, dest_path), pkg_name)
+                noerrors = False
             elif not exists and inverted:
                 logging.error("{} file dosen't exists: {}"
-                              .format(direction, destPath), pkgName)
-                noErrors = False
+                              .format(direction, dest_path), pkg_name)
+                noerrors = False
 
-    return noErrors
+    return noerrors
 
 
-def check_install_locations(pkgConfig, inverted=False):
+def check_install_locations(pkg_config, inverted=False):
     """
         Checks to see if link locations are clean
     """
+    return _check_location(pkg_config, _HOME_PATH, False, inverted)
 
-    return _check_location(pkgConfig, homePath, False, inverted)
 
-
-def check_source_locations(pkgConfig, dotfilePath, inverted=False):
+def check_source_locations(pkg_config, dotfile_path, inverted=False):
     """
         Check to see if dotfile locations are clean
     """
-    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
-    return _check_location(pkgConfig, directoryPath, True, not inverted)
+    directory_path = dotfile_path + pkg_config['directoryName'] + "/"
+    return _check_location(pkg_config, directory_path, True, not inverted)
 
 
-def run_commands(pkgConfig, after):
-
-    unparsedCommands = None
+def run_commands(pkg_config, after):
+    commands = None
 
     # Use commandsBefore list when after is false
-    if "commandsBefore" in pkgConfig and not after:
-        unparsedCommands = pkgConfig['commandsBefore']
+    if "commandsBefore" in pkg_config and not after:
+        commands = pkg_config['commandsBefore']
 
     # Use commandsAfter list when after is true
-    if "commandsAfter" in pkgConfig and after:
-        unparsedCommands = pkgConfig['commandsAfter']
+    if "commandsAfter" in pkg_config and after:
+        commands = pkg_config['commandsAfter']
 
     # Check if we have something todo
-    if unparsedCommands is None:
+    if commands is None:
         return True
 
-    for command in unparsedCommands:
-        parsedCommand = command.split()
+    for command in commands:
+        parsed_command = command.split()
 
         try:
-            runner = run(parsedCommand)
+            runner = run(parsed_command)
         except Exception as error:
             logging.error(
                 "Error occured during command \"{}\": {}"
-                .format(command, error), pkgConfig['pkgName'])
+                .format(command, error), pkg_config['pkgName'])
             return False
         else:
             logging.debug(
                 "Command \"{}\" finished with exit code: {}"
-                .format(command, runner.returncode), pkgConfig['pkgName'])
+                .format(command, runner.returncode), pkg_config['pkgName'])
 
     return True
 
 
-def symlink_package(pkgConfig, dotfilePath):
+def symlink_package(pkg_config, dotfile_path):
     """
         Symlink package to local system
     """
     # Grab dotfile package directory
-    directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
+    directory_path = dotfile_path + pkg_config['directoryName'] + "/"
 
     # Loop through files to link
-    for link in pkgConfig['links']:
+    for link in pkg_config['links']:
         # Symlink files to local files
         for key, value in link.items():
-            sourceFile = directoryPath + key
-            destFile = homePath + value
-            pkgName = pkgConfig['pkgName']
+            source_file = directory_path + key
+            dest_file = _HOME_PATH + value
+            pkg_name = pkg_config['pkgName']
 
             # Create base folder if it dosent exist
-            if directory.create_parent_folder(destFile, pkgName):
+            if directory.create_parent_folder(dest_file, pkg_name):
                 # Create symlink, if it fails return false
-                if not symlink.create(sourceFile, destFile, pkgName):
+                if not symlink.create(source_file, dest_file, pkg_name):
                     return False
             else:
                 return False
@@ -112,96 +109,94 @@ def symlink_package(pkgConfig, dotfilePath):
     return True
 
 
-def install(pkgConfig, dotfilePath):
-    if not run_commands(pkgConfig, after=False):
+def install(pkg_config, dotfile_path):
+    if not run_commands(pkg_config, after=False):
         logging.error(
             "Abort installation of package due to \"commandsBefore\" Errors",
-            pkgConfig['pkgName'])
+            pkg_config['pkgName'])
         return False
 
-    if not symlink_package(pkgConfig, dotfilePath):
+    if not symlink_package(pkg_config, dotfile_path):
         logging.error(
             "Abort installation of package due to Symlink Errors",
-            pkgConfig['pkgName'])
+            pkg_config['pkgName'])
         return False
 
-    if not run_commands(pkgConfig, after=True):
+    if not run_commands(pkg_config, after=True):
         logging.error(
             "Abort installation of package due to \"commandsAfter\" Errors",
-            pkgConfig['pkgName'])
+            pkg_config['pkgName'])
         return False
 
     logging.info("Package was installed successfully",
-                 pkgConfig['pkgName'])
+                 pkg_config['pkgName'])
     return True
 
 
-def uninstall(pkgConfig):
+def uninstall(pkg_config):
+    noerrors = True
+    unlink_files = []
+    pkg_name = pkg_config['pkgName']
 
-    noErrors = True
-    filesToUnlink = []
-    pkgName = pkgConfig['pkgName']
-
-    for link in pkgConfig['links']:
+    for link in pkg_config['links']:
         for _, value in link.items():
-            symlinkFile = homePath + value
+            symlink_file = _HOME_PATH + value
 
-            if symlinkFile not in filesToUnlink:
-                filesToUnlink.append(symlinkFile)
+            if symlink_file not in unlink_files:
+                unlink_files.append(symlink_file)
 
-    for symlinkFile in filesToUnlink:
-        if directory.isfolder(symlinkFile):
-            if not directory.delete_folder(symlinkFile, pkgName):
-                noErrors = False
-        elif directory.isfile(symlinkFile):
-            if not directory.delete_file(symlinkFile, pkgName):
-                noErrors = False
+    for symlink_file in unlink_files:
+        if directory.isfolder(symlink_file):
+            if not directory.delete_folder(symlink_file, pkg_name):
+                noerrors = False
+        elif directory.isfile(symlink_file):
+            if not directory.delete_file(symlink_file, pkg_name):
+                noerrors = False
 
-    return noErrors
+    return noerrors
 
 
-def backup(pkgConfig, dotfilePath, backupPath):
+def backup(pkg_config, backup_path):
+    noerrors = True
+    pkg_name = pkg_config['pkgName']
 
-    noErrors = True
-    pkgName = pkgConfig['pkgName']
-
-    for link in pkgConfig['links']:
+    for link in pkg_config['links']:
         for key, value in link.items():
-            sourceFile = homePath + value
-            destFile = backupPath + key
+            source_file = _HOME_PATH + value
+            dest_file = backup_path + key
 
-            if directory.isfile(sourceFile):
-                if not directory.copy_file(sourceFile, destFile, pkgName):
-                    noErrors = False
+            if directory.isfile(source_file):
+                if not directory.copy_file(source_file, dest_file, pkg_name):
+                    noerrors = False
             else:
-                if not directory.copy_folder(sourceFile, destFile, pkgName):
-                    noErrors = False
+                if not directory.copy_folder(source_file, dest_file, pkg_name):
+                    noerrors = False
 
-    return noErrors
+    return noerrors
 
 
-def setup(packageKey, configDict, dotfilePath):
+def setup(pkg_key, config, dotfile_path):
     """
         Setup package directory on dotfile
     """
     # Make a path for the new directory path using the name specified in the
     # config then make the folder using the path.
-    pkgConfig = configDict['options'][packageKey]
-    pkgName = pkgConfig['pkgName']
-    newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
-    directory.create_folder(newPackagePath, pkgName)
+    pkg_config = config['options'][pkg_key]
+    pkg_name = pkg_config['pkgName']
+    pkg_path = dotfile_path + pkg_config['directoryName'] + "/"
+    directory.create_folder(pkg_path, pkg_name)
 
-    for link in pkgConfig['links']:
+    for link in pkg_config['links']:
         for key, value in link.items():
-            sourceFile = homePath + value
-            destFile = newPackagePath + key
+            source_file = _HOME_PATH + value
+            dest_file = pkg_path + key
 
-            if directory.isfolder(sourceFile):
-                directory.copy_folder(sourceFile, destFile, pkgName)
-                directory.delete_folder(sourceFile, pkgName)
-            elif directory.isfile(sourceFile):
-                directory.copy_file(sourceFile, destFile, pkgName)
-                directory.delete_file(sourceFile, pkgName)
+            if directory.isfolder(source_file):
+                directory.copy_folder(source_file, dest_file, pkg_name)
+                directory.delete_folder(source_file, pkg_name)
+            elif directory.isfile(source_file):
+                directory.copy_file(source_file, dest_file, pkg_name)
+                directory.delete_file(source_file, pkg_name)
             else:
                 return False
 

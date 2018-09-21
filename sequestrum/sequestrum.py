@@ -17,35 +17,33 @@ def main():
         sys.exit(1)
 
     try:
-        configFile = open("config.yaml", "r")
+        config_dict = yaml.load(open("config.yaml", "r"))
     except Exception as error:
         logging.fatal("Could not open any configuration file: {}"
                       .format(error))
 
-    configDict = yaml.load(configFile)
-
     # Internally use pkg name without suffix
-    for key, _ in configDict['options'].items():
+    for key, _ in config_dict['options'].items():
         if key.endswith("Package"):
-            configDict['options'][key]['pkgName'] = key[:-7]
+            config_dict['options'][key]['pkgName'] = key[:-7]
 
     # We need to have a base package
-    if "base" not in configDict['options']:
+    if "base" not in config_dict['options']:
         logging.fatal(
             "Invalid config file, a base package needs to be defined")
 
     # TODO(nawuko): This looks ugly,
     # maybe use dictionary mapping?
     if args[0] == "Setup":
-        commands.setup(args, configDict)
+        commands.setup(args, config_dict)
     elif args[0] == "Install":
-        commands.install(args, configDict)
+        commands.install(args, config_dict)
     elif args[0] == "Refresh":
-        commands.refresh(args, configDict)
+        commands.refresh(args, config_dict)
     elif args[0] == "Backup":
-        commands.backup(args, configDict)
+        commands.backup(args, config_dict)
     elif args[0] == "Unlink":
-        commands.unlink(args, configDict)
+        commands.unlink(args, config_dict)
     else:
         arguments.PARSER.print_usage()
         sys.exit(1)

@@ -1,6 +1,3 @@
-# Directory Module
-
-# Libraries
 import os
 import shutil
 import pathlib
@@ -8,7 +5,7 @@ import pathlib
 from sequestrum import logging
 
 
-def create_folder(path, pkgName=None):
+def create_folder(path, pkg_name=None):
     """
         Creates a folder
     """
@@ -17,25 +14,25 @@ def create_folder(path, pkgName=None):
     except OSError as error:
         logging.error(
             "Could not create folder \"{}\" due to following error: {}"
-            .format(path, error), pkgName)
+            .format(path, error), pkg_name)
     else:
         logging.debug(
-            "Folder dosent exist and was created: {}".format(path), pkgName)
+            "Folder dosent exist and was created: {}".format(path), pkg_name)
 
 
-def create_parent_folder(path, pkgName):
+def create_parent_folder(path, pkg_name):
     """
         Create Base directory if needed
     """
-    basePath = pathlib.Path(path).parent
+    parent_path = pathlib.Path(path).parent
 
     # Check if the base folder is a file
-    if basePath.exists():
+    if parent_path.exists():
         # Check if the parent is a file or if its a symlink
-        if basePath.is_file() or basePath.is_symlink():
+        if parent_path.is_file() or parent_path.is_symlink():
             logging.error(
                 "Base directory is a file or link: {}"
-                .format(basePath), pkgName)
+                .format(parent_path), pkg_name)
             return False
         # If not, it must be a directory, so we are ok
         else:
@@ -43,21 +40,21 @@ def create_parent_folder(path, pkgName):
 
     # Create path and parents (or ignore if folder already exists)
     try:
-        basePath.mkdir(parents=True, exist_ok=True)
+        parent_path.mkdir(parents=True, exist_ok=True)
     except Exception as error:
         logging.error(
             "Could not create parent folder \"{}\" due to following error: {}"
-            .format(basePath, error), pkgName)
+            .format(parent_path, error), pkg_name)
         return False
     else:
         logging.debug(
             "Parent folder dosent exist and was created: {}"
-            .format(basePath), pkgName)
+            .format(parent_path), pkg_name)
 
     return True
 
 
-def copy_file(source, destination, pkgName):
+def copy_file(source, destination, pkg_name):
     """
         Copys file from source to destination
     """
@@ -65,15 +62,15 @@ def copy_file(source, destination, pkgName):
         shutil.copyfile(source, destination)
     except OSError as error:
         logging.error("Unable to copy file: {}"
-                      .format(error), pkgName)
+                      .format(error), pkg_name)
         return False
     else:
         logging.debug("Copy file {} -> {}"
-                      .format(source, destination), pkgName)
+                      .format(source, destination), pkg_name)
         return True
 
 
-def copy_folder(source, destination, pkgName):
+def copy_folder(source, destination, pkg_name):
     """
         Copies frolder from source to destination
     """
@@ -81,66 +78,60 @@ def copy_folder(source, destination, pkgName):
         shutil.copytree(source, destination)
     except OSError as error:
         logging.error("Unable to copy directory: {}"
-                      .format(error), pkgName)
+                      .format(error), pkg_name)
         return False
     else:
         logging.debug("Copy folder {} -> {}"
-                      .format(source, destination), pkgName)
+                      .format(source, destination), pkg_name)
         return True
 
 
-# Delete Folder
-
-
-def delete_folder(path, pkgName):
+def delete_folder(path, pkg_name):
     """
         Deletes a folder
     """
-
-    basePath = pathlib.Path(path)
+    base_path = pathlib.Path(path)
 
     # We don't need todo anything
-    if not basePath.exists():
+    if not base_path.exists():
         logging.debug("Cannot delete folder since it was not found: {}"
-                      .format(basePath), pkgName)
+                      .format(base_path), pkg_name)
         return True
 
     try:
-        if basePath.is_symlink():
-            basePath.unlink()
+        if base_path.is_symlink():
+            base_path.unlink()
         else:
-            shutil.rmtree(basePath)
+            shutil.rmtree(base_path)
     except OSError as error:
         logging.error("Deletion of folder failed: {}"
-                      .format(error), pkgName)
+                      .format(error), pkg_name)
         return False
 
-    logging.debug("Deleted folder: {}".format(basePath), pkgName)
+    logging.debug("Deleted folder: {}".format(base_path), pkg_name)
     return True
 
-# Delete File
 
-
-def delete_file(path, pkgName):
+def delete_file(path, pkg_name):
     """
         Deletes file
     """
-    basePath = pathlib.Path(path)
+    base_path = pathlib.Path(path)
 
     # We don't need todo anything
-    if not basePath.exists():
+    if not base_path.exists():
         logging.debug("Cannot delete file since it was not found: {}"
-                      .format(basePath), pkgName)
+                      .format(base_path), pkg_name)
         return True
 
     try:
-        basePath.unlink()
+        base_path.unlink()
     except OSError as error:
         logging.error("Deletion of file failed: {}"
-                      .format(error), pkgName)
+                      .format(error), pkg_name)
         return False
 
-    logging.debug("Deleted file: {}".format(basePath), pkgName)
+    logging.debug("Deleted file: {}".format(base_path), pkg_name)
     return True
 
 
@@ -151,10 +142,10 @@ def isfolder(path):
     try:
         if os.path.isdir(path):
             return True
-        else:
-            return False
-    except OSError:
-        print("Sequestum: Folder checking failed")
+    except OSError as error:
+        logging.error("Error during isfolder check: {}".format(error))
+
+    return False
 
 
 def isfile(path):
@@ -164,7 +155,7 @@ def isfile(path):
     try:
         if os.path.isfile(path):
             return True
-        else:
-            return False
-    except OSError:
-        print("Sequestrum: File check failed")
+    except OSError as error:
+        logging.error("Error during isfile check: {}".format(error))
+
+    return False

@@ -1,4 +1,3 @@
-# Logging module
 import os
 import sys
 
@@ -30,34 +29,34 @@ def _format_color(text, color=None):
     print(text)
 
 
-def _format_output(errorType, errorMessage, pkgName=None):
-    if pkgName is not None and pkgName is not "":
-        return("[{}:{}] {}".format(errorType, pkgName, errorMessage))
+def _format_output(level, text, pkg_name=None):
+    if pkg_name is not None and pkg_name is not "":
+        return("[{}:{}] {}".format(level, pkg_name, text))
     else:
-        return("[{}] {}".format(errorType, errorMessage))
+        return("[{}] {}".format(level, text))
 
 
-def fatal(errorMessage, pkgName=None):
-    _format_color(_format_output("FATAL", errorMessage, pkgName), 'red')
+def fatal(text, pkg_name=None):
+    _format_color(_format_output("FATAL", text, pkg_name), 'red')
     sys.exit(1)
 
 
-def error(errorMessage, pkgName=None):
-    _format_color(_format_output("ERROR", errorMessage, pkgName), 'red')
+def error(text, pkg_name=None):
+    _format_color(_format_output("ERROR", text, pkg_name), 'red')
 
 
-def warn(errorMessage, pkgName=None):
-    _format_color(_format_output("WARN", errorMessage, pkgName), 'yellow')
+def warn(text, pkg_name=None):
+    _format_color(_format_output("WARN", text, pkg_name), 'yellow')
 
 
-def info(errorMessage, pkgName=None):
-    _format_color(_format_output("INFO", errorMessage, pkgName), 'white')
+def info(text, pkg_name=None):
+    _format_color(_format_output("INFO", text, pkg_name), 'white')
 
 
-def success(errorMessage, pkgName=None):
-    _format_color(_format_output("INFO", errorMessage, pkgName), 'green')
+def success(text, pkg_name=None):
+    _format_color(_format_output("INFO", text, pkg_name), 'green')
 
 
-def debug(errorMessage, pkgName=None):
+def debug(text, pkg_name=None):
     if VERBOSE:
-        _format_color(_format_output("VERBOSE", errorMessage, pkgName), 'cyan')
+        _format_color(_format_output("VERBOSE", text, pkg_name), 'cyan')
