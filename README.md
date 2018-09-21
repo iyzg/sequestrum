@@ -6,7 +6,7 @@ other reasons? Fine, fine.. some real reasons.This is specifically made for dotf
 dotfile repository setup, and more!
 
 ## Install Guide
-1. `sudo pip install sequestrum`
+1. `sudo pip install (--user) sequestrum`
 2. Leave a star on this repo
 3. Enjoy!
 
@@ -44,7 +44,7 @@ options:
 
 ```
 
-The name of your config file should be config.yaml, and should be placed within your dotfiles. In theory, the config file
+The name of your config file should be **config.yaml**, and should be placed within your dotfiles. In theory, the config file
 could be placed anywhere as long as you get your dotfileDirectory correct, but for cleanliness, it's recommneded to be placed
 within your dotfile repository.
 
