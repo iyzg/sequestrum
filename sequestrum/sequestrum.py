@@ -29,14 +29,11 @@ def main():
                           .format(error))
 
     configDict = yaml.load(configFile)
-    packageList = []
 
-    # Grab list of directories from the config.
+    # Internally use pkg name without suffix
     for key, _ in configDict['options'].items():
         if key.endswith("Package"):
-            pkgName = key[:-7]
-            configDict['options'][key]['pkgName'] = pkgName
-            packageList.append(pkgName)
+            configDict['options'][key]['pkgName'] = key[:-7]
 
     # We need to have a base package
     if "base" not in configDict['options']:
