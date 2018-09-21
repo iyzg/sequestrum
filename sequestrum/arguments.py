@@ -2,12 +2,12 @@
 
 # Imports
 import argparse
-import sequestrum.loggingModule as logMod
+from sequestrum import logging
 
 PARSER = argparse.ArgumentParser()
 
 
-def getArguments():
+def get_arguments():
     """
         Return the arguments in the form of a tuple
     """
@@ -25,7 +25,7 @@ def getArguments():
     args = PARSER.parse_args()
 
     if not args.verbose:
-        logMod.VERBOSE = False
+        logging.VERBOSE = False
 
     if args.install is not None:
         return ("Install", args.install)

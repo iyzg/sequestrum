@@ -1,29 +1,25 @@
-# Symlink Module
-
-# Libraries
 import os
-import sequestrum.loggingModule as logMod
 
-# Functions
+from sequestrum import logging
 
 
-def createSymlink(source, destination, pkgName=None):
+def create(source, destination, pkgName=None):
     """
         Creates symlink from source to destination
     """
     try:
         os.symlink(source, destination)
     except OSError as error:
-        logMod.printError("Unable to create symlink: {}"
-                          .format(error), pkgName)
+        logging.error("Unable to create symlink: {}"
+                      .format(error), pkgName)
         return False
     else:
-        logMod.printVerbose("Linking {} <-> {}"
-                            .format(source, destination), pkgName)
+        logging.debug("Linking {} <-> {}"
+                      .format(source, destination), pkgName)
         return True
 
 
-def symlinkSourceExists(sourcePath):
+def source_exists(sourcePath):
     """
         Checks to see if symlink source exists
     """

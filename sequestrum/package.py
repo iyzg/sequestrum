@@ -1,15 +1,14 @@
 from subprocess import run
-
-import sequestrum.loggingModule as logMod
-import sequestrum.symlinkModule as symMod
-# import sequestrum.commandsModule as comMod
-import sequestrum.directoryModule as dirMod
-
 from pathlib import Path
+
+from sequestrum import logging
+from sequestrum import symlink
+from sequestrum import directory
+
 homePath = str(Path.home()) + "/"
 
 
-def checkLocation(pkgConfig, path, useSource=True, inverted=False):
+def _check_location(pkgConfig, path, useSource=True, inverted=False):
     """
         Checks to see if link locations are clean
     """
@@ -23,37 +22,37 @@ def checkLocation(pkgConfig, path, useSource=True, inverted=False):
             destPath = path + destLink
             pkgName = pkgConfig['pkgName']
 
-            exists = symMod.symlinkSourceExists(destPath)
+            exists = symlink.source_exists(destPath)
 
-            if symMod.symlinkSourceExists(destPath) and not inverted:
-                logMod.printError("{} file already exists: {}"
-                                  .format(direction, destPath), pkgName)
+            if symlink.source_exists(destPath) and not inverted:
+                logging.error("{} file already exists: {}"
+                              .format(direction, destPath), pkgName)
                 noErrors = False
             elif not exists and inverted:
-                logMod.printError("{} file dosen't exists: {}"
-                                  .format(direction, destPath), pkgName)
+                logging.error("{} file dosen't exists: {}"
+                              .format(direction, destPath), pkgName)
                 noErrors = False
 
     return noErrors
 
 
-def checkInstallLocations(pkgConfig, inverted=False):
+def check_install_locations(pkgConfig, inverted=False):
     """
         Checks to see if link locations are clean
     """
 
-    return checkLocation(pkgConfig, homePath, False, inverted)
+    return _check_location(pkgConfig, homePath, False, inverted)
 
 
-def checkSourceLocations(pkgConfig, dotfilePath, inverted=False):
+def check_source_locations(pkgConfig, dotfilePath, inverted=False):
     """
         Check to see if dotfile locations are clean
     """
     directoryPath = dotfilePath + pkgConfig['directoryName'] + "/"
-    return checkLocation(pkgConfig, directoryPath, True, not inverted)
+    return _check_location(pkgConfig, directoryPath, True, not inverted)
 
 
-def runCommands(pkgConfig, after):
+def run_commands(pkgConfig, after):
 
     unparsedCommands = None
 
@@ -75,19 +74,19 @@ def runCommands(pkgConfig, after):
         try:
             runner = run(parsedCommand)
         except Exception as error:
-            logMod.printError(
+            logging.error(
                 "Error occured during command \"{}\": {}"
                 .format(command, error), pkgConfig['pkgName'])
             return False
         else:
-            logMod.printVerbose(
+            logging.debug(
                 "Command \"{}\" finished with exit code: {}"
                 .format(command, runner.returncode), pkgConfig['pkgName'])
 
     return True
 
 
-def symlinkPackage(pkgConfig, dotfilePath):
+def symlink_package(pkgConfig, dotfilePath):
     """
         Symlink package to local system
     """
@@ -103,9 +102,9 @@ def symlinkPackage(pkgConfig, dotfilePath):
             pkgName = pkgConfig['pkgName']
 
             # Create base folder if it dosent exist
-            if dirMod.createBaseFolder(destFile, pkgName):
+            if directory.create_parent_folder(destFile, pkgName):
                 # Create symlink, if it fails return false
-                if not symMod.createSymlink(sourceFile, destFile, pkgName):
+                if not symlink.create(sourceFile, destFile, pkgName):
                     return False
             else:
                 return False
@@ -114,26 +113,26 @@ def symlinkPackage(pkgConfig, dotfilePath):
 
 
 def install(pkgConfig, dotfilePath):
-    if not runCommands(pkgConfig, after=False):
-        logMod.printError(
+    if not run_commands(pkgConfig, after=False):
+        logging.error(
             "Abort installation of package due to \"commandsBefore\" Errors",
             pkgConfig['pkgName'])
         return False
 
-    if not symlinkPackage(pkgConfig, dotfilePath):
-        logMod.printError(
+    if not symlink_package(pkgConfig, dotfilePath):
+        logging.error(
             "Abort installation of package due to Symlink Errors",
             pkgConfig['pkgName'])
         return False
 
-    if not runCommands(pkgConfig, after=True):
-        logMod.printError(
+    if not run_commands(pkgConfig, after=True):
+        logging.error(
             "Abort installation of package due to \"commandsAfter\" Errors",
             pkgConfig['pkgName'])
         return False
 
-    logMod.printInfo("Package was installed successfully",
-                     pkgConfig['pkgName'])
+    logging.info("Package was installed successfully",
+                 pkgConfig['pkgName'])
     return True
 
 
@@ -151,11 +150,11 @@ def uninstall(pkgConfig):
                 filesToUnlink.append(symlinkFile)
 
     for symlinkFile in filesToUnlink:
-        if dirMod.isFolder(symlinkFile):
-            if not dirMod.deleteFolder(symlinkFile, pkgName):
+        if directory.isfolder(symlinkFile):
+            if not directory.delete_folder(symlinkFile, pkgName):
                 noErrors = False
-        elif dirMod.isFile(symlinkFile):
-            if not dirMod.deleteFile(symlinkFile, pkgName):
+        elif directory.isfile(symlinkFile):
+            if not directory.delete_file(symlinkFile, pkgName):
                 noErrors = False
 
     return noErrors
@@ -171,11 +170,11 @@ def backup(pkgConfig, dotfilePath, backupPath):
             sourceFile = homePath + value
             destFile = backupPath + key
 
-            if dirMod.isFile(sourceFile):
-                if not dirMod.copyFile(sourceFile, destFile, pkgName):
+            if directory.isfile(sourceFile):
+                if not directory.copy_file(sourceFile, destFile, pkgName):
                     noErrors = False
             else:
-                if not dirMod.copyFolder(sourceFile, destFile, pkgName):
+                if not directory.copy_folder(sourceFile, destFile, pkgName):
                     noErrors = False
 
     return noErrors
@@ -190,19 +189,19 @@ def setup(packageKey, configDict, dotfilePath):
     pkgConfig = configDict['options'][packageKey]
     pkgName = pkgConfig['pkgName']
     newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
-    dirMod.createFolder(newPackagePath, pkgName)
+    directory.create_folder(newPackagePath, pkgName)
 
     for link in pkgConfig['links']:
         for key, value in link.items():
             sourceFile = homePath + value
             destFile = newPackagePath + key
 
-            if dirMod.isFolder(sourceFile):
-                dirMod.copyFolder(sourceFile, destFile, pkgName)
-                dirMod.deleteFolder(sourceFile, pkgName)
-            elif dirMod.isFile(sourceFile):
-                dirMod.copyFile(sourceFile, destFile, pkgName)
-                dirMod.deleteFile(sourceFile, pkgName)
+            if directory.isfolder(sourceFile):
+                directory.copy_folder(sourceFile, destFile, pkgName)
+                directory.delete_folder(sourceFile, pkgName)
+            elif directory.isfile(sourceFile):
+                directory.copy_file(sourceFile, destFile, pkgName)
+                directory.delete_file(sourceFile, pkgName)
             else:
                 return False
 

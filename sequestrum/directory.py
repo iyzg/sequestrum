@@ -4,29 +4,26 @@
 import os
 import shutil
 import pathlib
-import sequestrum.loggingModule as logMod
 
-# Create Folder
+from sequestrum import logging
 
 
-def createFolder(path, pkgName=None):
+def create_folder(path, pkgName=None):
     """
         Creates a folder
     """
     try:
         os.makedirs(path)
     except OSError as error:
-        logMod.printError(
+        logging.error(
             "Could not create folder \"{}\" due to following error: {}"
             .format(path, error), pkgName)
     else:
-        logMod.printVerbose(
+        logging.debug(
             "Folder dosent exist and was created: {}".format(path), pkgName)
 
-# Create Base Folder
 
-
-def createBaseFolder(path, pkgName):
+def create_parent_folder(path, pkgName):
     """
         Create Base directory if needed
     """
@@ -36,7 +33,7 @@ def createBaseFolder(path, pkgName):
     if basePath.exists():
         # Check if the parent is a file or if its a symlink
         if basePath.is_file() or basePath.is_symlink():
-            logMod.printError(
+            logging.error(
                 "Base directory is a file or link: {}"
                 .format(basePath), pkgName)
             return False
@@ -48,54 +45,54 @@ def createBaseFolder(path, pkgName):
     try:
         basePath.mkdir(parents=True, exist_ok=True)
     except Exception as error:
-        logMod.printError(
+        logging.error(
             "Could not create parent folder \"{}\" due to following error: {}"
             .format(basePath, error), pkgName)
         return False
     else:
-        logMod.printVerbose(
+        logging.debug(
             "Parent folder dosent exist and was created: {}"
             .format(basePath), pkgName)
 
     return True
 
 
-def copyFile(source, destination, pkgName):
+def copy_file(source, destination, pkgName):
     """
         Copys file from source to destination
     """
     try:
         shutil.copyfile(source, destination)
     except OSError as error:
-        logMod.printError("Unable to copy file: {}"
-                          .format(error), pkgName)
+        logging.error("Unable to copy file: {}"
+                      .format(error), pkgName)
         return False
     else:
-        logMod.printVerbose("Copy file {} -> {}"
-                            .format(source, destination), pkgName)
+        logging.debug("Copy file {} -> {}"
+                      .format(source, destination), pkgName)
         return True
 
 
-def copyFolder(source, destination, pkgName):
+def copy_folder(source, destination, pkgName):
     """
         Copies frolder from source to destination
     """
     try:
         shutil.copytree(source, destination)
     except OSError as error:
-        logMod.printError("Unable to copy directory: {}"
-                          .format(error), pkgName)
+        logging.error("Unable to copy directory: {}"
+                      .format(error), pkgName)
         return False
     else:
-        logMod.printVerbose("Copy folder {} -> {}"
-                            .format(source, destination), pkgName)
+        logging.debug("Copy folder {} -> {}"
+                      .format(source, destination), pkgName)
         return True
 
 
 # Delete Folder
 
 
-def deleteFolder(path, pkgName):
+def delete_folder(path, pkgName):
     """
         Deletes a folder
     """
@@ -104,8 +101,8 @@ def deleteFolder(path, pkgName):
 
     # We don't need todo anything
     if not basePath.exists():
-        logMod.printVerbose("Cannot delete folder since it was not found: {}"
-                            .format(basePath), pkgName)
+        logging.debug("Cannot delete folder since it was not found: {}"
+                      .format(basePath), pkgName)
         return True
 
     try:
@@ -114,17 +111,17 @@ def deleteFolder(path, pkgName):
         else:
             shutil.rmtree(basePath)
     except OSError as error:
-        logMod.printError("Deletion of folder failed: {}"
-                          .format(error), pkgName)
+        logging.error("Deletion of folder failed: {}"
+                      .format(error), pkgName)
         return False
 
-    logMod.printVerbose("Deleted folder: {}".format(basePath), pkgName)
+    logging.debug("Deleted folder: {}".format(basePath), pkgName)
     return True
 
 # Delete File
 
 
-def deleteFile(path, pkgName):
+def delete_file(path, pkgName):
     """
         Deletes file
     """
@@ -132,24 +129,22 @@ def deleteFile(path, pkgName):
 
     # We don't need todo anything
     if not basePath.exists():
-        logMod.printVerbose("Cannot delete file since it was not found: {}"
-                            .format(basePath), pkgName)
+        logging.debug("Cannot delete file since it was not found: {}"
+                      .format(basePath), pkgName)
         return True
 
     try:
         basePath.unlink()
     except OSError as error:
-        logMod.printError("Deletion of file failed: {}"
-                          .format(error), pkgName)
+        logging.error("Deletion of file failed: {}"
+                      .format(error), pkgName)
         return False
 
-    logMod.printVerbose("Deleted file: {}".format(basePath), pkgName)
+    logging.debug("Deleted file: {}".format(basePath), pkgName)
     return True
 
-# Check If Folder
 
-
-def isFolder(path):
+def isfolder(path):
     """
         Checks to see if path is a folder
     """
@@ -161,10 +156,8 @@ def isFolder(path):
     except OSError:
         print("Sequestum: Folder checking failed")
 
-# Check If File
 
-
-def isFile(path):
+def isfile(path):
     """
         Checks to see if path is a file
     """
@@ -175,14 +168,3 @@ def isFile(path):
             return False
     except OSError:
         print("Sequestrum: File check failed")
-
-# Grab all package names
-
-
-def grabPackageNames(path):
-    packageList = []
-    for name in os.listdir(path):
-        if os.path.isdir(path):
-            packageList.append(name)
-
-    return packageList
