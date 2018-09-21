@@ -203,7 +203,7 @@ def setup(pkg_key, config, dotfile_path):
 
 def refresh(pkg_config, dotfile_path):
     """
-        Refresh package directory on dotfile
+        Refresh package directory, this works bidirectional
     """
     # Grab dotfile package directory
     directory_path = dotfile_path + pkg_config['directoryName'] + "/"
@@ -216,9 +216,11 @@ def refresh(pkg_config, dotfile_path):
             source_file = directory_path + key
             dest_file = _HOME_PATH + value
 
-            exists_source = symlink.source_exists(source_file)
+            exists_source = symlink.source_exists(source_file, False)
             exists_dest = symlink.source_exists(dest_file, False)
 
+            # If the $HOME file is a symlink, if so check
+            # if its still pointing to our source file
             if exists_dest and symlink.is_link(dest_file):
                 if symlink.get_dest(dest_file) != source_file:
                     logging.warn(
@@ -226,6 +228,8 @@ def refresh(pkg_config, dotfile_path):
                         .format(dest_file), pkg_name)
                 continue
 
+            # Check if the source file exists, and also check if its
+            # a link, if so we ignore it and print a warning
             if exists_source and symlink.is_link(source_file):
                 logging.warn(
                     "File  \"{}\" is a symlink and will be ignored"
@@ -236,8 +240,14 @@ def refresh(pkg_config, dotfile_path):
             # inside $HOME directory
             if exists_dest and not exists_source:
                 links_setup.append((key, value))
+
+            # Check if we have a file inside dotfiles
+            # but $HOME location doesent have one
             elif exists_source and not exists_dest:
                 links_install.append((key, value))
+
+            # Both sides have valid files (no symlinks)
+            # ignore and print a warning
             elif exists_dest and exists_source:
                 logging.warn(
                     "File for link  \"{}\" exist in both locations, ignoring"
@@ -265,6 +275,7 @@ def refresh(pkg_config, dotfile_path):
         # Everything okay, lets add to install
         links_install.append((key, value))
 
+    # Now run install
     for key, value in links_install:
         source_file = directory_path + key
         dest_file = _HOME_PATH + value
@@ -277,5 +288,6 @@ def refresh(pkg_config, dotfile_path):
         else:
             return False
 
+    # All done! We did it scotty!
     logging.info("Refresh of package was successfull.", pkg_name)
     return True
