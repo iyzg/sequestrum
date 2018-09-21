@@ -99,9 +99,26 @@ def install(args, config):
                       .format(args[1] + "Package"))
 
 
-# TODO: Fix
+# We do a setup -> install run,
+# but only actually operate on the differences
+# between an existing installation and changes
+# this command dosent do pre-checks
 def refresh(args, config):
-    logging.fatal("NYI")
+    # Grab the path of the dotfile directory
+    dotfile_path = _HOME_PATH + \
+        config['options']['base']['dotfileDirectory'] + "/"
+    error_occured = False
+
+    for key, value in config['options'].items():
+        if key.endswith("Package"):
+            if not package.refresh(value, dotfile_path):
+                error_occured = True
+
+    if error_occured:
+        logging.warn(
+            "Errors occured during refresh, please check above")
+    else:
+        logging.success("Packages got refreshed successfully!")
 
 
 # Backs up your local files before you setup your dotfiles. This is also a
