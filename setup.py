@@ -16,7 +16,7 @@ setup(
         'pyyaml == 3.13',
     ],
     entry_points={
-    'console_scripts':
-    ['sequestrum = sequestrum.sequestrum:main']
+        'console_scripts':
+        ['sequestrum = sequestrum.sequestrum:main']
     }
 )
