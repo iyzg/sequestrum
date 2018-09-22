@@ -79,9 +79,6 @@ request. C:
 6. -b, --backup : Backup your system and check your config
 
 ## TODOS
-- [ ] Dual way safety checks for install and setup
-- [ ] Safety checks before backup
-- [ ] Fix Refresh
 - [ ] Commands to modify config
 - [ ] Add support for more directories than home
 
