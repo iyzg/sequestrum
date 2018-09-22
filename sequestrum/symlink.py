@@ -19,16 +19,36 @@ def create(source_path, dest_path, pkg_name=None):
         return True
 
 
-def source_exists(source_path):
+def source_exists(source_path, ignore_symlinks=True):
     """
         Checks to see if symlink source exists
     """
     # Check if file exists
-    if not os.path.exists(source_path):
+    if not os.path.lexists(source_path):
         return False
 
     # We cannot link symlinks
-    if os.path.islink(source_path):
+    if ignore_symlinks and os.path.islink(source_path):
         return False
 
     return True
+
+
+def is_link(source_path):
+    """
+        Checks to see if the source_path is a symlink
+    """
+    if not os.path.lexists(source_path):
+        return False
+
+    return os.path.islink(source_path)
+
+
+def get_dest(source_path):
+    """
+        Returns the destination of a symlink
+    """
+    if not is_link(source_path):
+        return None
+
+    return os.path.realpath(source_path)

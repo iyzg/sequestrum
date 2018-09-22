@@ -23,7 +23,7 @@ def _check_location(pkg_config, path, use_source=True, inverted=False):
 
             exists = symlink.source_exists(dest_path)
 
-            if symlink.source_exists(dest_path) and not inverted:
+            if exists and not inverted:
                 logging.error("{} file already exists: {}"
                               .format(direction, dest_path), pkg_name)
                 noerrors = False
@@ -197,7 +197,97 @@ def setup(pkg_key, config, dotfile_path):
             elif directory.isfile(source_file):
                 directory.copy_file(source_file, dest_file, pkg_name)
                 directory.delete_file(source_file, pkg_name)
-            else:
-                return False
 
+    return True
+
+
+def refresh(pkg_config, dotfile_path):
+    """
+        Refresh package directory, this works bidirectional
+    """
+    # Grab dotfile package directory
+    directory_path = dotfile_path + pkg_config['directoryName'] + "/"
+    pkg_name = pkg_config['pkgName']
+    links_setup = []
+    links_install = []
+
+    for link in pkg_config['links']:
+        for key, value in link.items():
+            source_file = directory_path + key
+            dest_file = _HOME_PATH + value
+
+            exists_source = symlink.source_exists(source_file, False)
+            exists_dest = symlink.source_exists(dest_file, False)
+
+            # If the $HOME file is a symlink, if so check
+            # if its still pointing to our source file
+            if exists_dest and symlink.is_link(dest_file):
+                if symlink.get_dest(dest_file) != source_file:
+                    logging.warn(
+                        "Link  \"{}\" exist but is invalid, ignoring"
+                        .format(dest_file), pkg_name)
+                continue
+
+            # Check if the source file exists, and also check if its
+            # a link, if so we ignore it and print a warning
+            if exists_source and symlink.is_link(source_file):
+                logging.warn(
+                    "File  \"{}\" is a symlink and will be ignored"
+                    .format(source_file), pkg_name)
+                continue
+
+            # Check if we have already a file
+            # inside $HOME directory
+            if exists_dest and not exists_source:
+                links_setup.append((key, value))
+
+            # Check if we have a file inside dotfiles
+            # but $HOME location doesent have one
+            elif exists_source and not exists_dest:
+                links_install.append((key, value))
+
+            # Both sides have valid files (no symlinks)
+            # ignore and print a warning
+            elif exists_dest and exists_source:
+                logging.warn(
+                    "File for link  \"{}\" exist in both locations, ignoring"
+                    .format(dest_file), pkg_name)
+
+    # If both lists are empty, we just return since nothing todo
+    if (len(links_setup) + len(links_install)) == 0:
+        logging.debug("Files are up-to-date. No refresh needed", pkg_name)
+        return True
+
+    # First run setup
+    for key, value in links_setup:
+        source_file = directory_path + key
+        dest_file = _HOME_PATH + value
+
+        if directory.isfolder(dest_file):
+            directory.create_parent_folder(source_file, pkg_name)
+            directory.copy_folder(dest_file, source_file, pkg_name)
+            directory.delete_folder(dest_file, pkg_name)
+        elif directory.isfile(dest_file):
+            directory.create_parent_folder(source_file, pkg_name)
+            directory.copy_file(dest_file, source_file, pkg_name)
+            directory.delete_file(dest_file, pkg_name)
+
+        # Everything okay, lets add to install
+        links_install.append((key, value))
+
+    # Now run install
+    for key, value in links_install:
+        source_file = directory_path + key
+        dest_file = _HOME_PATH + value
+
+        # Create base folder if it dosent exist
+        if directory.create_parent_folder(dest_file, pkg_name):
+            # Create symlink, if it fails return false
+            if not symlink.create(source_file, dest_file, pkg_name):
+                return False
+        else:
+            return False
+
+    # All done! We did it scotty!
+    logging.info("Refresh of package was successfull.", pkg_name)
     return True
