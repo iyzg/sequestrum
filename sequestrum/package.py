@@ -159,7 +159,7 @@ def uninstall(pkg_config):
 def backup(pkg_config, backup_path):
     noerrors = True
     pkg_name = pkg_config['pkgName']
-    pkg_dir = backup_path + pkg_config['directoryName']
+    pkg_dir = backup_path + pkg_config['directoryName'] + "/"
 
     for link in pkg_config['links']:
         for key, value in link.items():
