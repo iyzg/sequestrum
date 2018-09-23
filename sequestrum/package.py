@@ -159,12 +159,17 @@ def uninstall(pkg_config):
 def backup(pkg_config, backup_path):
     noerrors = True
     pkg_name = pkg_config['pkgName']
+    pkg_dir = backup_path + pkg_config['directoryName']
 
     for link in pkg_config['links']:
         for key, value in link.items():
             source_file = _HOME_PATH + value
-            dest_file = backup_path + key
+            dest_file = pkg_dir + key
 
+            # Create base file
+            directory.create_parent_folder(dest_file, pkg_name)
+
+            # Copy the stuff over
             if directory.isfile(source_file):
                 if not directory.copy_file(source_file, dest_file, pkg_name):
                     noerrors = False
