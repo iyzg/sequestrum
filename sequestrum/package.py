@@ -184,21 +184,40 @@ def setup(pkg_key, config, dotfile_path):
     pkg_config = config['options'][pkg_key]
     pkg_name = pkg_config['pkgName']
     pkg_path = dotfile_path + pkg_config['directoryName'] + "/"
-    directory.create_folder(pkg_path, pkg_name)
+    noError = True
 
+    # Create base folder
+    if not directory.create_folder(pkg_path, pkg_name):
+        return False
+
+    # Copy files over and remove them if copy was
+    # successfull, otherwise mark as failed
     for link in pkg_config['links']:
         for key, value in link.items():
             source_file = _HOME_PATH + value
             dest_file = pkg_path + key
 
+            # Check if our source is a folder
             if directory.isfolder(source_file):
-                directory.copy_folder(source_file, dest_file, pkg_name)
-                directory.delete_folder(source_file, pkg_name)
+                # Copy folder and check if everything was ok
+                if not directory.copy_folder(source_file, dest_file, pkg_name):
+                    noError = False
+                    continue
+                # If everything was okay - delete it
+                if not directory.delete_folder(source_file, pkg_name):
+                    noError = False
+                    continue
             elif directory.isfile(source_file):
-                directory.copy_file(source_file, dest_file, pkg_name)
-                directory.delete_file(source_file, pkg_name)
+                # Copy file and check if everything was ok
+                if not directory.copy_file(source_file, dest_file, pkg_name):
+                    noError = False
+                    continue
+                # If everything was okay - delete it
+                if not directory.delete_file(source_file, pkg_name):
+                    noError = False
+                    continue
 
-    return True
+    return noError
 
 
 def refresh(pkg_config, dotfile_path):
@@ -263,14 +282,21 @@ def refresh(pkg_config, dotfile_path):
         source_file = directory_path + key
         dest_file = _HOME_PATH + value
 
+        # Check if our source is a folder
         if directory.isfolder(dest_file):
-            directory.create_parent_folder(source_file, pkg_name)
-            directory.copy_folder(dest_file, source_file, pkg_name)
-            directory.delete_folder(dest_file, pkg_name)
+            # Copy folder and check if everything was ok
+            if not directory.copy_folder(dest_file, source_file, pkg_name):
+                return False
+            # If everything was okay - delete it
+            if not directory.delete_folder(dest_file, pkg_name):
+                return False
         elif directory.isfile(dest_file):
-            directory.create_parent_folder(source_file, pkg_name)
-            directory.copy_file(dest_file, source_file, pkg_name)
-            directory.delete_file(dest_file, pkg_name)
+            # Copy file and check if everything was ok
+            if not directory.copy_file(dest_file, source_file, pkg_name):
+                return False
+            # If everything was okay - delete it
+            if not directory.delete_file(dest_file, pkg_name):
+                return False
 
         # Everything okay, lets add to install
         links_install.append((key, value))
