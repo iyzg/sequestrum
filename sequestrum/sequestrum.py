@@ -84,6 +84,11 @@ def installPackage(packageKey, configDict, dotfilePath):
             sourceFile = directoryPath + key
             destFile = homePath + value
 
+            if dirMod.isFolder(destFile):
+                continue
+            elif dirMod.isFile(destFile):
+                continue
+
             if dirMod.createBaseFolder(destFile, pkgConfig['pkgName']):
                 symMod.createSymlink(sourceFile, destFile, pkgConfig['pkgName'])
             else:
