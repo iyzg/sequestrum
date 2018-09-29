@@ -36,7 +36,7 @@ def setupPackage(packageKey, configDict, dotfilePath):
     pkgConfig = configDict['options'][packageKey]
     pkgName = pkgConfig['pkgName']
     newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
-    if dirMod.isFile(newPackagePath) == False:
+    if dirMod.isFolder(newPackagePath) == False:
         dirMod.createFolder(newPackagePath, pkgName)
 
     for link in pkgConfig['links']:
