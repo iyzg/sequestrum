@@ -1,6 +1,7 @@
 # Logging module
 
 import sys
+from termcolor import cprint
 
 
 def formatOutput(errorType, errorMessage, pkgName=None):
@@ -11,21 +12,21 @@ def formatOutput(errorType, errorMessage, pkgName=None):
 
 
 def printFatal(errorMessage, pkgName=None):
-    print(formatOutput("FATAL", errorMessage, pkgName))
+    cprint(formatOutput("FATAL", errorMessage, pkgName), 'red')
     sys.exit()
 
 
 def printError(errorMessage, pkgName=None):
-    print(formatOutput("ERROR", errorMessage, pkgName))
+    cprint(formatOutput("ERROR", errorMessage, pkgName), 'red')
 
 
 def printWarn(errorMessage, pkgName=None):
-    print(formatOutput("WARN", errorMessage, pkgName))
+    cprint(formatOutput("WARN", errorMessage, pkgName), 'yellow')
 
 
 def printInfo(errorMessage, pkgName=None):
-    print(formatOutput("INFO", errorMessage, pkgName))
+    cprint(formatOutput("INFO", errorMessage, pkgName), 'green')
 
 
 def printVerbose(errorMessage, pkgName=None):
-    print(formatOutput("VERBOSE", errorMessage, pkgName))
+    cprint(formatOutput("VERBOSE", errorMessage, pkgName), 'green')

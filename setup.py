@@ -14,6 +14,7 @@ setup(
     packages=['sequestrum'],
     install_requires=[
         'pyyaml == 3.13',
+        'termcolor == 1.1.0'
     ],
     entry_points={
     'console_scripts':
