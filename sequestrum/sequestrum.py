@@ -47,7 +47,7 @@ def setupPackage(packageKey, configDict, dotfilePath):
             # Checks
             if dirMod.isFolder(destFile):
                 continue
-            elif dirmod.isFile(destFile):
+            elif dirMod.isFile(destFile):
                 continue
 
             # Setup
@@ -263,7 +263,6 @@ def main():
         else:
             print(errMod.formatError("Sequstrum", "Invalid Package."))
 
-    # TODO: Fix
     elif arguments[0] == "Refresh":
         if arguments[1] == "all":
             dotfilePackageList = dirMod.grabPackageNames(dotfilePath)
@@ -277,34 +276,6 @@ def main():
                     if "commandsAfter" in value:
                         comMod.runCommands(
                             configDict['options'][key]["commandsAfter"])
-        else:
-            print(errMod.formatError("Sequestrum", "Source code compromised."))
-
-    # Backs up your local files before you setup your dotfiles. This is also a
-    # good way to check if your config files aer correct. If they aren't they won't
-    # be backed up to your backup folder and throw an error instead.
-    elif arguments[0] == "Backup":
-        if arguments[1] == "all":
-            backupPath = homePath + "sequestrum-backup/"
-            if dirMod.isFolder(backupPath):
-                print(errMod.formatError("Backup", "{} Exists".format(backupPath)))
-                sys.exit()
-            else:
-                dirMod.createFolder(backupPath)
-            for key, value in configDict['options'].items():
-                if key.endswith("Package"):
-                    for link in configDict['options'][key]['links']:
-                        for key, value in link.items():
-                            sourceFile = homePath + value
-                            destFile = backupPath + key
-
-                            if dirMod.isFile(sourceFile):
-                                symMod.copyFile(sourceFile, destFile)
-                            else:
-                                print(errMod.formatError(
-                                    "Backup", "{} doesn't exist."))
-                                sys.exit()
-            print(errMod.formatError("Backup", "All files backed up"))
         else:
             print(errMod.formatError("Sequestrum", "Source code compromised."))
 
