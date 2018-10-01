@@ -88,6 +88,7 @@ request. C:
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
 just fork this, add to it, then send a merge request. I'll try and get around to looking at it as soon as possible.
+Be sure to read [CONTRIBUTING.md](CONTRIBUTING.md) first though.
 
 ## License
 Copyright (c) 2018-2018 Ivy Zhang. Released under the MIT License.
