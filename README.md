@@ -80,10 +80,10 @@ request. C:
 
 ## TODOS
 - [ ] Dual way safety checks for install and setup
-- [ ] Safety checks before backup
-- [ ] Fix Refresh
-- [ ] Commands to modify config
 - [ ] Add support for more directories than home
+- [ ] Colors!!!
+- [ ] Verbose Mode
+- [ ] Pep8ify
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
