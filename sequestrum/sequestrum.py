@@ -37,6 +37,7 @@ def setupPackage(packageKey, configDict, dotfilePath):
     pkgName = pkgConfig['pkgName']
     newPackagePath = dotfilePath + pkgConfig['directoryName'] + "/"
     if dirMod.isFolder(newPackagePath) == False:
+        logMod.printWarn("{} does not exists. Creating the directory".format(newPackagePath))
         dirMod.createFolder(newPackagePath, pkgName)
 
     for link in pkgConfig['links']:
@@ -52,10 +53,14 @@ def setupPackage(packageKey, configDict, dotfilePath):
 
             # Setup
             if dirMod.isFolder(sourceFile):
+                logMod.printVerbose("symlinking {} to {}".format(sourceFile, destFile))
                 symMod.copyFolder(sourceFile, destFile)
+                logMod.printVerbose("deleting {}".format(sourceFile))
                 dirMod.deleteFolder(sourceFile)
             elif dirMod.isFile(sourceFile):
+                logMod.printVerbose("symlinking {} to {}".format(sourceFile, destFile))
                 symMod.copyFile(sourceFile, destFile)
+                logMod.printVerbose("deleting {}".format(sourceFile))
                 dirMod.deleteFile(sourceFile)
             else:
                 return False
@@ -159,7 +164,7 @@ def checkSourceLocations(packageKey, configDict, dotfilePath):
             sourcePath = directoryPath + key
 
             if symMod.symlinkSourceExists(sourcePath):
-                logMod.printFatal("File dosent exists: {}".format(sourcePath))
+                logMod.printFatal("File doesnt exists: {}".format(sourcePath))
 
 
 def main():
@@ -177,7 +182,7 @@ def main():
         print(errMod.formatError("Core", "No configuration found."))
         sys.exit()
 
-    configDict = yaml.load(configFile)
+    configDict = yaml.safe_load(configFile)
     packageList = []
 
     # Grab list of directories from the config.

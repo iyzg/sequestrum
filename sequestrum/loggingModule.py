@@ -1,32 +1,29 @@
 # Logging module
 
 import sys
-from termcolor import cprint
-
 
 def formatOutput(errorType, errorMessage, pkgName=None):
-    if pkgName is not None and pkgName is not "":
+    if pkgName:
         return("[{}:{}] {}".format(errorType, pkgName, errorMessage))
     else:
         return("[{}] {}".format(errorType, errorMessage))
 
 
-def printFatal(errorMessage, pkgName=None):
-    cprint(formatOutput("FATAL", errorMessage, pkgName), 'red')
+def printFatal(errorMessage, pkgname=None):
+    print("\033[1;31mFATAL\033[0m: {} {}".format(errorMessage, pkgName))
     sys.exit()
 
 
 def printError(errorMessage, pkgName=None):
-    cprint(formatOutput("ERROR", errorMessage, pkgName), 'red')
+    print("\033[1;31mERROR\033[0m: {} {}".format(errorMessage, pkgName))
 
 
 def printWarn(errorMessage, pkgName=None):
-    cprint(formatOutput("WARN", errorMessage, pkgName), 'yellow')
-
+    print("\033[1;33mWARN\033[0m: {} {}".format(errorMessage, pkgName))
 
 def printInfo(errorMessage, pkgName=None):
-    cprint(formatOutput("INFO", errorMessage, pkgName), 'green')
+    print("\033[1;32mINFO\033[0m: {} {}".format(errorMessage, pkgName))
 
 
 def printVerbose(errorMessage, pkgName=None):
-    cprint(formatOutput("VERBOSE", errorMessage, pkgName), 'green')
+    print("\033[1;32mVERBOSE\033[0m: {} {}".format(errorMessage, pkgName))

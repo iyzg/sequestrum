@@ -13,8 +13,7 @@ setup(
     license='MIT',
     packages=['sequestrum'],
     install_requires=[
-        'pyyaml == 3.13',
-        'termcolor == 1.1.0'
+        'pyyaml == 3.13'
     ],
     entry_points={
     'console_scripts':
