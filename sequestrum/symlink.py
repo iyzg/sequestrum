@@ -4,24 +4,24 @@
 import os
 from shutil import copytree, copyfile
 
-import sequestrum.loggingModule as logMod
+import logging
 
 # Functions
 
 
-def createSymlink(source, destination, pkgName = None):
+def create_symlink(source, destination, package_name = None):
     """
         Creates symlink from source to destination
     """
     try:
         os.symlink(source, destination)
     except OSError as error:
-        logMod.printError("Unable to create symlink: {}".format(error), pkgName)
+        logMod.print_error("Unable to create symlink: {}".format(error), package_name)
     else:
-        logMod.printVerbose("Linking {} <-> {}".format(source, destination), pkgName)
+        logMod.print_verbose("Linking {} <-> {}".format(source, destination), package_name)
 
 
-def copyFile(source, destination):
+def copy_file(source, destination):
     """
         Copys file from source to destination
     """
@@ -33,7 +33,7 @@ def copyFile(source, destination):
         return True
 
 
-def copyFolder(source, destination):
+def copy_folder(source, destination):
     """
         Copies frolder from source to destination
     """
@@ -45,7 +45,7 @@ def copyFolder(source, destination):
         print("Sucess copying folder ")
 
 
-def symlinkSourceExists(sourcePath):
+def symlink_source_exists(sourcePath):
     """
         Checks to see if symlink source exists
     """
