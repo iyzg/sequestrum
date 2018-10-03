@@ -16,6 +16,6 @@ def run_commands(unparsed_command_list, package_name=None):
         try:
             runner = run(parsed_command)
         except Exception as error:
-            logMod.printFatal("Error occured during command \"{}\": {}".format(command, error), package_name)
+            logging.printFatal("Error occured during command \"{}\": {}".format(command, error), package_name)
         else:
-            logMod.printVerbose("Command \"{}\" finished with exit code: {}".format(command, runner.returncode), package_name)
+            logging.printVerbose("Command \"{}\" finished with exit code: {}".format(command, runner.returncode), package_name)
