@@ -19,7 +19,7 @@ import sequestrum.logging as logging
 packages_to_unlink = []
 
 # Global constants
-homePath = str(Path.home()) + "/"
+HOME_PATH = str(Path.home()) + "/"
 
 
 # Creates a new directory. It creates a new folder path using the config
@@ -43,7 +43,7 @@ def setup_package(package_key, config_dict, dotfile_path):
 
     for link in package_config['links']:
         for key, value in link.items():
-            source_file = homePath + value
+            source_file = HOME_PATH + value
             dest_file = new_package_path + key
 
             # Checks
@@ -85,7 +85,7 @@ def install_package(package_key, config_dict, dotfile_path):
         # Symlink files to local files
         for key, value in link.items():
             source_file = directory_path + key
-            dest_file = homePath + value
+            dest_file = HOME_PATH + value
 
             if directories.is_folder(dest_file):
                 continue
@@ -109,7 +109,7 @@ def get_packages_to_unlink(package_key, config_dict, dotfile_path):
 
     for link in package_config['links']:
         for _, value in link.items():
-            fileToGrab = homePath + value
+            fileToGrab = HOME_PATH + value
 
             if fileToGrab not in packages_to_unlink:
                 packages_to_unlink.append(fileToGrab)
@@ -139,7 +139,7 @@ def check_install_locations(package_key, config_dict):
 
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
-            destPath = homePath + value
+            destPath = HOME_PATH + value
 
             if symlink.symlink_source_exists(destPath):
                 print(errors.format_error(
@@ -199,7 +199,7 @@ def main():
             "Invalid config file, a base package needs to be defined")
 
     # Grab the path of the dotfile directory
-    dotfile_path = homePath + \
+    dotfile_path = HOME_PATH + \
         config_dict['options']['base']['dotfileDirectory'] + "/"
 
     # Setups up the dotfiles accordingly to the config. This should only be
