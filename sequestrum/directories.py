@@ -5,12 +5,10 @@ import os
 import sys
 import shutil
 import pathlib
-import sequestrum.loggingModule as logMod
 
-# Create Folder
+import logging
 
-
-def createFolder(path, pkgName):
+def create_folder(path, package_name):
     """
         Creates a folder
     """
@@ -18,17 +16,14 @@ def createFolder(path, pkgName):
         os.makedirs(path)
     except OSError as error:
         logMod.printError(
-            "Could not create folder \"{}\" due to following error: {}".format(path, error), pkgName)
+            "Could not create folder \"{}\" due to following error: {}".format(path, error), package_name)
     else:
         logMod.printVerbose(
-            "Folder dosent exist and was created: {}".format(path), pkgName)
+            "Folder dosent exist and was created: {}".format(path), package_name)
 
-# Create Base Folder
-
-
-def createBaseFolder(path, pkgName):
+def create_base_folder(path, package_name):
     """
-        Create Base directory if needed
+        Create base directory if needed
     """
     basePath = pathlib.Path(path).parent
 
@@ -37,7 +32,7 @@ def createBaseFolder(path, pkgName):
         # Check if the parent is a file or if its a symlink
         if basePath.is_file() or basePath.is_symlink():
             logMod.printError(
-                "Base directory is a file or link: {}".format(basePath), pkgName)
+                "Base directory is a file or link: {}".format(basePath), package_name)
             return False
         # If not, it must be a directory, so we are ok
         else:
@@ -48,18 +43,15 @@ def createBaseFolder(path, pkgName):
         basePath.mkdir(parents=True, exist_ok=True)
     except Exception as error:
         logMod.printError(
-            "Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), pkgName)
+            "Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), package_name)
         return False
     else:
         logMod.printVerbose(
-            "Parent folder dosent exist and was created: {}".format(basePath), pkgName)
+            "Parent folder dosent exist and was created: {}".format(basePath), package_name)
 
     return True
 
-# Delete Folder
-
-
-def deleteFolder(path):
+def delete_folder(path):
     """
         Deletes a folder
     """
@@ -80,10 +72,7 @@ def deleteFolder(path):
     else:
         print("Sequestrum: Deleted successfully!")
 
-# Delete File
-
-
-def deleteFile(path):
+def delete_file(path):
     """
         Deletes file
     """
@@ -94,10 +83,7 @@ def deleteFile(path):
     else:
         print("Successfully removed file")
 
-# Check If Folder
-
-
-def isFolder(path):
+def is_folder(path):
     """
         Checks to see if path is a folder
     """
@@ -109,10 +95,7 @@ def isFolder(path):
     except OSError:
         print("Sequestum: Folder checking failed")
 
-# Check If File
-
-
-def isFile(path):
+def is_file(path):
     """
         Checks to see if path is a file
     """
@@ -124,10 +107,7 @@ def isFile(path):
     except OSError:
         print("Sequestrum: File check failed")
 
-# Grab all package names
-
-
-def grabPackageNames(path):
+def grab_package_names(path):
     packageList = []
     for name in os.listdir(path):
         if os.path.isdir(path):

@@ -3,7 +3,7 @@
 # Imports
 import argparse
 
-def getArguments():
+def get_arguments():
     """
         Return the arguments in the form of a tuple
     """
