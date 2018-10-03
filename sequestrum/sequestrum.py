@@ -17,6 +17,7 @@ packages_to_unlink = []
 # Global constants
 HOME_PATH = str(Path.home()) + "/"
 
+
 # Creates a new directory. It creates a new folder path using the config
 # then creates a new folder using that path. It then loops through each
 # link in the links list and **copies** (not symlinking) the original file
