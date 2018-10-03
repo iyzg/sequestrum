@@ -1,13 +1,7 @@
-#!/usr/bin/env python3
-#
-# Sequestrum - Dotfile Manager
-
 # Libraries
 import sys
-from pathlib import Path
 import yaml
-
-HOME_PATH = str(Path.home()) + "/"
+from pathlib import Path
 
 # Modules
 import sequestrum.errors as errors
@@ -19,6 +13,9 @@ import sequestrum.logging as logging
 
 # For Later
 packages_to_unlink = []
+
+# Global constants
+HOME_PATH = str(Path.home()) + "/"
 
 # Creates a new directory. It creates a new folder path using the config
 # then creates a new folder using that path. It then loops through each
