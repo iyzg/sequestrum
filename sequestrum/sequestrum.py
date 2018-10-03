@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 import yaml
 
-homePath = str(Path.home()) + "/"
+HOME_PATH = str(Path.home()) + "/"
 
 # Modules
 import sequestrum.errors as errors
@@ -40,7 +40,7 @@ def setup_package(package_key, config_dict, dotfile_path):
 
     for link in package_config['links']:
         for key, value in link.items():
-            source_file = homePath + value
+            source_file = HOME_PATH + value
             dest_file = new_package_path + key
             
             # Checks
@@ -81,7 +81,7 @@ def install_package(package_key, config_dict, dotfile_path):
         # Symlink files to local files
         for key, value in link.items():
             source_file = directory_path + key
-            dest_file = homePath + value
+            dest_file = HOME_PATH + value
 
             if directories.is_folder(dest_file):
                 continue
@@ -104,7 +104,7 @@ def get_packages_to_unlink(package_key, config_dict, dotfile_path):
 
     for link in package_config['links']:
         for _, value in link.items():
-            fileToGrab = homePath + value
+            fileToGrab = HOME_PATH + value
 
             if fileToGrab not in packages_to_unlink:
                 packages_to_unlink.append(fileToGrab)
@@ -133,7 +133,7 @@ def check_install_locations(package_key, config_dict):
     """
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
-            destPath = homePath + value
+            destPath = HOME_PATH + value
             if symlink.symlink_source_exists(destPath):
                 print(errors.format_error(
                     "Safety", "{} already exists.".format(destPath)))
@@ -192,7 +192,7 @@ def main():
             "Invalid config file, a base package needs to be defined")
 
     # Grab the path of the dotfile directory
-    dotfile_path = homePath + \
+    dotfile_path = HOME_PATH + \
         config_dict['options']['base']['dotfileDirectory'] + "/"
 
     # Setups up the dotfiles accordingly to the config. This should only be
@@ -267,6 +267,11 @@ def main():
         else:
             print(errors.format_error("Sequstrum", "Invalid Package."))
 
+    # Refresh
+    # -------
+    # Refreshs the symlinks with the current file. This is so users don't have to manually
+    # move files around and can instead manage their dotfiles in one file.
+    # TODO: Remove files with warning if they are gone from the config
     elif args[0] == "Refresh":
         if args[1] == "all":
             dotfile_package_list = directories.grab_package_names(dotfile_path)
@@ -299,6 +304,18 @@ def main():
             unlink_packages()
         else:
             print(errors.format_error("Sequestrum", "Invalid Package."))
+
+
+    # Walkthrough
+    # -----------
+    elif args[0] == "Walkthrough":
+        print("Sequestrum Walkthrough")
+        print("----------------------")
+        print("Part 1: Dotfile Directory")
+        dotfile_folder = input("What directory is for dotfiles?")
+        if directories.is_folder(HOME_PATH + dotfile_folder) == False:
+            logging.print_fatal("Invalid Directory, Walkthrough Exiting")
+
     else:
         print(errors.format_error("Sequestrum", "Invalid Command"))
 
