@@ -10,12 +10,12 @@ import yaml
 homePath = str(Path.home()) + "/"
 
 # Modules
-import errors
-import directories
-import symlink
-import arguments
-import commands
-import logging
+import sequestrum.errors as errors
+import sequestrum.directories as directories
+import sequestrum.symlink as symlink
+import sequestrum.arguments as arguments
+import sequestrum.commands as commands
+import sequestrum.logging as logging
 
 # For Later
 packages_to_unlink = []
@@ -120,7 +120,7 @@ def unlink_packages():
         elif directories.is_file(path):
             directories.delete_file(path)
         else:
-            print(errors.formatError("Sequestrum", "Nothing to unlink!"))
+            print(errors.format_error("Sequestrum", "Nothing to unlink!"))
 
 # Goes through all the file locations that need to be empty for the
 # symlinking to work and checks to see if they're empty. If they're not,
@@ -134,8 +134,8 @@ def check_install_locations(package_key, config_dict):
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             destPath = homePath + value
-            if symlink.symlinkSourceExists(destPath):
-                print(errors.formatError(
+            if symlink.symlink_source_exists(destPath):
+                print(errors.format_error(
                     "Safety", "{} already exists.".format(destPath)))
                 return False
 
@@ -146,7 +146,7 @@ def check_install_locations(package_key, config_dict):
 # overwriting of file that may or may not be important to the user.
 
 
-def checkSourceLocations(package_key, config_dict, dotfile_path):
+def check_source_locations(package_key, config_dict, dotfile_path):
     """
         Check to see if dotfile locations are clean
     """
@@ -157,38 +157,38 @@ def checkSourceLocations(package_key, config_dict, dotfile_path):
         for key, value in link.items():
             sourcePath = directory_path + key
 
-            if symlink.symlinkSourceExists(sourcePath):
-                logging.printFatal("File dosent exists: {}".format(sourcePath))
+            if symlink.symlink_source_exists(sourcePath):
+                logging.print_fatal("File dosent exists: {}".format(sourcePath))
 
 
 def main():
 
-    # Grab user inputted arguments from the module and make sure they entered some.
-    arguments = arguments.getArguments()
+    # Grab user inputted args from the module and make sure they entered some.
+    args = arguments.get_arguments()
 
-    if arguments is None:
-        print(errors.formatError("Arguments", "Must pass arguments"))
+    if args is None:
+        print(errors.format_error("Arguments", "Must pass args"))
         sys.exit()
 
     try:
         configFile = open("config.yaml", "r")
     except:
-        print(errors.formatError("Core", "No configuration found."))
+        print(errors.format_error("Core", "No configuration found."))
         sys.exit()
 
     config_dict = yaml.load(configFile)
-    packageList = []
+    package_list = []
 
     # Grab list of directories from the config.
     for key, value in config_dict['options'].items():
         if key.endswith("Package"):
-            friendlyName = key[:-7]
-            config_dict['options'][key]['package_name'] = friendlyName
-            packageList.append(friendlyName)
+            friendly_name = key[:-7]
+            config_dict['options'][key]['package_name'] = friendly_name
+            package_list.append(friendly_name)
 
     # We need to have a base package
     if "base" not in config_dict['options']:
-        logging.printFatal(
+        logging.print_fatal(
             "Invalid config file, a base package needs to be defined")
 
     # Grab the path of the dotfile directory
@@ -199,38 +199,38 @@ def main():
     # ran once to setup your dotfiles with the right directories. After this,
     # users should use the update argument to update their dotfiles with new
     # packages.
-    if arguments[0] == "Setup":
-        if arguments[1] == "all":
+    if args[0] == "Setup":
+        if args[1] == "all":
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
-                    if not checkSourceLocations(key, config_dict, dotfile_path):
-                        print(errors.formatError("Sequestrum", "Dotfile Path Missing"))
+                    if not check_source_locations(key, config_dict, dotfile_path):
+                        print(errors.format_error("Sequestrum", "Dotfile Path Missing"))
                         sys.exit()
 
                     if not check_install_locations(key, config_dict):
-                        print(errors.formatError("Sequestrum", "Home Path Occupied"))
+                        print(errors.format_error("Sequestrum", "Home Path Occupied"))
                         sys.exit()
 
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     setup_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
-            print(errors.formatError("Sequestrum",
+            print(errors.format_error("Sequestrum",
                                      "uwu Another Impossible Safety Net owo"))
 
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
     # already exists on the local system, delete it then symlink properly to
     # avoid errors.
-    elif arguments[0] == "Install":
+    elif args[0] == "Install":
         # Install all packages
-        if arguments[1] == "all":
+        if args[1] == "all":
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if not check_install_locations(key, config_dict):
@@ -239,68 +239,68 @@ def main():
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]['commandsBefore'], config_dict['options'][key]['package_name'])
                     install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]['commandsAfter'], config_dict['options'][key]['package_name'])
 
             logging.printInfo("We are done!")
 
         # The option to only install one package instead of all your dotfiles.
-        elif arguments[1] in packageList:
+        elif args[1] in package_list:
             for key, value in config_dict['options'].items():
-                if key == arguments[1] + "Package":
+                if key == args[1] + "Package":
                     if not check_install_locations(key, config_dict):
                         sys.exit()
 
             for key, value in config_dict['options'].items():
-                if key == arguments[1] + "Package":
+                if key == args[1] + "Package":
                     if "commandsBefore" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
-            print(errors.formatError("Sequstrum", "Invalid Package."))
+            print(errors.format_error("Sequstrum", "Invalid Package."))
 
-    elif arguments[0] == "Refresh":
-        if arguments[1] == "all":
-            dotfilePackageList = directories.grabPackageNames(dotfile_path)
+    elif args[0] == "Refresh":
+        if args[1] == "all":
+            dotfile_package_list = directories.grab_package_names(dotfile_path)
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     setup_package(key, config_dict, dotfile_path)
                     install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.runCommands(
+                        commands.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
-            print(errors.formatError("Sequestrum", "Source code compromised."))
+            print(errors.format_error("Sequestrum", "Source code compromised."))
 
     # Unlink the source files. This doesn't really "unlink", instead it actually just
     # deletes the files. It collects a list of files to unlink then it goes through and
     # unlinks them all.
-    elif arguments[0] == "Unlink":
-        if arguments[1] == "all":
+    elif args[0] == "Unlink":
+        if args[1] == "all":
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     get_packages_to_unlink(key, config_dict, dotfile_path)
             unlink_packages()
-        elif arguments[1] in packageList:
+        elif args[1] in package_list:
             for key, value in config_dict['options'].items():
-                if key == arguments[1] + "Package":
+                if key == args[1] + "Package":
                     get_packages_to_unlink(key, config_dict, dotfile_path)
             unlink_packages()
         else:
-            print(errors.formatError("Sequestrum", "Invalid Package."))
+            print(errors.format_error("Sequestrum", "Invalid Package."))
     else:
-        print(errors.formatError("Sequestrum", "Invalid Command"))
+        print(errors.format_error("Sequestrum", "Invalid Command"))
 
 
 if __name__ == '__main__':
