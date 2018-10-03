@@ -169,14 +169,18 @@ def main():
         print(errors.format_error("Arguments", "Must pass args"))
         sys.exit()
 
-    try:
-        configFile = open("config.yaml", "r")
-    except:
-        print(errors.format_error("Core", "No configuration found."))
-        sys.exit()
-
-    config_dict = yaml.load(configFile)
+    configFile = None
+    config_dict = None
     package_list = []
+
+    if args[0] != "Walkthrough":
+        try:
+            configFile = open("config.yaml", "r")
+        except:
+            print(errors.format_error("Core", "No configuration found."))
+            sys.exit()
+
+        config_dict = yaml.load(configFile)
 
     # Grab list of directories from the config.
     for key, value in config_dict['options'].items():
@@ -316,6 +320,8 @@ def main():
         dotfile_folder = input("What directory is for dotfiles?")
         if directories.is_folder(HOME_PATH + dotfile_folder) == False:
             logging.print_fatal("Invalid Directory, Walkthrough Exiting")
+        else:
+            logging.print_info("{} detected successfully".format(dotfile_folder))
 
     else:
         print(errors.format_error("Sequestrum", "Invalid Command"))

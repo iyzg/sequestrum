@@ -8,7 +8,7 @@ def delay_print(string):
     for character in string:
         sys.stdout.write(character)
         sys.stdout.flush()
-        time.sleep(0.05)
+        time.sleep(0.07)
 
     print("\n", end="")
 
@@ -33,7 +33,7 @@ def print_warn(error_message, package_name=None):
 
 
 def print_info(error_message, package_name=None):
-    cprint(format_output("INFO", error_message, package_name), 'green')
+    cprint(format_output("INFO", error_message, package_name), 'blue')
 
 
 def print_verbose(error_message, package_name=None):
