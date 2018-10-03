@@ -3,10 +3,12 @@
 # Imports
 import argparse
 
+
 def get_arguments():
     """
         Return the arguments in the form of a tuple
     """
+
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
 

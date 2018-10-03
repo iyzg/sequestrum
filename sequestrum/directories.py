@@ -5,8 +5,8 @@ import os
 import sys
 import shutil
 import pathlib
-
 import logging
+
 
 def create_folder(path, package_name):
     """
@@ -15,24 +15,23 @@ def create_folder(path, package_name):
     try:
         os.makedirs(path)
     except OSError as error:
-        logMod.printError(
-            "Could not create folder \"{}\" due to following error: {}".format(path, error), package_name)
+        logMod.printError("Could not create folder \"{}\" due to following error: {}".format(path, error), package_name)
     else:
-        logMod.printVerbose(
-            "Folder dosent exist and was created: {}".format(path), package_name)
+        logMod.printVerbose("Folder doesn't exist and was created: {}".format(path), package_name)
+
 
 def create_base_folder(path, package_name):
     """
         Create base directory if needed
     """
+
     basePath = pathlib.Path(path).parent
 
     # Check if the base folder is a file
     if basePath.exists():
         # Check if the parent is a file or if its a symlink
         if basePath.is_file() or basePath.is_symlink():
-            logMod.printError(
-                "Base directory is a file or link: {}".format(basePath), package_name)
+            logMod.printError("Base directory is a file or link: {}".format(basePath), package_name)
             return False
         # If not, it must be a directory, so we are ok
         else:
@@ -42,14 +41,13 @@ def create_base_folder(path, package_name):
     try:
         basePath.mkdir(parents=True, exist_ok=True)
     except Exception as error:
-        logMod.printError(
-            "Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), package_name)
+        logMod.printError("Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), package_name)
         return False
     else:
-        logMod.printVerbose(
-            "Parent folder dosent exist and was created: {}".format(basePath), package_name)
+        logMod.printVerbose("Parent folder dosent exist and was created: {}".format(basePath), package_name)
 
     return True
+
 
 def delete_folder(path):
     """
@@ -83,6 +81,7 @@ def delete_file(path):
     else:
         print("Successfully removed file")
 
+
 def is_folder(path):
     """
         Checks to see if path is a folder
@@ -95,10 +94,12 @@ def is_folder(path):
     except OSError:
         print("Sequestum: Folder checking failed")
 
+
 def is_file(path):
     """
         Checks to see if path is a file
     """
+
     try:
         if os.path.isfile(path):
             return True
@@ -107,8 +108,10 @@ def is_file(path):
     except OSError:
         print("Sequestrum: File check failed")
 
+
 def grab_package_names(path):
     packageList = []
+
     for name in os.listdir(path):
         if os.path.isdir(path):
             packageList.append(name)
