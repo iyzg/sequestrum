@@ -2,6 +2,15 @@
 
 import sys
 from termcolor import cprint
+import time
+
+def delay_print(string):
+    for character in string:
+        sys.stdout.write(character)
+        sys.stdout.flush()
+        time.sleep(0.05)
+
+    print("\n", end="")
 
 def format_output(error_type, error_message, package_name=None):
     if package_name is not None and package_name is not "":

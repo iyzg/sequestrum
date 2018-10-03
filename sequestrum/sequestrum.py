@@ -308,10 +308,12 @@ def main():
 
     # Walkthrough
     # -----------
+    # Walks the user through a first time config writing. Also teachs them a bit about
+    # all the different options and packages to get them the basics.
     elif args[0] == "Walkthrough":
-        print("Sequestrum Walkthrough")
-        print("----------------------")
-        print("Part 1: Dotfile Directory")
+        logging.delay_print("Sequestrum Walkthrough")
+        logging.delay_print("----------------------")
+        logging.delay_print("Part 1: Dotfile Directory")
         dotfile_folder = input("What directory is for dotfiles?")
         if directories.is_folder(HOME_PATH + dotfile_folder) == False:
             logging.print_fatal("Invalid Directory, Walkthrough Exiting")
