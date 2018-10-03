@@ -132,6 +132,7 @@ def check_install_locations(package_key, config_dict):
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             destPath = HOME_PATH + value
+
             if symlink.symlink_source_exists(destPath):
                 print(errors.format_error(
                     "Safety", "{} already exists.".format(destPath)))
