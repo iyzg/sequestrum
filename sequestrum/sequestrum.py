@@ -315,6 +315,7 @@ def main():
     # Walks the user through a first time config writing. Also teachs them a bit about
     # all the different options and packages to get them the basics.
     elif args[0] == "Walkthrough":
+        print("")
         logging.delay_print("Sequestrum Walkthrough")
         logging.delay_print("----------------------")
         logging.delay_print("Part 1: Dotfile Directory")
@@ -335,7 +336,14 @@ def main():
         package_name = input("What would you like to name your first package: ")
         local_filename = input("What file would you like in the package (Ex- .vimrc): ")
         dotfile_filename = input("File name in dotfiles (Ex- vimrc): ")
-
+        
+        print("")
+        logging.delay_print("---------------")
+        logging.delay_print("Part 3: Summary")
+        logging.delay_print("Dotfile Directory: {}".format(dotfile_folder))
+        logging.delay_print("Package Name: {}".format(package_name))
+        logging.delay_print("File: {} --> {}".format(local_filename, dotfile_filename))
+        print("")
     else:
         print(errors.format_error("Sequestrum", "Invalid Command"))
 
