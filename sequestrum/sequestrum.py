@@ -1,8 +1,8 @@
 # Libraries
-import sys
-import yaml
-from time import sleep
 from pathlib import Path
+import sys
+from time import sleep
+import yaml
 
 # Modules
 import sequestrum.errors as errors
@@ -34,14 +34,14 @@ def setup_package(package_key, config_dict, dotfile_path):
     package_config = config_dict['options'][package_key]
     package_name = package_config['package_name']
     new_package_path = dotfile_path + package_config['directoryName'] + "/"
-    if directories.is_folder(new_package_path) == False:
+    if directories.is_folder(new_package_path) is False:
         directories.create_folder(new_package_path, package_name)
 
     for link in package_config['links']:
         for key, value in link.items():
             source_file = HOME_PATH + value
             dest_file = new_package_path + key
-            
+
             # Checks
             if directories.is_folder(dest_file):
                 continue
@@ -226,7 +226,7 @@ def main():
                             config_dict['options'][key]["commandsAfter"])
         else:
             print(errors.format_error("Sequestrum",
-                                     "uwu Another Impossible Safety Net owo"))
+                                      "uwu Another Impossible Safety Net owo"))
 
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
@@ -250,7 +250,7 @@ def main():
                         commands.run_commands(
                             config_dict['options'][key]['commandsAfter'], config_dict['options'][key]['package_name'])
 
-            logging.printInfo("We are done!")
+            logging.print_info("We are done!")
 
         # The option to only install one package instead of all your dotfiles.
         elif args[1] in package_list:
@@ -278,7 +278,6 @@ def main():
     # TODO: Remove files with warning if they are gone from the config
     elif args[0] == "Refresh":
         if args[1] == "all":
-            dotfile_package_list = directories.grab_package_names(dotfile_path)
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
@@ -314,6 +313,8 @@ def main():
     # -----------
     # Walks the user through a first time config writing. Also teachs them a bit about
     # all the different options and packages to get them the basics.
+    # TODO: If config.yaml exists, exit. Also add step to show the user how to
+    # setup their dotfiles.
     elif args[0] == "Walkthrough":
         print("")
         logging.delay_print("Sequestrum Walkthrough")
@@ -322,8 +323,10 @@ def main():
         sleep(0.1)
         dotfile_folder = input("What directory is for dotfiles: ")
 
-        if directories.is_folder(HOME_PATH + dotfile_folder) == False:
+        if directories.is_folder(HOME_PATH + dotfile_folder) is False:
             logging.print_fatal("Invalid Directory, Walkthrough Exiting")
+        elif directories.current_path() != HOME_PATH + dotfile_folder:
+            logging.print_fatal("Walkthrough must be run in dotfile directory")
         else:
             logging.print_info("{} detected successfully".format(dotfile_folder))
         
@@ -333,10 +336,23 @@ def main():
         logging.delay_print("Packages are just groups of files you'd like to seperate.")
         logging.delay_print("So for example, you might store your .vimrc in your vim package")
         logging.delay_print("Style wise, package names are lowercase but it doesn't affect Sequestrum.")
-        package_name = input("What would you like to name your first package: ")
+        package_name = input("What would you like to name your first package (Ex- vim): ")
         local_filename = input("What file would you like in the package (Ex- .vimrc): ")
         dotfile_filename = input("File name in dotfiles (Ex- vimrc): ")
+
+        config = """
+            options:
+                base: &base
+                    dotfileDirectory: {}
+            
+            {}Package:
+                directoryName: {}
+                links:
+                    - {}: {}
+        """.format(dotfile_folder, package_name, package_name, dotfile_filename, local_filename)
         
+        stream = open('config.yaml', 'w')
+        yaml.dump(yaml.load(config), stream, default_flow_style=False)
         print("")
         logging.delay_print("---------------")
         logging.delay_print("Part 3: Summary")
