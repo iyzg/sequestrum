@@ -12,6 +12,7 @@ def delay_print(string):
 
     print("\n", end="")
 
+
 def format_output(error_type, error_message, package_name=None):
     if package_name is not None and package_name is not "":
         return("[{}:{}] {}".format(error_type, package_name, error_message))

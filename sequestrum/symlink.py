@@ -6,13 +6,12 @@ from shutil import copytree, copyfile
 
 import logging
 
-# Functions
 
-
-def create_symlink(source, destination, package_name = None):
+def create_symlink(source, destination, package_name=None):
     """
         Creates symlink from source to destination
     """
+
     try:
         os.symlink(source, destination)
     except OSError as error:
@@ -25,6 +24,7 @@ def copy_file(source, destination):
     """
         Copys file from source to destination
     """
+
     try:
         copyfile(source, destination)
     except IOError:
@@ -37,6 +37,7 @@ def copy_folder(source, destination):
     """
         Copies frolder from source to destination
     """
+
     try:
         copytree(source, destination)
     except IOError:

@@ -29,6 +29,7 @@ def setup_package(package_key, config_dict, dotfile_path):
     """
         Setup package directory on dotfile
     """
+
     # Make a path for the new directory path using the name specified in the
     # config then make the folder using the path.
     package_config = config_dict['options'][package_key]
@@ -71,6 +72,7 @@ def install_package(package_key, config_dict, dotfile_path):
     """
         Install package to local system
     """
+
     # Grab dotfile package directory
     package_config = config_dict['options'][package_key]
     directory_path = dotfile_path + package_config['directoryName'] + "/"
@@ -99,6 +101,7 @@ def get_packages_to_unlink(package_key, config_dict, dotfile_path):
     """
         Grab packages and put them into a list ( NO DUPES )
     """
+
     package_config = config_dict['options'][package_key]
 
     for link in package_config['links']:
@@ -130,6 +133,7 @@ def check_install_locations(package_key, config_dict):
     """
         Checks to see if link locations are clean
     """
+
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             destPath = HOME_PATH + value
@@ -150,6 +154,7 @@ def check_source_locations(package_key, config_dict, dotfile_path):
     """
         Check to see if dotfile locations are clean
     """
+
     directory_path = dotfile_path + \
         config_dict['options'][package_key]['directoryName'] + "/"
 
@@ -162,7 +167,6 @@ def check_source_locations(package_key, config_dict, dotfile_path):
 
 
 def main():
-
     # Grab user inputted args from the module and make sure they entered some.
     args = arguments.get_arguments()
 

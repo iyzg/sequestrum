@@ -4,7 +4,6 @@
 import os
 import shutil
 import pathlib
-
 import logging
 
 
@@ -33,6 +32,7 @@ def create_base_folder(path, package_name):
     """
         Create base directory if needed
     """
+
     basePath = pathlib.Path(path).parent
 
     # Check if the base folder is a file
@@ -58,6 +58,7 @@ def create_base_folder(path, package_name):
             "Parent folder dosent exist and was created: {}".format(basePath), package_name)
 
     return True
+
 
 def delete_folder(path):
     """
@@ -110,6 +111,7 @@ def is_file(path):
     """
         Checks to see if path is a file
     """
+
     try:
         if os.path.isfile(path):
             return True
