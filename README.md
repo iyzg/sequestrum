@@ -1,9 +1,6 @@
 # Sequestrum
 ## Description
-A modern, lightweight dotfile manager for the masses. This README.md may look daunting, but trust me on this, it's easy as pie.
-Promise. Now you may be wondering, why use this over Stow or Dotbot. Simple.Well for starters, the name is better. Do you need any
-other reasons? Fine, fine.. some real reasons.This is specifically made for dotfile management and provides features like modulatarity, 
-dotfile repository setup, and more!
+A modern, lightweight, easy to use dotfile manager for the masses that provides modularity, dotfile repository setup, and more.
 
 ## Install Guide
 1. `sudo pip install (--user) sequestrum`
@@ -12,17 +9,15 @@ dotfile repository setup, and more!
 
 ## Usage
 ### Getting Started
-First, you'll need a Sequestrum Config in your dotfiles so it knows how to properly handle files. A guide to writing 
-your own custom config along with an exampe config are down included down below. After you're done writing your config,
-you can come back to finish setup! 
+You'll need to create a Sequestrum configuration in your dotfiles so that the program knows how to properly handle your dotfiles.
+Refer to **Config Guide** to for information on configuration, or **Example Config** for an example of the configuration/
 
-**Note:** Your dotfiles should be empty of all config files to keep from having duplicate files unless for some reason you
-would want that. Never edit your config when you have packages installed. Unlink then edit your config to prevent lost files.
+**Note:** Your dotfiles should be empty of configuration files to prevent duplicates, unless this is the intention. Never edit
+your configuration when you have packages installed. Unlink before editing configuration files to prevent file loss.
 
-Now they you're all setup with your config file, time for the fun to begin! If your configuration file is setup correctly, you
-should be able to run `sequestrum --setup` (full list of commands below) to finish setting up your dotfiles. If something goes 
-wrong, be sure to check your configuration file to make sure everything is correct. Run `-sequestrum --install` after to symlink 
-your dotfiles to your system. Setup will delete all local system files and move them to the dotfile repository.
+Once your configuration file is setup correctly, run `sequestrum --setup` to finish setting up your dotfiles. If something goes
+wrong, ensure that your configuration is correct. Run `sequestrum --install` afterwards to create symbolic links of your dotfiles
+to your system. Setup will delete all local system files and move them to the dotfile repository.
 
 ### Example Config
 Here is an example of a finished config file.
@@ -44,39 +39,43 @@ options:
 
 ```
 
-The name of your config file should be **config.yaml**, and should be placed within your dotfiles. In theory, the config file
-could be placed anywhere as long as you get your dotfileDirectory correct, but for cleanliness, it's recommneded to be placed
-within your dotfile repository.
-
 ### Config Guide
-As you can notice, all config files have to begin with `options:`. After that, you need to add a base, just take the one off the
-example configuration but change the name of the dotfileDirectory to wherever your dotfiles are located. For each set of files you
-want to package you'll need a seperate package declaration (ex. vimPackage in the example).
+Configuration is done with YAML. If you are not familiar with YAML syntax, it would be in your best interest to get
+at least a basic understanding of the syntax.
+
+The name of your configuration file should be **config.yaml** and should be placed in your dotfiles, or anywhere as long as the
+directory is specified in the `dotfileDirectory` variable in the configuration.
+
+All configuration files begin with `options:`, which is a parent to `base`. For each set of files you wish to package you'll need a
+separate package declaration (view **directories** for information on package declarations). Refer to the example configuration if needed.
 
 #### Directories
-As you'll notice the each set of links you want to group will need their own package. You can name these whatever you like as long 
-as they end in "Package" (ex. vimPackage or binPackage). In each package, you must include the directory name and 
-links. Directory name is whatever you'd like the directory holding all the links to be called, and the links are the files getting linked.
-Each link is formatted like so: `dotfileFileName: localFilePath`. So in the example config, the file vimrc within my dotfiles would be 
-linked to ~/.vimrc.
+Each set of links you want grouped require their own package. Packages can be named anything you would like so long as they're suffixed
+with the word "Package" (e.g. vimPackage or binPackage). Each package must include the directory name and links. Links are all of the
+files that will be linked to the package. Each link is listed in an array with the key as the link name, and the value being the path
+to the link.
 
 ### Installing
-Installing dotfiles onto your system is as easy as pie. Simple run sequestrum -i <package>. Make sure that the location on your system doesn't
-exist yet or it'll toss you an error. You can use all to install all your dotfiles.
+To install dotfiles, simply run `sequestrem --install <package>`. Make sure that the directory specified by the package doesn't exist at
+the time of running the installation command. You can use `all` as a keyword in place of the package name in the installation command
+to install all dotfiles.
 
 #### Additonal Options
-On top of the two required includes (directoryName and links), you also have to option to add a commandsBefore and commandsAfter.
-The names are pretty self explanatory, commandsBefore is a list of commands to run before the symlinking, and commandsAfter is a list 
-of commands to run after the symlinking. More of custom options will be added in the future. If you have any ideas, just leave a feature
-request. C:
+In addition to the required options for packages, you may also use `commandsBefore` and `commandsAfter` keys, which specify a list
+of commands that are to be run before and after (respectively )symbolic links are created.
 
-### List of Commands
-1. -s, --setup  : Setup your dotfile repository
-2. -i, --install: Installs your dotfiles onto the system
-3. -u, --unlink : Unlink a package from your system
-4. -d, --delete : Delete a repository from your dotfiles
-5. -r, --refresh: Refresh your dotfiles based on your config
-6. -b, --backup : Backup your system and check your config
+Additional options will be added in the future, and suggestions for additional options are open (be sure to leave a feature request).
+
+### List of Arguments
+
+|Short|Long|Description|
+|-|-|-|
+|-s|--setup|Sets up your dotfile repository|
+|-i|--install|Installs your dotfiles to the system|
+|-i|--unlink|Unlinks a package from your system|
+|-d|--delete|Deletes a repository|
+|-r|--refresh|Refreshes dotfiles based on the loaded configuration|
+|-b|--backup|Backs up your system configuration|
 
 ## TODOS
 - [ ] Dual way safety checks for install and setup
