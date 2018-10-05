@@ -4,7 +4,7 @@
 import os
 import shutil
 import pathlib
-import logging
+import sequestrum.logging as logging
 
 
 def current_path():

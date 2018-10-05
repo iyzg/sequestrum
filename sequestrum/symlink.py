@@ -4,7 +4,7 @@
 import os
 from shutil import copytree, copyfile
 
-import logging
+import sequestrum.logging as logging
 
 
 def create_symlink(source, destination, package_name=None):
