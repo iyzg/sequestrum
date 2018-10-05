@@ -12,6 +12,7 @@ def get_arguments():
     parser = argparse.ArgumentParser()
     group = parser.add_mutually_exclusive_group()
 
+    group.add_argument("-g", "--guide", help="Guide for writing the config and different options", action="store_true")
     group.add_argument("-i", "--install", help="Install packages onto local system. Use all to install all packages.")
     group.add_argument("-r", "--refresh", help="Refresh your dotfiles based on your config.", action="store_true")
     group.add_argument("-s", "--setup", help="Setup dotfile directory. Only run this once.", action="store_true")
@@ -20,13 +21,15 @@ def get_arguments():
 
     args = parser.parse_args()
 
-    if args.install != None:
+    if args.install is None:
         return ("Install", args.install)
     elif args.setup:
         return ("Setup", "all")
     elif args.refresh:
         return ("Refresh", "all")
-    elif args.unlink != None:
+    elif args.unlink is None:
         return ("Unlink", args.unlink)
     elif args.walkthrough:
         return ("Walkthrough", "all")
+    elif args.guide:
+        return ("Guide, all")

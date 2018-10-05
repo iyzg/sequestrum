@@ -374,6 +374,30 @@ def main():
         logging.delay_print("Package Name: {}".format(package_name))
         logging.delay_print("File: {} --> {}".format(local_filename, dotfile_filename))
         print("")
+
+    elif args[0] == "Guide":
+        print("")
+        logging.delay_print("Sequestrum Guide")
+        logging.delay_print("-----------------")
+        logging.delay_print("Section 1: Config")
+        logging.delay_print("Options:")
+        logging.delay_print("     [Mandatory] links: Links from dotfiles to local files")
+        logging.delay_print("     [Mandatory] directoryName: Name of the dotfile package folder")
+        logging.delay_print("     [Optional] commandsBefore: Commands that run before operations")
+        logging.delay_print("     [Optional] commandsAfter: Commands that run after operations")
+
+        print("")
+        logging.delay_print("------------")
+        logging.delay_print("Section 2: Commands")
+        logging.delay_print("|Short|Long|Description|")
+        logging.delay_print("|-|-|-|")
+        logging.delay_print("|-s|--setup|Sets up your dotfile repository|")
+        logging.delay_print("|-i|--install|Installs your dotfiles to the system|")
+        logging.delay_print("|-i|--unlink|Unlinks a package from your system|")
+        logging.delay_print("|-d|--delete|Deletes a repository|")
+        logging.delay_print("|-r|--refresh|Refreshes dotfiles based on the loaded configuration|")
+        logging.delay_print("|-b|--backup|Backs up your system configuration|")
+
     else:
         print(errors.format_error("Sequestrum", "Invalid Command"))
 
