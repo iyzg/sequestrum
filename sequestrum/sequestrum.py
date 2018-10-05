@@ -308,13 +308,10 @@ def main():
         else:
             print(errors.format_error("Sequestrum", "Invalid Package."))
 
-
     # Walkthrough
     # -----------
-    # Walks the user through a first time config writing. Also teachs them a bit about
-    # all the different options and packages to get them the basics.
-    # TODO: If config.yaml exists, exit. Also add step to show the user how to
-    # setup their dotfiles.
+    # Walks the user through a first time config writing. Also teachs them a
+    # bit about all the different options and packages to get them the basics.
     elif args[0] == "Walkthrough":
         print("")
         logging.delay_print("Sequestrum Walkthrough")
@@ -325,6 +322,8 @@ def main():
 
         if directories.is_folder(HOME_PATH + dotfile_folder) is False:
             logging.print_fatal("Invalid Directory, Walkthrough Exiting")
+        elif directories.is_file(HOME_PATH + dotfile_folder + "/config.yaml"):
+            logging.print_fatal("Config already exists! Walkthrough Exiting.")
         elif directories.current_path() != HOME_PATH + dotfile_folder:
             logging.print_fatal("Walkthrough must be run in dotfile directory")
         else:
@@ -353,9 +352,20 @@ def main():
         
         stream = open('config.yaml', 'w')
         yaml.dump(yaml.load(config), stream, default_flow_style=False)
+
+        print("")
+        logging.delay_print("--------------")
+        logging.delay_print("Part 3: Finish")
+        logging.delay_print("Now that your file is successfully added in your")
+        logging.delay_print("config, all you need to do is setup! Since this ")
+        logging.delay_print("is your first time, you can do sequestrum -s.   ")
+        logging.delay_print("This will delete your local file, add it to your")
+        logging.delay_print("dotfiles, and symlink it. You can check the guid")
+        logging.delay_print("e for commands to refresh your files.")
+
         print("")
         logging.delay_print("---------------")
-        logging.delay_print("Part 3: Summary")
+        logging.delay_print("Part 4: Summary")
         logging.delay_print("Dotfile Directory: {}".format(dotfile_folder))
         logging.delay_print("Package Name: {}".format(package_name))
         logging.delay_print("File: {} --> {}".format(local_filename, dotfile_filename))
