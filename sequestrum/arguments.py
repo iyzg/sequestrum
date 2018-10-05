@@ -16,6 +16,7 @@ def get_arguments():
     group.add_argument("-r", "--refresh", help="Refresh your dotfiles based on your config.", action="store_true")
     group.add_argument("-s", "--setup", help="Setup dotfile directory. Only run this once.", action="store_true")
     group.add_argument("-u", "--unlink", help="Unlink packages from local system. Use all to unlink all packages.")
+    group.add_argument("-w", "--walkthrough", help="Walkthrough for first time users", action="store_true")
 
     args = parser.parse_args()
 
@@ -27,3 +28,5 @@ def get_arguments():
         return ("Refresh", "all")
     elif args.unlink != None:
         return ("Unlink", args.unlink)
+    elif args.walkthrough:
+        return ("Walkthrough", "all")

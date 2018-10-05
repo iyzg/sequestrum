@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
-#
-# Sequestrum - Dotfile Manager
-
 # Libraries
-import sys
-import yaml
 from pathlib import Path
+import sys
+from time import sleep
+import yaml
 
 # Modules
 import sequestrum.errors as errors
@@ -38,7 +35,7 @@ def setup_package(package_key, config_dict, dotfile_path):
     package_config = config_dict['options'][package_key]
     package_name = package_config['package_name']
     new_package_path = dotfile_path + package_config['directoryName'] + "/"
-    if directories.is_folder(new_package_path) == False:
+    if directories.is_folder(new_package_path) is False:
         directories.create_folder(new_package_path, package_name)
 
     for link in package_config['links']:
@@ -177,30 +174,34 @@ def main():
         print(errors.format_error("Arguments", "Must pass args"))
         sys.exit()
 
-    try:
-        configFile = open("config.yaml", "r")
-    except:
-        print(errors.format_error("Core", "No configuration found."))
-        sys.exit()
-
-    config_dict = yaml.load(configFile)
+    config_file = None
+    config_dict = {}
     package_list = []
 
-    # Grab list of directories from the config.
-    for key, value in config_dict['options'].items():
-        if key.endswith("Package"):
-            friendly_name = key[:-7]
-            config_dict['options'][key]['package_name'] = friendly_name
-            package_list.append(friendly_name)
+    if args[0] != "Walkthrough":
+        try:
+            config_file = open("config.yaml", "r")
+        except:
+            print(errors.format_error("Core", "No configuration found."))
+            sys.exit()
 
-    # We need to have a base package
-    if "base" not in config_dict['options']:
-        logging.print_fatal(
-            "Invalid config file, a base package needs to be defined")
+        config_dict = yaml.load(config_file)
 
-    # Grab the path of the dotfile directory
-    dotfile_path = HOME_PATH + \
-        config_dict['options']['base']['dotfileDirectory'] + "/"
+        # Grab list of directories from the config.
+        for key, value in config_dict['options'].items():
+            if key.endswith("Package"):
+                friendly_name = key[:-7]
+                config_dict['options'][key]['package_name'] = friendly_name
+                package_list.append(friendly_name)
+
+        # We need to have a base package
+        if "base" not in config_dict['options']:
+            logging.print_fatal(
+                "Invalid config file, a base package needs to be defined")
+
+        # Grab the path of the dotfile directory
+        dotfile_path = HOME_PATH + \
+            config_dict['options']['base']['dotfileDirectory'] + "/"
 
     # Setups up the dotfiles accordingly to the config. This should only be
     # ran once to setup your dotfiles with the right directories. After this,
@@ -229,7 +230,7 @@ def main():
                             config_dict['options'][key]["commandsAfter"])
         else:
             print(errors.format_error("Sequestrum",
-                                     "uwu Another Impossible Safety Net owo"))
+                                      "uwu Another Impossible Safety Net owo"))
 
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
@@ -274,9 +275,13 @@ def main():
         else:
             print(errors.format_error("Sequstrum", "Invalid Package."))
 
+    # Refresh
+    # -------
+    # Refreshs the symlinks with the current file. This is so users don't have to manually
+    # move files around and can instead manage their dotfiles in one file.
+    # TODO: Remove files with warning if they are gone from the config
     elif args[0] == "Refresh":
         if args[1] == "all":
-            dotfile_package_list = directories.grab_package_names(dotfile_path)
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
@@ -306,6 +311,69 @@ def main():
             unlink_packages()
         else:
             print(errors.format_error("Sequestrum", "Invalid Package."))
+
+    # Walkthrough
+    # -----------
+    # Walks the user through a first time config writing. Also teachs them a
+    # bit about all the different options and packages to get them the basics.
+    elif args[0] == "Walkthrough":
+        print("")
+        logging.delay_print("Sequestrum Walkthrough")
+        logging.delay_print("----------------------")
+        logging.delay_print("Part 1: Dotfile Directory")
+        sleep(0.1)
+        dotfile_folder = input("What directory is for dotfiles: ")
+
+        if directories.is_folder(HOME_PATH + dotfile_folder) is False:
+            logging.print_fatal("Invalid Directory, Walkthrough Exiting")
+        elif directories.is_file(HOME_PATH + dotfile_folder + "/config.yaml"):
+            logging.print_fatal("Config already exists! Walkthrough Exiting.")
+        elif directories.current_path() != HOME_PATH + dotfile_folder:
+            logging.print_fatal("Walkthrough must be run in dotfile directory")
+        else:
+            logging.print_info("{} detected successfully".format(dotfile_folder))
+        
+        print("")
+        logging.delay_print("----------------")
+        logging.delay_print("Part 2: Packages")
+        logging.delay_print("Packages are just groups of files you'd like to seperate.")
+        logging.delay_print("So for example, you might store your .vimrc in your vim package")
+        logging.delay_print("Style wise, package names are lowercase but it doesn't affect Sequestrum.")
+        package_name = input("What would you like to name your first package (Ex- vim): ")
+        local_filename = input("What file would you like in the package (Ex- .vimrc): ")
+        dotfile_filename = input("File name in dotfiles (Ex- vimrc): ")
+
+        config = """
+            options:
+                base: &base
+                    dotfileDirectory: {}
+            
+            {}Package:
+                directoryName: {}
+                links:
+                    - {}: {}
+        """.format(dotfile_folder, package_name, package_name, dotfile_filename, local_filename)
+        
+        stream = open('config.yaml', 'w')
+        yaml.dump(yaml.load(config), stream, default_flow_style=False)
+
+        print("")
+        logging.delay_print("--------------")
+        logging.delay_print("Part 3: Finish")
+        logging.delay_print("Now that your file is successfully added in your")
+        logging.delay_print("config, all you need to do is setup! Since this ")
+        logging.delay_print("is your first time, you can do sequestrum -s.   ")
+        logging.delay_print("This will delete your local file, add it to your")
+        logging.delay_print("dotfiles, and symlink it. You can check the guid")
+        logging.delay_print("e for commands to refresh your files.")
+
+        print("")
+        logging.delay_print("---------------")
+        logging.delay_print("Part 4: Summary")
+        logging.delay_print("Dotfile Directory: {}".format(dotfile_folder))
+        logging.delay_print("Package Name: {}".format(package_name))
+        logging.delay_print("File: {} --> {}".format(local_filename, dotfile_filename))
+        print("")
     else:
         print(errors.format_error("Sequestrum", "Invalid Command"))
 

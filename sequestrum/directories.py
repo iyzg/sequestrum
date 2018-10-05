@@ -2,10 +2,16 @@
 
 # Libraries
 import os
-import sys
 import shutil
 import pathlib
 import logging
+
+
+def current_path():
+    """
+        Returns the current path
+    """
+    return os.getcwd()
 
 
 def create_folder(path, package_name):
@@ -70,6 +76,7 @@ def delete_folder(path):
     else:
         print("Sequestrum: Deleted successfully!")
 
+
 def delete_file(path):
     """
         Deletes file
@@ -110,10 +117,12 @@ def is_file(path):
 
 
 def grab_package_names(path):
-    packageList = []
-
+    """
+        Grabs package names from config
+    """
+    package_list = []
     for name in os.listdir(path):
         if os.path.isdir(path):
-            packageList.append(name)
+            package_list.append(name)
 
-    return packageList
+    return package_list
