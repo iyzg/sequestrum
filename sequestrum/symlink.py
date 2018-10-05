@@ -15,9 +15,9 @@ def create_symlink(source, destination, package_name=None):
     try:
         os.symlink(source, destination)
     except OSError as error:
-        logMod.print_error("Unable to create symlink: {}".format(error), package_name)
+        logging.print_error("Unable to create symlink: {}".format(error), package_name)
     else:
-        logMod.print_verbose("Linking {} <-> {}".format(source, destination), package_name)
+        logging.print_verbose("Linking {} <-> {}".format(source, destination), package_name)
 
 
 def copy_file(source, destination):

@@ -253,7 +253,7 @@ def main():
                         commands.run_commands(
                             config_dict['options'][key]['commandsAfter'], config_dict['options'][key]['package_name'])
 
-            logging.printInfo("We are done!")
+            logging.print_info("We are done!")
 
         # The option to only install one package instead of all your dotfiles.
         elif args[1] in package_list:
