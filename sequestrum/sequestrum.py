@@ -17,6 +17,7 @@ packages_to_unlink = []
 
 # Global constants
 HOME_PATH = str(Path.home()) + "/"
+GLOBAL_COMMANDS = ["Walkthrough", "Guide"]
 
 
 # Creates a new directory. It creates a new folder path using the config
@@ -177,8 +178,8 @@ def main():
     config_file = None
     config_dict = {}
     package_list = []
-
-    if args[0] != "Walkthrough" or args[0] != "Guide":
+    
+    if args[0] not in GLOBAL_COMMANDS:
         try:
             config_file = open("config.yaml", "r")
         except:
