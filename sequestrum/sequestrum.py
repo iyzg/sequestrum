@@ -178,7 +178,7 @@ def main():
     config_dict = {}
     package_list = []
 
-    if args[0] != "Walkthrough":
+    if args[0] != "Walkthrough" or args[0] != "Guide":
         try:
             config_file = open("config.yaml", "r")
         except:
@@ -387,7 +387,7 @@ def main():
         logging.delay_print("     [Optional] commandsAfter: Commands that run after operations")
 
         print("")
-        logging.delay_print("------------")
+        logging.delay_print("-------------------")
         logging.delay_print("Section 2: Commands")
         logging.delay_print("|Short|Long|Description|")
         logging.delay_print("|-|-|-|")
@@ -397,7 +397,7 @@ def main():
         logging.delay_print("|-d|--delete|Deletes a repository|")
         logging.delay_print("|-r|--refresh|Refreshes dotfiles based on the loaded configuration|")
         logging.delay_print("|-b|--backup|Backs up your system configuration|")
-
+        print("")
     else:
         print(errors.format_error("Sequestrum", "Invalid Command"))
 
