@@ -32,4 +32,4 @@ def get_arguments():
     elif args.walkthrough:
         return ("Walkthrough", "all")
     elif args.guide:
-        return ("Guide, all")
+        return ("Guide", "all")
