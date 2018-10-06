@@ -1,7 +1,6 @@
 # Logging module
 
 import sys
-from termcolor import cprint
 import time
 
 def delay_print(string):
@@ -14,28 +13,27 @@ def delay_print(string):
 
 
 def format_output(error_type, error_message, package_name=None):
-    if package_name is not None and package_name is not "":
+    if package_name:
         return("[{}:{}] {}".format(error_type, package_name, error_message))
     else:
         return("[{}] {}".format(error_type, error_message))
 
 
 def print_fatal(error_message, package_name=None):
-    cprint(format_output("FATAL", error_message, package_name), 'red')
+    print("\033[1;31mFATAL\033[0m: {} {}".format(error_message, package_name))
     sys.exit()
 
 
 def print_error(error_message, package_name=None):
-    cprint(format_output("ERROR", error_message, package_name), 'red')
+    print("\033[1;31mERROR\033[0m: {} {}".format(error_message, package_name))
 
 
 def print_warn(error_message, package_name=None):
-    cprint(format_output("WARN", error_message, package_name), 'yellow')
+    print("\033[1;33mWARN\033[0m: {} {}".format(error_message, package_name))
 
 
 def print_info(error_message, package_name=None):
-    cprint(format_output("INFO", error_message, package_name), 'blue')
-
+    print("\033[1;32mINFO\033[0m: {} {}".format(error_message, package_name))
 
 def print_verbose(error_message, package_name=None):
-    cprint(format_output("VERBOSE", error_message, package_name), 'green')
+    print("\033[1;32mVERBOSE\033[0m: {} {}".format(error_message, package_name))
