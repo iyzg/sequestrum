@@ -6,9 +6,8 @@ other reasons? Fine, fine.. some real reasons.This is specifically made for dotf
 dotfile repository setup, and more!
 
 ## Install Guide
+- Arch: `yay -S sequestrum-git`
 1. `sudo pip install (--user) sequestrum`
-2. Leave a star on this repo
-3. Enjoy!
 
 ## Usage
 ### Getting Started
