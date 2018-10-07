@@ -6,84 +6,11 @@ other reasons? Fine, fine.. some real reasons.This is specifically made for dotf
 dotfile repository setup, and more!
 
 ## Install Guide
-<<<<<<< HEAD
 - Arch: `yay -S sequestrum-git`
 - Pip: `pip install --user sequestrum`
 
-## Usage
-### Getting Started
-First, you'll need a Sequestrum config in your dotfiles so it knows how to properly handle files. A guide to writing 
-your own custom config along with an exampe config are down included down below. After you're done writing your config,
-you can come back to finish setup! 
-
-**Note:** Your dotfiles should be empty of all config files to keep from having duplicate files unless for some reason you
-would want that. Never edit your config when you have packages installed. Unlink then edit your config to prevent lost files.
-
-Now that you're all setup with your config file, it's time for the fun to begin! If your configuration file is setup correctly, you
-should be able to run `sequestrum --setup` (full list of commands below) to finish setting up your dotfiles. If something goes 
-wrong, be sure to check your configuration file to make sure everything is correct. Run `sequestrum --install` afterwards to symlink 
-your dotfiles to your system. Setup will delete all local system files and move them to the dotfile repository.
-
-### Example Config
-Here is an example of a finished config file.
-
-```
-options:
-    base: &base
-        dotfileDirectory: .dotfiles
-    
-    vimPackage:
-        directoryName: vim
-        commandsBefore:
-            - ufetch
-        links:
-            - vimrc: .vimrc
-            - vim-plugins: .vim/plugins
-        commandsAfter:
-            - ls
-
-```
-
-The name of your config file should be `config.yaml`, and should be placed within your dotfiles. In theory, the config file
-could be placed anywhere as long as you get your `dotfileDirectory` correct, but for cleanliness, it's recommneded to be placed
-within your dotfile repository.
-
-### Config Guide
-As you can notice, all config files have to begin with `options:`. After that, you need to add a base, just take the one off the
-example configuration but change the name of the `dotfileDirectory` to wherever your dotfiles are located. For each set of files you
-want to package you'll need a separate package declaration (ex. `vimPackage` in the example).
-
-#### Directories
-As you'll notice the each set of links you want to group will need their own package. You can name these whatever you like as long 
-as they end in "Package" (ex. `vimPackage` or `binPackage`). In each package, you must include the directory name and 
-links. Directory name is whatever you'd like the directory holding all the links to be called, and the links are the files getting linked.
-Each link is formatted like so: `dotfileFileName: localFilePath`. So in the example config, the file vimrc within my dotfiles would be 
-linked to ~/.vimrc.
-
-### Installing
-Installing dotfiles onto your system is as easy as pie. Simple run `sequestrum -i <package>.` Make sure that the location on your system doesn't
-exist yet or it'll toss you an error. You can use all to install all your dotfiles.
-
-#### Additional Options
-On top of the two required includes (`directoryName` and `links`), you also have to option to add a `commandsBefore` and `commandsAfter`.
-The names are pretty self explanatory, `commandsBefore` is a list of commands to run before the symlinking, and `commandsAfter` is a list 
-of commands to run after the symlinking. More of custom options will be added in the future. If you have any ideas, just leave a feature
-request. C:
-
-### List of Commands
-1. `-s`, `--setup`  : Setup your dotfile repository
-2. `-i`, `--install`: Installs your dotfiles onto the system
-3. `-u`, `--unlink` : Unlink a package from your system
-4. `-d`, `--delete` : Delete a repository from your dotfiles
-5. `-r`, `--refresh`: Refresh your dotfiles based on your config
-6. `-b`, `--backup` : Backup your system and check your config
-
-## TODOS
-- [ ] Dual way safety checks for install and setup
-- [ ] Add support for more directories than home
-- [ ] Colors!!!
-- [ ] Verbose Mode
-- [ ] PEP8ify
+## Wiki
+For help on writing a config and setting up Sequestrum, visit the [Wiki](https://github.com/iiPlasma/sequestrum/wiki)
 
 ## Contributing
 If you'd like to contribute, whether that'd be improving the comments or README (which could always use work), or adding functionality,
