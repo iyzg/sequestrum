@@ -4,7 +4,7 @@
 import os
 import shutil
 import pathlib
-import logging
+import sequestrum.logging as logging
 
 
 def current_path():
@@ -63,7 +63,7 @@ def delete_folder(path):
     basePath = pathlib.Path(path)
 
     if not basePath.exists():
-        print("Sequestrum: Folder already deleted!")
+        logging.print_error("Folder doesn't exist: {}".format(path))
         return
 
     try:
@@ -72,9 +72,9 @@ def delete_folder(path):
         else:
             shutil.rmtree(basePath)
     except OSError as error:
-        print("Sequestrum: Deletion of folder failed: {}".format(error))
+        logging.print_error("Folder Deletion/Unsymlink Failed: {}".format(error))
     else:
-        print("Sequestrum: Deleted successfully!")
+        logging.print_verbose("Folder Deleted Successfully: {}".format(path))
 
 
 def delete_file(path):
@@ -83,10 +83,10 @@ def delete_file(path):
     """
     try:
         os.remove(path)
-    except OSError:
-        print("REmoving of file failed")
+    except OSError as error:
+        logging.print_error("File Deletion Failed: {}".format(path))
     else:
-        print("Successfully removed file")
+        logging.print_verbose("File Successfully Deleted: {}".format(path))
 
 
 def is_folder(path):
@@ -98,8 +98,8 @@ def is_folder(path):
             return True
         else:
             return False
-    except OSError:
-        print("Sequestum: Folder checking failed")
+    except OSError as error:
+        logging.print_error("Path doesn't exist: {}".format(path))
 
 
 def is_file(path):
@@ -112,9 +112,8 @@ def is_file(path):
             return True
         else:
             return False
-    except OSError:
-        print("Sequestrum: File check failed")
-
+    except OSError as error:
+        logging.print_error("Path doesn't exist: {}".format(path))
 
 def grab_package_names(path):
     """

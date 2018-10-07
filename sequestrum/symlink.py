@@ -4,7 +4,7 @@
 import os
 from shutil import copytree, copyfile
 
-import logging
+import sequestrum.logging as logging
 
 
 def create_symlink(source, destination, package_name=None):
@@ -27,10 +27,10 @@ def copy_file(source, destination):
 
     try:
         copyfile(source, destination)
-    except IOError:
-        return False
+    except IOError as error:
+        logging.print_error("Unable to copy file: {}".format(error), "")
     else:
-        return True
+        logging.print_verbose("Copied {} --> {}".format(source, destination), "")
 
 
 def copy_folder(source, destination):
@@ -40,10 +40,10 @@ def copy_folder(source, destination):
 
     try:
         copytree(source, destination)
-    except IOError:
-        print("Location must be writable")
+    except IOError as error:
+        logging.print_error("Unable to copy folder: {}".format(error), "")
     else:
-        print("Sucess copying folder ")
+        logging.print_verbose("Copied {} --> {}".format(source, destination), "")
 
 
 def symlink_source_exists(sourcePath):
