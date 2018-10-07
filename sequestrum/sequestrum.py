@@ -1,5 +1,5 @@
 # Libraries
-from pathlib import Path
+from Pathlib import Path
 import sys
 from time import sleep
 import yaml
@@ -163,7 +163,9 @@ def check_source_locations(package_key, config_dict, dotfile_path):
             sourcePath = directory_path + key
 
             if symlink.symlink_source_exists(sourcePath):
-                logging.print_fatal("File dosent exists: {}".format(sourcePath))
+                logging.print_fatal("Dotfile location occupied: {}".format(sourcePath))
+    
+    logging.print_info("Dotfiles are clean")
 
 
 def main():
@@ -193,10 +195,12 @@ def main():
             config_dict['options'][key]['package_name'] = friendly_name
             package_list.append(friendly_name)
 
-    # We need to have a base package
+    # Error checking for proper config
     if "base" not in config_dict['options']:
         logging.print_fatal(
             "Invalid config file, a base package needs to be defined")
+    elif "dotfileDirectory" not in config_dict['options']['base']:
+        logging.print_fatal("Missing dotfileDirectory in base package")
 
     # Grab the path of the dotfile directory
     dotfile_path = HOME_PATH + \
@@ -210,9 +214,7 @@ def main():
         if args[1] == "all":
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
-                    if not check_source_locations(key, config_dict, dotfile_path):
-                        print(errors.format_error("Sequestrum", "Dotfile Path Missing"))
-                        sys.exit()
+                    check_source_locations(key, config_dict, dotfile_path)
 
                     if not check_install_locations(key, config_dict):
                         print(errors.format_error("Sequestrum", "Home Path Occupied"))
