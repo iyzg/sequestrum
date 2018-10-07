@@ -8,7 +8,7 @@ dotfile repository setup, and more!
 ## Install Guide
 <<<<<<< HEAD
 - Arch: `yay -S sequestrum-git`
-1. `sudo pip install (--user) sequestrum`
+- Pip: `pip install --user sequestrum`
 
 ## Usage
 ### Getting Started
