@@ -1,5 +1,5 @@
 # Libraries
-from Pathlib import Path
+from pathlib import Path
 import sys
 from time import sleep
 import yaml
@@ -129,19 +129,26 @@ def unlink_packages():
 # it will return false. If it is clean, it'll return true.
 
 
-def check_install_locations(package_key, config_dict):
+def check_localfile_locations(package_key, config_dict, mode=None):
     """
-        Checks to see if link locations are clean
+        Checks local file locations
     """
+    
+    if mode is None:
+        logging.print_fatal("No mode provided to check")
 
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             destPath = HOME_PATH + value
-
-            if symlink.symlink_source_exists(destPath):
-                print(errors.format_error(
-                    "Safety", "{} already exists.".format(destPath)))
-                return False
+            
+            if mode == "Clean":
+                if symlink.symlink_source_exists(destPath):
+                    logging.print_fatal("Local file location occupied: {}".format(destPath))
+                    return False
+            elif mode == "Dirty":
+                if not symlink.symlink_source_exists(destPath):
+                    logging.print_fatal("Local file location empty: {}".format(destPath))
+                    return False
 
     return True
 
@@ -150,10 +157,13 @@ def check_install_locations(package_key, config_dict):
 # overwriting of file that may or may not be important to the user.
 
 
-def check_source_locations(package_key, config_dict, dotfile_path):
+def check_dotfile_locations(package_key, config_dict, dotfile_path, mode=None):
     """
-        Check to see if dotfile locations are clean
+        Checks dotfile locations
     """
+
+    if mode is None:
+        logging.print_fatal("No mode provided to check")
 
     directory_path = dotfile_path + \
         config_dict['options'][package_key]['directoryName'] + "/"
@@ -161,11 +171,18 @@ def check_source_locations(package_key, config_dict, dotfile_path):
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             sourcePath = directory_path + key
-
-            if symlink.symlink_source_exists(sourcePath):
-                logging.print_fatal("Dotfile location occupied: {}".format(sourcePath))
+            
+            if mode == "Clean":
+                if symlink.symlink_source_exists(sourcePath):
+                    logging.print_fatal("Dotfile location occupied: {}".format(sourcePath))
+                    return False
+            if mode == "Dirty":
+                if not symlink.symlink_source_exists(sourcePath):
+                    logging.print_fatal("Dotfile location empty: {}".format(sourcePath))
+                    return False
     
-    logging.print_info("Dotfiles are clean")
+    return True
+    
 
 
 def main():
@@ -214,11 +231,8 @@ def main():
         if args[1] == "all":
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
-                    check_source_locations(key, config_dict, dotfile_path)
-
-                    if not check_install_locations(key, config_dict):
-                        print(errors.format_error("Sequestrum", "Home Path Occupied"))
-                        sys.exit()
+                    check_dotfile_locations(key, config_dict, dotfile_path, "Clean")
+                    check_localfile_locations(key, config_dict, "Dirty")
 
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
@@ -242,8 +256,8 @@ def main():
         if args[1] == "all":
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
-                    if not check_install_locations(key, config_dict):
-                        sys.exit()
+                    check_dotfile_locations(key, config_dict, dotfile_path, "Dirty")
+                    check_localfile_locations(key, config_dict, "Clean")
 
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
@@ -261,7 +275,7 @@ def main():
         elif args[1] in package_list:
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
-                    if not check_install_locations(key, config_dict):
+                    if not check_localfile_locations(key, config_dict):
                         sys.exit()
 
             for key, value in config_dict['options'].items():

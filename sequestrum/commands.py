@@ -2,7 +2,7 @@
 
 # Imports
 from subprocess import run
-import logging
+import sequestrum.logging as logging
 
 
 def run_commands(unparsed_command_list, package_name=None):
