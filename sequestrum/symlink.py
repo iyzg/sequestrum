@@ -7,7 +7,7 @@ from shutil import copytree, copyfile
 import sequestrum.logging as logging
 
 
-def create_symlink(source, destination, package_name=None):
+def create_symlink(source, destination):
     """
         Creates symlink from source to destination
     """
@@ -15,9 +15,9 @@ def create_symlink(source, destination, package_name=None):
     try:
         os.symlink(source, destination)
     except OSError as error:
-        logging.print_error("Unable to create symlink: {}".format(error), package_name)
+        logging.print_error("Unable to create symlink: {}".format(error))
     else:
-        logging.print_verbose("Linking {} <-> {}".format(source, destination), package_name)
+        logging.print_verbose("Linking {} <-> {}".format(source, destination))
 
 
 def copy_file(source, destination):
