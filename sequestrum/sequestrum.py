@@ -5,7 +5,6 @@ from time import sleep
 import yaml
 
 # Modules
-import sequestrum.errors as errors
 import sequestrum.directories as directories
 import sequestrum.symlink as symlink
 import sequestrum.arguments as arguments
@@ -36,7 +35,7 @@ def setup_package(package_key, config_dict, dotfile_path):
     package_name = package_config['package_name']
     new_package_path = dotfile_path + package_config['directoryName'] + "/"
     if directories.is_folder(new_package_path) is False:
-        directories.create_folder(new_package_path, package_name)
+        directories.create_folder(new_package_path)
 
     for link in package_config['links']:
         for key, value in link.items():
@@ -122,7 +121,7 @@ def unlink_packages():
         elif directories.is_file(path):
             directories.delete_file(path)
         else:
-            print(errors.format_error("Sequestrum", "Nothing to unlink!"))
+            logging.print_error("Nothing to unlink")
 
 # Goes through all the file locations that need to be empty for the
 # symlinking to work and checks to see if they're empty. If they're not,
@@ -190,7 +189,7 @@ def main():
     args = arguments.get_arguments()
 
     if args is None:
-        print(errors.format_error("Arguments", "Must pass args"))
+        logging.print_error("Must pass arguments")
         sys.exit()
 
     config_file = None
@@ -200,7 +199,7 @@ def main():
     try:
         config_file = open("config.yaml", "r")
     except:
-        print(errors.format_error("Core", "No configuration found."))
+        logging.print_error("No configuration found")
         sys.exit()
 
     config_dict = yaml.load(config_file)
@@ -244,8 +243,7 @@ def main():
                         commands.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
-            print(errors.format_error("Sequestrum",
-                                      "uwu Another Impossible Safety Net owo"))
+            logging.print_error("Error 101 Please report to GH")
 
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
@@ -275,8 +273,8 @@ def main():
         elif args[1] in package_list:
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
-                    if not check_localfile_locations(key, config_dict):
-                        sys.exit()
+                    check_dotfile_locations(key, config_dict, dotfile_path, "Dirty")
+                    check_localfile_locations(key, config_dict, "Clean")
 
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
@@ -288,7 +286,7 @@ def main():
                         commands.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
-            print(errors.format_error("Sequstrum", "Invalid Package."))
+            logging.print_error("Invalid Package")
 
     # Refresh
     # -------
@@ -308,11 +306,12 @@ def main():
                         commands.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
-            print(errors.format_error("Sequestrum", "Source code compromised."))
+            logging.print_error("Error 102 Please report to GH")
 
     # Unlink the source files. This doesn't really "unlink", instead it actually just
     # deletes the files. It collects a list of files to unlink then it goes through and
     # unlinks them all.
+    # TODO: Add safety to make sure both the files exist
     elif args[0] == "Unlink":
         if args[1] == "all":
             for key, value in config_dict['options'].items():
@@ -325,10 +324,10 @@ def main():
                     get_packages_to_unlink(key, config_dict, dotfile_path)
             unlink_packages()
         else:
-            print(errors.format_error("Sequestrum", "Invalid Package."))
+            logging.print_error("Invalid Package")
 
     else:
-        print(errors.format_error("Sequestrum", "Invalid Command"))
+        logging.print_error("Invalid Command")
 
 
 if __name__ == '__main__':
