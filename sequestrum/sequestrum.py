@@ -223,35 +223,11 @@ def main():
     dotfile_path = HOME_PATH + \
         config_dict['options']['base']['dotfileDirectory'] + "/"
 
-    # Setups up the dotfiles accordingly to the config. This should only be
-    # ran once to setup your dotfiles with the right directories. After this,
-    # users should use the update argument to update their dotfiles with new
-    # packages.
-    # TODO: REmove setup in favor for just using refresh
-    if args[0] == "Setup":
-        if args[1] == "all":
-            for key, value in config_dict['options'].items():
-                if key.endswith("Package"):
-                    check_dotfile_locations(key, config_dict, dotfile_path, "Clean")
-                    check_localfile_locations(key, config_dict, "Dirty")
-
-            for key, value in config_dict['options'].items():
-                if key.endswith("Package"):
-                    if "commandsBefore" in value:
-                        options.run_commands(
-                            config_dict['options'][key]["commandsBefore"])
-                    setup_package(key, config_dict, dotfile_path)
-                    if "commandsAfter" in value:
-                        options.run_commands(
-                            config_dict['options'][key]["commandsAfter"])
-        else:
-            logging.print_error("Error 101 Please report to GH")
-
     # Install the files from the dotfiles. Symlinks the files from the
     # specified packages to the local system files. If the file or folder
     # already exists on the local system, delete it then symlink properly to
     # avoid errors.
-    elif args[0] == "Install":
+    if args[0] == "Install":
         # Install all packages
         if args[1] == "all":
             for key, value in config_dict['options'].items():
