@@ -14,19 +14,19 @@ def current_path():
     return os.getcwd()
 
 
-def create_folder(path, package_name):
+def create_folder(path):
     """
         Creates a folder
     """
     try:
         os.makedirs(path)
     except OSError as error:
-        logging.print_error("Could not create folder \"{}\" due to following error: {}".format(path, error), package_name)
+        logging.print_error("Could not create folder \"{}\" due to following error: {}".format(path, error))
     else:
-        logging.print_verbose("Folder doesn't exist and was created: {}".format(path), package_name)
+        logging.print_verbose("Folder doesn't exist and was created: {}".format(path))
 
 
-def create_base_folder(path, package_name):
+def create_base_folder(path):
     """
         Create base directory if needed
     """
@@ -37,7 +37,7 @@ def create_base_folder(path, package_name):
     if basePath.exists():
         # Check if the parent is a file or if its a symlink
         if basePath.is_file() or basePath.is_symlink():
-            logging.print_error("Base directory is a file or link: {}".format(basePath), package_name)
+            logging.print_error("Base directory is a file or link: {}".format(basePath))
             return False
         # If not, it must be a directory, so we are ok
         else:
@@ -47,10 +47,10 @@ def create_base_folder(path, package_name):
     try:
         basePath.mkdir(parents=True, exist_ok=True)
     except Exception as error:
-        logging.print_error("Could not create parent folder \"{}\" due to following error: {}".format(basePath, error), package_name)
+        logging.print_error("Could not create parent folder \"{}\" due to following error: {}".format(basePath, error))
         return False
     else:
-        logging.print_verbose("Parent folder dosent exist and was created: {}".format(basePath), package_name)
+        logging.print_verbose("Parent folder dosent exist and was created: {}".format(basePath))
 
     return True
 
