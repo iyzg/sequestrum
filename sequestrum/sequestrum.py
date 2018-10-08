@@ -32,7 +32,6 @@ def setup_package(package_key, config_dict, dotfile_path):
     # Make a path for the new directory path using the name specified in the
     # config then make the folder using the path.
     package_config = config_dict['options'][package_key]
-    package_name = package_config['package_name']
     new_package_path = dotfile_path + package_config['directoryName'] + "/"
     if directories.is_folder(new_package_path) is False:
         directories.create_folder(new_package_path)
@@ -88,8 +87,8 @@ def install_package(package_key, config_dict, dotfile_path):
             elif directories.is_file(dest_file):
                 continue
 
-            if directories.create_base_folder(dest_file, package_config['package_name']):
-                symlink.create_symlink(source_file, dest_file, package_config['package_name'])
+            if directories.create_base_folder(dest_file):
+                symlink.create_symlink(source_file, dest_file)
             else:
                 return False
 
@@ -267,7 +266,7 @@ def main():
                         commands.run_commands(
                             config_dict['options'][key]['commandsAfter'], config_dict['options'][key]['package_name'])
 
-            logging.print_info("We are done!")
+            logging.print_info("Installation complete")
 
         # The option to only install one package instead of all your dotfiles.
         elif args[1] in package_list:

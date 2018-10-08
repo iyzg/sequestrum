@@ -12,28 +12,25 @@ def delay_print(string):
     print("\n", end="")
 
 
-def format_output(error_type, error_message, package_name=""):
-    if package_name:
-        return("[{}:{}] {}".format(error_type, package_name, error_message))
-    else:
+def format_output(error_type, error_message):
         return("[{}] {}".format(error_type, error_message))
 
 
-def print_fatal(error_message, package_name=""):
-    print("\033[1;31mFATAL\033[0m: {} {}".format(error_message, package_name))
+def print_fatal(error_message):
+    print("\033[1;31mFATAL\033[0m: {}".format(error_message))
     sys.exit()
 
 
-def print_error(error_message, package_name=""):
-    print("\033[1;31mERROR\033[0m: {} {}".format(error_message, package_name))
+def print_error(error_message):
+    print("\033[1;31mERROR\033[0m: {}".format(error_message))
 
 
-def print_warn(error_message, package_name=""):
-    print("\033[1;33mWARN\033[0m: {} {}".format(error_message, package_name))
+def print_warn(error_message):
+    print("\033[1;33mWARN\033[0m: {}".format(error_message))
 
 
-def print_info(error_message, package_name=""):
-    print("\033[1;32mINFO\033[0m: {} {}".format(error_message, package_name))
+def print_info(error_message):
+    print("\033[1;32mINFO\033[0m: {}".format(error_message))
 
-def print_verbose(error_message, package_name=""):
-    print("\033[1;32mVERBOSE\033[0m: {} {}".format(error_message, package_name))
+def print_verbose(error_message):
+    print("\033[1;32mVERBOSE\033[0m: {}".format(error_message))
