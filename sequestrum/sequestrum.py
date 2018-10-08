@@ -225,6 +225,7 @@ def main():
     # ran once to setup your dotfiles with the right directories. After this,
     # users should use the update argument to update their dotfiles with new
     # packages.
+    # TODO: REmove setup in favor for just using refresh
     if args[0] == "Setup":
         if args[1] == "all":
             for key, value in config_dict['options'].items():
