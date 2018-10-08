@@ -1,7 +1,6 @@
 # Libraries
 from pathlib import Path
 import sys
-from time import sleep
 import yaml
 
 # Modules
@@ -135,14 +134,14 @@ def check_localfile_locations(package_key, config_dict, mode=None):
     """
         Checks local file locations
     """
-    
+
     if mode is None:
         logging.print_fatal("No mode provided to check")
 
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             destPath = HOME_PATH + value
-            
+
             if mode == "Clean":
                 if symlink.symlink_source_exists(destPath):
                     logging.print_fatal("Local file location occupied: {}".format(destPath))
@@ -173,7 +172,7 @@ def check_dotfile_locations(package_key, config_dict, dotfile_path, mode=None):
     for link in config_dict['options'][package_key]['links']:
         for key, value in link.items():
             sourcePath = directory_path + key
-            
+
             if mode == "Clean":
                 if symlink.symlink_source_exists(sourcePath):
                     logging.print_fatal("Dotfile location occupied: {}".format(sourcePath))
@@ -182,9 +181,8 @@ def check_dotfile_locations(package_key, config_dict, dotfile_path, mode=None):
                 if not symlink.symlink_source_exists(sourcePath):
                     logging.print_fatal("Dotfile location empty: {}".format(sourcePath))
                     return False
-    
+
     return True
-    
 
 
 def main():
