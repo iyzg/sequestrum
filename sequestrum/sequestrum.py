@@ -8,7 +8,7 @@ import yaml
 import sequestrum.directories as directories
 import sequestrum.symlink as symlink
 import sequestrum.arguments as arguments
-import sequestrum.commands as commands
+import sequestrum.options as options
 import sequestrum.logging as logging
 
 # For Later
@@ -43,8 +43,10 @@ def setup_package(package_key, config_dict, dotfile_path):
 
             # Checks
             if directories.is_folder(dest_file):
+                logging.print_warn("Folder exists, skipping: {}".format(dest_file))
                 continue
             elif directories.is_file(dest_file):
+                logging.print_warn("File exists, skipping: {}".format(dest_file))
                 continue
 
             # Setup
@@ -83,8 +85,10 @@ def install_package(package_key, config_dict, dotfile_path):
             dest_file = HOME_PATH + value
 
             if directories.is_folder(dest_file):
+                logging.print_warn("Folder exists, skipping: {}".format(dest_file))
                 continue
             elif directories.is_file(dest_file):
+                logging.print_warn("File exists, skipping: {}".format(dest_file))
                 continue
 
             if directories.create_base_folder(dest_file):
@@ -236,11 +240,11 @@ def main():
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     setup_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
             logging.print_error("Error 101 Please report to GH")
@@ -260,11 +264,11 @@ def main():
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]['commandsBefore'], config_dict['options'][key]['package_name'])
                     install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]['commandsAfter'], config_dict['options'][key]['package_name'])
 
             logging.print_info("Installation complete")
@@ -279,11 +283,11 @@ def main():
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
                     if "commandsBefore" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
             logging.print_error("Invalid Package")
@@ -298,12 +302,12 @@ def main():
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     if "commandsBefore" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     setup_package(key, config_dict, dotfile_path)
                     install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
-                        commands.run_commands(
+                        options.run_commands(
                             config_dict['options'][key]["commandsAfter"])
         else:
             logging.print_error("Error 102 Please report to GH")
