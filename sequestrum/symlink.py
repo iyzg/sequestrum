@@ -3,7 +3,6 @@
 # Libraries
 import os
 from shutil import copytree, copyfile
-
 import sequestrum.logging as logging
 
 
