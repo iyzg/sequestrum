@@ -1,4 +1,4 @@
-# Commands Module
+# Options Module
 
 # Imports
 from subprocess import run

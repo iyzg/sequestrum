@@ -28,9 +28,9 @@ def copy_file(source, destination):
     try:
         copyfile(source, destination)
     except IOError as error:
-        logging.print_error("Unable to copy file: {}".format(error), "")
+        logging.print_error("Unable to copy file: {}".format(error))
     else:
-        logging.print_verbose("Copied {} --> {}".format(source, destination), "")
+        logging.print_verbose("Copied {} --> {}".format(source, destination))
 
 
 def copy_folder(source, destination):
@@ -41,9 +41,9 @@ def copy_folder(source, destination):
     try:
         copytree(source, destination)
     except IOError as error:
-        logging.print_error("Unable to copy folder: {}".format(error), "")
+        logging.print_error("Unable to copy folder: {}".format(error))
     else:
-        logging.print_verbose("Copied {} --> {}".format(source, destination), "")
+        logging.print_verbose("Copied {} --> {}".format(source, destination))
 
 
 def symlink_source_exists(sourcePath):
