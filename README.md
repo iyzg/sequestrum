@@ -1,5 +1,5 @@
 <div align="center">
-	<img src="https://user-images.githubusercontent.com/16062194/46696688-ba174480-cbe0-11e8-8291-a1d4b05798a9.png"> <h3>Sequestrum</h3>
+	<h3>Sequestrum</h3>
 </div>
 
 ## Description
