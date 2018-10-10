@@ -1,4 +1,7 @@
-# Sequestrum
+<div align="center">
+	<img src="https://user-images.githubusercontent.com/16062194/46696688-ba174480-cbe0-11e8-8291-a1d4b05798a9.png"> <h3>Sequestrum</h3>
+</div>
+
 ## Description
 A modern, lightweight dotfile manager for the masses. This README.md may look daunting, but trust me on this, it's easy as pie.
 Promise. Now you may be wondering, why use this over Stow or Dotbot. Simple.Well for starters, the name is better. Do you need any
