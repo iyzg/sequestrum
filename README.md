@@ -1,5 +1,5 @@
 <div align="center">
-	<h3>Sequestrum</h3>
+	<h1>Sequestrum</h1>
 </div>
 
 ## Description
