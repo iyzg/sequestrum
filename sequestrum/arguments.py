@@ -18,10 +18,9 @@ def get_arguments():
 
     args = parser.parse_args()
 
-    if args.install != None:
+    if args.install is not None:
         return ("Install", args.install)
     elif args.refresh:
         return ("Refresh", "all")
-    elif args.unlink != None:
+    elif args.unlink is not None:
         return ("Unlink", args.unlink)
-

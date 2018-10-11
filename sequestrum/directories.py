@@ -11,6 +11,7 @@ def current_path():
     """
         Returns the current path
     """
+
     return os.getcwd()
 
 
@@ -18,6 +19,7 @@ def create_folder(path):
     """
         Creates a folder
     """
+
     try:
         os.makedirs(path)
     except OSError as error:
@@ -81,6 +83,7 @@ def delete_file(path):
     """
         Deletes file
     """
+
     try:
         os.remove(path)
     except OSError as error:
@@ -93,6 +96,7 @@ def is_folder(path):
     """
         Checks to see if path is a folder
     """
+
     try:
         if os.path.isdir(path):
             return True
@@ -115,10 +119,12 @@ def is_file(path):
     except OSError as error:
         logging.print_error("Path doesn't exist: {}".format(path))
 
+
 def grab_package_names(path):
     """
         Grabs package names from config
     """
+
     package_list = []
     for name in os.listdir(path):
         if os.path.isdir(path):

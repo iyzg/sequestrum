@@ -1,5 +1,4 @@
 # Logging module
-
 from sys import exit
 
 
@@ -37,6 +36,7 @@ def print_info(error_message):
         Prints message with INFO
     """
     print("\033[1;32mINFO\033[0m {}".format(error_message))
+
 
 def print_verbose(error_message):
     """
