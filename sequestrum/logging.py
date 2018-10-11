@@ -3,6 +3,7 @@
 import sys
 import time
 
+
 def delay_print(string):
     for character in string:
         sys.stdout.write(character)
@@ -31,6 +32,7 @@ def print_warn(error_message):
 
 def print_info(error_message):
     print("\033[1;32mINFO\033[0m {}".format(error_message))
+
 
 def print_verbose(error_message):
     print("\033[1;32mVERBOSE\033[0m {}".format(error_message))
