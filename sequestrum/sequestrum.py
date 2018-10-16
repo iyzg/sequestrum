@@ -233,7 +233,6 @@ def main():
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
                     check_dotfile_locations(key, config_dict, dotfile_path, "Dirty")
-                    check_localfile_locations(key, config_dict, "Clean")
 
             for key, value in config_dict['options'].items():
                 if key.endswith("Package"):
@@ -245,14 +244,13 @@ def main():
                         options.run_commands(
                             config_dict['options'][key]['commandsAfter'], config_dict['options'][key]['package_name'])
 
-            logging.print_info("Installation complete")
+            logging.print_info("Complete installation complete")
 
         # The option to only install one package instead of all your dotfiles.
         elif args[1] in package_list:
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
                     check_dotfile_locations(key, config_dict, dotfile_path, "Dirty")
-                    check_localfile_locations(key, config_dict, "Clean")
 
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
@@ -263,6 +261,8 @@ def main():
                     if "commandsAfter" in value:
                         options.run_commands(
                             config_dict['options'][key]["commandsAfter"])
+
+            logging.print_info("{} installation complete".format(args[1]))
         else:
             logging.print_error("Invalid Package")
 
@@ -279,10 +279,11 @@ def main():
                         options.run_commands(
                             config_dict['options'][key]["commandsBefore"])
                     setup_package(key, config_dict, dotfile_path)
-                    install_package(key, config_dict, dotfile_path)
                     if "commandsAfter" in value:
                         options.run_commands(
                             config_dict['options'][key]["commandsAfter"])
+
+            logging.print_info("Dotfile refresh complete")
         else:
             logging.print_error("Error 102 Please report to GH")
 
@@ -296,11 +297,13 @@ def main():
                 if key.endswith("Package"):
                     get_packages_to_unlink(key, config_dict, dotfile_path)
             unlink_packages()
+            logging.print_info("Completele unlink complete")
         elif args[1] in package_list:
             for key, value in config_dict['options'].items():
                 if key == args[1] + "Package":
                     get_packages_to_unlink(key, config_dict, dotfile_path)
             unlink_packages()
+            logging.print_info("{} unlink complete".format(args[1]))
         else:
             logging.print_error("Invalid Package")
 
