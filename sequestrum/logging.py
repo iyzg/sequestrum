@@ -1,16 +1,6 @@
 # Logging module
 
-import sys
-import time
-
-
-def delay_print(string):
-    for character in string:
-        sys.stdout.write(character)
-        sys.stdout.flush()
-        time.sleep(0.07)
-
-    print("\n", end="")
+from sys import exit
 
 
 def format_output(error_type, error_message):
