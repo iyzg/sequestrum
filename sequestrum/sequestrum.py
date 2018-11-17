@@ -199,7 +199,7 @@ def main():
 
     try:
         config_file = open("config.yaml", "r")
-    except:
+    except IOError:
         logging.print_error("No configuration found")
         sys.exit()
 

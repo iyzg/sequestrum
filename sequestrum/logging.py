@@ -1,4 +1,5 @@
 # Logging module
+
 from sys import exit
 
 
