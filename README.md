@@ -3,7 +3,7 @@
 </div>
 
 ## Description
-A modern, lightweight dotfile manager for the masses. This README.md may look daunting, but trust me on this, it's easy as pie.
+A modern, lightweight dotfile manager for the masses. This README.md may look daunting, but trust me on this, it's as easy as pie.
 Promise. Now you may be wondering, why use this over Stow or Dotbot. Simple.Well for starters, the name is better. Do you need any
 other reasons? Fine, fine.. some real reasons.This is specifically made for dotfile management and provides features like modularity, 
 dotfile repository setup, and more!
