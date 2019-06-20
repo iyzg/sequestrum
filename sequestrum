@@ -4,8 +4,11 @@
 
 set -e
 
-
-# BIG FUCKING TODO: MAKE IT SO THE USER CAN SOMEHOW SET THE FUCKING DOTFILE REPO TYVM
+if [ -e "$HOME/.local/share/sequestrum/.dot_location" ]; then
+    source "$HOME/.local/share/sequestrum/.dot_location"
+else
+    dotfile_location="$HOME/dots"
+fi
 
 basename() {
     : "${1%/}"
@@ -46,27 +49,34 @@ die() {
 }
 
 add_location() {
-    mv  "$1" "$HOME/dots/$2"
+    mv  "$1" "$dotfile_location/$2"
     
     # Check to make sure the package is installed
     if [ -e "$HOME/.local/share/sequestrum/$2" ]; then
         # Make sure the config file exist before symlinking it 
-        [[ ! -e $HOME/dots/$2/.seq_pkg ]] &&
+        [[ ! -e $dotfile_location/$2/.seq_pkg ]] &&
             die "Can't install $1 since $2 is missing .seq_pkg"
 
-        source "$HOME/dots/$2/.seq_pkg"
+        source "$dotfile_location/$2/.seq_pkg"
         db_add "location" "$2" "$1"
-        ln -s "$HOME/dots/$2/$1" "$link_location/$1"
+        ln -s "$dotfile_location/$2/$1" "$link_location/$1"
         die "File was added and installed to package $2"
     else
         die "File was added to package $2 but not installed since package isn't either."
     fi
 }
 
+configure_location() {
+    [[ -e "$HOME/.local/share/sequestrum/.dot_location" ]] &&
+        rm "$HOME/.local/share/sequestrum/.dot_location"
+    touch "$HOME/.local/share/sequestrum/.dot_location"
+    echo -e "dotfile_location=$1" >> "$HOME/.local/share/sequestrum/.dot_location"
+}
+
 # REMEMBER TO DO CHECKS BEFORE EVERYTHING STARTS
 install_package() {
     pkgs=()
-    source "$HOME/dots/$1/.seq_pkg"
+    source "$dotfile_location/$1/.seq_pkg"
     if [ ! ${#pkgs[@]} -eq 0 ]; then
         if [ ! -e "$HOME/.local/share/sequestrum/$1" ]; then
             # db_add metabase name of meta package
@@ -81,7 +91,7 @@ install_package() {
         # Add error checking to make sure its not a subpackage
         if [ ! -e "$HOME/.local/share/sequestrum/$1" ]; then
             db_add "package" "$1"
-            for location in "$HOME/dots/$1/"*; do
+            for location in "$dotfile_location/$1/"*; do
                 [[ "$location" != ".seq_pkg" ]] &&
                     ln -s "$location" "$link_location/$(basename "$location")"
                     db_add "location" "$1" "$(basename "$location")"
@@ -92,10 +102,40 @@ install_package() {
     fi
 }
 
+status() {
+    red='\033[0;31m'
+    grn='\033[0;32m'
+    nc='\033[0m'
+    installed=()
+    uninstalled=()
+
+    for package in "$dotfile_location/"*; do
+        if [ -e "$HOME/.local/share/sequestrum/$(basename "$package")" ]; then
+            installed+=("$(basename "$package")")
+        else
+            uninstalled+=("$(basename "$package")")
+        fi
+    done
+
+    echo -e "${grn}Installed Packages:${nc}"
+    for ipack in "${installed[@]}"; do
+        echo "    $ipack"
+    done
+    [[ ${#installed[@]} -eq 0 ]] &&
+        echo "    none"
+
+    echo -e "${red}Unnstalled Packages:${nc}"
+    for upack in "${uninstalled[@]}"; do
+        echo "    $upack"
+    done
+    [[ ${#uninstalled[@]} -eq 0 ]] &&
+        echo "    none"
+}
+
 unlink_package() {
     # TODO: UNLINKING META PACKAGES
     if [ -e "$HOME/.local/share/sequestrum/$1" ]; then
-        source "$HOME/dots/$1/.seq_pkg"
+        source "$dotfile_location/$1/.seq_pkg"
         while IFS= read -r line
         do
             if [ "$line" != "" ]; then 
@@ -112,7 +152,9 @@ unlink_package() {
 usage() { printf '%s' "\
 sequestrum 2.0.0 - dotfile manager
 => [a]dd [location] [package] - Add a file/folder to a package and install it.
+=> [c]onfigure - Set the location of your dotfile directory. (Leave off last /)
 => [i]nstall [package] - Install package onto local system.
+=> [s]tatus - Check out the status of all packages in your dotfile.
 => [u]nlink  [package] - Unlink package from local system.
 "
 exit 1
@@ -131,15 +173,28 @@ main() {
     [[ $1 == [iu]* && -z $2 || $1 == [a]* && -z $3 ]] &&
         die "Missing [package] argument."
     
-    [[ ($1 == [a]* && ! -e $HOME/dots/$3) || ($2 == [iu]* && ! -e $HOME/dots/$2) ]] &&
+    [[ ($1 == [a]* && ! -e $dotfile_location/$3) || ($2 == [iu]* && ! -e $dotfile_location/$2) ]] &&
         die "Package $3 does not exist."
     
+    [[ $1 == [c]* && -z $2 ]] &&
+        die "Missing location to set as new dotfile directory."
+
+    [[ $1 == [c]* && ! -d $2 ]] &&
+        die "Cannot set dotfile directory to a folder that doesn't exist"
+
+
     case $1 in
         a*)
             add_location "$2" "$3"
             ;;
+        c*)
+            configure_location "$2"
+            ;;
         i*)
             install_package "$2"
+            ;;
+        s*)
+            status "$2"
             ;;
         u*)
             unlink_package "$2"
