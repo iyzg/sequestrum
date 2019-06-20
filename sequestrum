@@ -1,0 +1,153 @@
+#!/usr/bin/env bash
+#
+# sequestrum - dotfile manager
+
+set -e
+
+
+# BIG FUCKING TODO: MAKE IT SO THE USER CAN SOMEHOW SET THE FUCKING DOTFILE REPO TYVM
+
+basename() {
+    : "${1%/}"
+    printf '%s\n' "${_##*/}"
+}
+
+create_symlink() {
+        ln -s "$1" "$2" || die "Cannot create symlink from $1 >> $2."
+}
+
+check_config() {
+    printf '%s\n' "Todo: Check to make sure the respective config is valid before going through"
+}
+# TODO: Make sure the config is correct and all locations are clear before doing anything
+
+db_add() {
+    # Make sure that ~/.local/share/sequestrum exists first or db won't work
+    [[ ! -d $HOME/.local/share/sequestrum ]] &&
+        mkdir "$HOME/.local/share/sequestrum"
+    
+    # Check to see either to add a package or location to conflict.
+    if [ "$1" == "location" ]; then
+        [[ ! -e $HOME/.local/share/sequestrum/$2 ]] &&
+            die "Cannot install a location when package $2 isn't. Serious error, please report to Github."
+        echo -e "$3\n" >> "$HOME/.local/share/sequestrum/$2"
+    elif [ "$1" == "package" ]; then
+        [[ -e $HOME/.local/share/sequestrum/$2 ]] &&
+            die "First check has failed horribly or forgot to add. Serious error, please report to Github."
+        touch "$HOME/.local/share/sequestrum/$2"
+    else
+        die "Invalid parameter 1 passed into db_add"
+    fi
+}
+
+die() {
+    printf 'error: %s\n' "$1" >&2
+    exit 1
+}
+
+add_location() {
+    mv  "$1" "$HOME/dots/$2"
+    
+    # Check to make sure the package is installed
+    if [ -e "$HOME/.local/share/sequestrum/$2" ]; then
+        # Make sure the config file exist before symlinking it 
+        [[ ! -e $HOME/dots/$2/.seq_pkg ]] &&
+            die "Can't install $1 since $2 is missing .seq_pkg"
+
+        source "$HOME/dots/$2/.seq_pkg"
+        db_add "location" "$2" "$1"
+        ln -s "$HOME/dots/$2/$1" "$link_location/$1"
+        die "File was added and installed to package $2"
+    else
+        die "File was added to package $2 but not installed since package isn't either."
+    fi
+}
+
+# REMEMBER TO DO CHECKS BEFORE EVERYTHING STARTS
+install_package() {
+    pkgs=()
+    source "$HOME/dots/$1/.seq_pkg"
+    if [ ! ${#pkgs[@]} -eq 0 ]; then
+        if [ ! -e "$HOME/.local/share/sequestrum/$1" ]; then
+            # db_add metabase name of meta package
+            for pkg in "${pkgs[@]}"; do
+                # db_add metapackage [name of subpackage]
+                install_package "$pkg"
+            done
+        else
+            die "Can't install a metapackage that's already installed."
+        fi
+    else
+        # Add error checking to make sure its not a subpackage
+        if [ ! -e "$HOME/.local/share/sequestrum/$1" ]; then
+            db_add "package" "$1"
+            for location in "$HOME/dots/$1/"*; do
+                [[ "$location" != ".seq_pkg" ]] &&
+                    ln -s "$location" "$link_location/$(basename "$location")"
+                    db_add "location" "$1" "$(basename "$location")"
+            done
+        else
+            die "Can't install a package that's already installed."
+        fi
+    fi
+}
+
+unlink_package() {
+    # TODO: UNLINKING META PACKAGES
+    if [ -e "$HOME/.local/share/sequestrum/$1" ]; then
+        source "$HOME/dots/$1/.seq_pkg"
+        while IFS= read -r line
+        do
+            if [ "$line" != "" ]; then 
+                unlink "$link_location/$line"
+            fi
+        done < "$HOME/.local/share/sequestrum/$1"
+        rm "$HOME/.local/share/sequestrum/$1"
+    else
+        die "Can't unlink a package that isn't installed."
+    fi
+}
+
+
+usage() { printf '%s' "\
+sequestrum 2.0.0 - dotfile manager
+=> [a]dd [location] [package] - Add a file/folder to a package and install it.
+=> [i]nstall [package] - Install package onto local system.
+=> [u]nlink  [package] - Unlink package from local system.
+"
+exit 1
+}
+
+main() {
+    [[ $1 == -? || -z $1 ]] &&
+        usage
+    
+    [[ $1 == [a]* && -z $2 ]] &&
+        die "Missing [location] argument"
+    
+    [[ $1 == [a]* && ! -e $2 ]] &&
+        die "Location $2 does not exist."
+
+    [[ $1 == [iu]* && -z $2 || $1 == [a]* && -z $3 ]] &&
+        die "Missing [package] argument."
+    
+    [[ ($1 == [a]* && ! -e $HOME/dots/$3) || ($2 == [iu]* && ! -e $HOME/dots/$2) ]] &&
+        die "Package $3 does not exist."
+    
+    case $1 in
+        a*)
+            add_location "$2" "$3"
+            ;;
+        i*)
+            install_package "$2"
+            ;;
+        u*)
+            unlink_package "$2"
+            ;;
+        *)
+            usage
+            ;;
+    esac
+}
+
+main "$@"
