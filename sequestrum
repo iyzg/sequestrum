@@ -38,6 +38,13 @@ db_add() {
         [[ -e $HOME/.local/share/sequestrum/$2 ]] &&
             die "First check has failed horribly or forgot to add. Serious error, please report to Github."
         touch "$HOME/.local/share/sequestrum/$2"
+    elif [ "$1" == "metabase" ]; then
+        [[ -e "$HOME/.local/share/sequestrum/meta_${2}" ]] &&
+            die "Cannot add to database an already installed metabase. Serious error, please report to Github."
+        touch "$HOME/.local/share/sequestrum/meta_${2}"
+    elif [ "$1" == "metapackage" ]; then
+        # TODO: Add error checking
+        touch "$HOME/.local/share/sequestrum/${3}_${2}"
     else
         die "Invalid parameter 1 passed into db_add"
     fi
@@ -50,7 +57,7 @@ die() {
 
 add_location() {
     mv  "$1" "$dotfile_location/$2"
-    
+    # TODO: Add support for meta package adding.
     # Check to make sure the package is installed
     if [ -e "$HOME/.local/share/sequestrum/$2" ]; then
         # Make sure the config file exist before symlinking it 
@@ -67,6 +74,7 @@ add_location() {
 }
 
 configure_location() {
+    # Add a way to change a package's link location as well, make sure its not installed to avoid errors :D 
     [[ -e "$HOME/.local/share/sequestrum/.dot_location" ]] &&
         rm "$HOME/.local/share/sequestrum/.dot_location"
     touch "$HOME/.local/share/sequestrum/.dot_location"
@@ -76,16 +84,33 @@ configure_location() {
 # REMEMBER TO DO CHECKS BEFORE EVERYTHING STARTS
 install_package() {
     pkgs=()
-    source "$dotfile_location/$1/.seq_pkg"
+    if [ "$3" != "metapackage" ]; then
+        source "$dotfile_location/$1/.seq_pkg"
+    else
+        source "$dotfile_location/$2/$1/.seq_pkg"
+    fi
+
     if [ ! ${#pkgs[@]} -eq 0 ]; then
-        if [ ! -e "$HOME/.local/share/sequestrum/$1" ]; then
-            # db_add metabase name of meta package
+        if [ ! -e "$HOME/.local/share/sequestrum/meta_${1}" ]; then
+            db_add "metabase" "$1"
             for pkg in "${pkgs[@]}"; do
-                # db_add metapackage [name of subpackage]
-                install_package "$pkg"
+                db_add "metapackage" "$1" "$pkg"
+                install_package "$pkg" "$1" "metapackage"
             done
         else
             die "Can't install a metapackage that's already installed."
+        fi
+    elif [ "$3" == "metapackage" ]; then
+        # $1 is the metapackage, $2 is the base
+        if [ -e "$HOME/.local/share/sequestrum/meta_$2" ]; then
+            db_add "metapackage" "$1" "$2"
+            for location in "$dotfile_location/$2/$1/"*; do
+                [[ "$location" != ".seq_pkg" ]] &&
+                    ln -s "$location" "$link_location/$(basename "$location")"
+                    db_add "location" "$2_$1" "$(basename "$location")"
+            done
+        else
+            die "Cannot installed metapackage when base is not installed. Serious error, please report to Github."
         fi
     else
         # Add error checking to make sure its not a subpackage
@@ -103,6 +128,7 @@ install_package() {
 }
 
 status() {
+    #TODO: Add support for pretty status for metapackages
     red='\033[0;31m'
     grn='\033[0;32m'
     nc='\033[0m'
@@ -124,7 +150,7 @@ status() {
     [[ ${#installed[@]} -eq 0 ]] &&
         echo "    none"
 
-    echo -e "${red}Unnstalled Packages:${nc}"
+    echo -e "${red}Uninstalled Packages:${nc}"
     for upack in "${uninstalled[@]}"; do
         echo "    $upack"
     done
