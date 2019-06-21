@@ -2,6 +2,7 @@
 #
 # sequestrum - dotfile manager
 
+# Add error checking so you aren't allowed to remove packages that are subpackages
 set -e
 
 if [ -e "$HOME/.local/share/sequestrum/.dot_location" ]; then
@@ -44,7 +45,7 @@ db_add() {
         touch "$HOME/.local/share/sequestrum/meta_${2}"
     elif [ "$1" == "metapackage" ]; then
         # TODO: Add error checking
-        touch "$HOME/.local/share/sequestrum/${3}_${2}"
+        touch "$HOME/.local/share/sequestrum/${2}_${3}"
     else
         die "Invalid parameter 1 passed into db_add"
     fi
@@ -103,7 +104,6 @@ install_package() {
     elif [ "$3" == "metapackage" ]; then
         # $1 is the metapackage, $2 is the base
         if [ -e "$HOME/.local/share/sequestrum/meta_$2" ]; then
-            db_add "metapackage" "$1" "$2"
             for location in "$dotfile_location/$2/$1/"*; do
                 [[ "$location" != ".seq_pkg" ]] &&
                     ln -s "$location" "$link_location/$(basename "$location")"
@@ -160,17 +160,50 @@ status() {
 
 unlink_package() {
     # TODO: UNLINKING META PACKAGES
-    if [ -e "$HOME/.local/share/sequestrum/$1" ]; then
+
+    pkgs=()
+    if [ "$3" != "metapackage" ]; then
         source "$dotfile_location/$1/.seq_pkg"
-        while IFS= read -r line
-        do
-            if [ "$line" != "" ]; then 
-                unlink "$link_location/$line"
-            fi
-        done < "$HOME/.local/share/sequestrum/$1"
-        rm "$HOME/.local/share/sequestrum/$1"
     else
-        die "Can't unlink a package that isn't installed."
+        source "$dotfile_location/$2/$1/.seq_pkg"
+    fi
+
+    if [ ! ${#pkgs[@]} -eq 0 ]; then
+        if [ -e "$HOME/.local/share/sequestrum/meta_${1}" ]; then
+            for pkg in "${pkgs[@]}"; do
+                unlink_package "$pkg" "$1" "metapackage"
+            done
+            rm "$HOME/.local/share/sequestrum/meta_${1}"
+        else
+            die "Can't uninstall a metapackage not already installed."
+        fi
+    elif [ "$3" == "metapackage" ]; then
+        # $1 is the metapackage, $2 is the base
+        if [ -e "$HOME/.local/share/sequestrum/$2_$1" ]; then
+            source "$dotfile_location/$2/$1/.seq_pkg"
+            while IFS= read -r line
+            do
+                if [ "$line" != "" ]; then
+                    unlink "$link_location/$line"
+                fi
+            done < "$HOME/.local/share/sequestrum/${2}_${1}"
+            rm "$HOME/.local/share/sequestrum/$2_$1"
+        else
+            die "Cannot uninstall metapackage when it is not installed. Serious error, please report to Github."
+        fi
+    else
+        if [ -e "$HOME/.local/share/sequestrum/$1" ]; then
+            source "$dotfile_location/$1/.seq_pkg"
+            while IFS= read -r line
+            do
+                if [ "$line" != "" ]; then 
+                    unlink "$link_location/$line"
+                fi
+            done < "$HOME/.local/share/sequestrum/$1"
+            rm "$HOME/.local/share/sequestrum/$1"
+        else
+            die "Can't unlink a package that isn't installed."
+        fi
     fi
 }
 
