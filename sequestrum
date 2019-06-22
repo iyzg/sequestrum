@@ -132,30 +132,100 @@ status() {
     red='\033[0;31m'
     grn='\033[0;32m'
     nc='\033[0m'
-    installed=()
     uninstalled=()
 
+    shopt -s dotglob
+    # New way, loop through all packages, if installed then print and if not then save it as a package to look over later.
+    any_installed=false;
+    echo ""
+    echo "$(basename "${dotfile_location}")/"
+    numofpackages=0
     for package in "$dotfile_location/"*; do
-        if [ -e "$HOME/.local/share/sequestrum/$(basename "$package")" ]; then
-            installed+=("$(basename "$package")")
+        numofpackages=$((numofpackages+1))
+    done
+    packagecount=0
+    for package in "$dotfile_location/"*; do
+        if [ -e "$HOME/.local/share/sequestrum/$(basename "$package")" ] || [ -e "$HOME/.local/share/sequestrum/meta_$(basename "$package")" ]; then
+            packagecount=$((packagecount+1))
+            if [ $packagecount -ne $numofpackages ]; then
+                echo -e "├── ${grn}$(basename "$package")/${nc}"
+            else
+                echo -e "└── ${grn}$(basename "$package")/${nc}"
+            fi
+            
+            numofsubpackages=0
+            for subpackage in "$dotfile_location/$(basename "$package")"*; do
+                numofsubpackages=$((numofsubpackages+1))
+            done
+            subpackagecount=0
+            for subpackage in "$dotfile_location/$(basename "$package")/"*; do
+                if [ "$(basename "$subpackage")"  != ".seq_pkg" ]; then
+                    subpackagecount=$((subpackagecount+1))
+                    if [ $subpackagecount -ne $numofsubpackages ]; then
+                        if [ $packagecount -eq $numofpackages ]; then
+                            symbol="    ├──"
+                        else
+                            symbol="│   ├──"
+                        fi
+                    else
+                        if [ $packagecount -eq $numofpackages ]; then
+                            symbol="    └──"
+                        else
+                            symbol="│   └──"
+                        fi
+                    fi
+                    
+                    if [ -d "$subpackage" ]; then
+                        echo -e "${symbol} ${grn}$(basename "$subpackage")/${nc}"
+                    else
+                        echo -e "${symbol} ${grn}$(basename "$subpackage")${nc}"
+                    fi
+                fi
+            done
         else
-            uninstalled+=("$(basename "$package")")
+            packagecount=$((packagecount+1))
+            if [ "$(basename "$package")" != ".seq_pkg" ]; then
+                if [ $packagecount -ne $numofpackages ]; then
+                    echo -e "├── ${red}$(basename "$package")/${nc}"
+                else
+                    echo -e "└── ${red}$(basename "$package")/${nc}"
+                fi
+                
+                numofsubpackages=0
+                for subpackage in "$dotfile_location/$(basename "$package")"*; do
+                    numofsubpackages=$((numofsubpackages+1))
+                done
+                subpackagecount=0
+                for subpackage in "$dotfile_location/$(basename "$package")/"*; do
+                    if [ "$(basename "$subpackage")"  != ".seq_pkg" ]; then
+                        subpackagecount=$((subpackagecount+1))
+                        if [ $subpackagecount -ne $numofsubpackages ]; then
+                            if [ $packagecount -eq $numofpackages ]; then
+                                symbol="    ├──"
+                            else
+                                symbol="│   ├──"
+                            fi
+                        else
+                            if [ $packagecount -eq $numofpackages ]; then
+                                symbol="    └──"
+                            else
+                                symbol="│   └──"
+                            fi
+                        fi
+                        
+                        if [ -d "$subpackage" ]; then
+                            echo -e "${symbol} ${red}$(basename "$subpackage")/${nc}"
+                        else
+                            echo -e "${symbol} ${red}$(basename "$subpackage")${nc}"
+                        fi
+                    fi
+                done
+            fi
         fi
+        uninstalled+=("$(basename "$package")")
     done
-
-    echo -e "${grn}Installed Packages:${nc}"
-    for ipack in "${installed[@]}"; do
-        echo "    $ipack"
-    done
-    [[ ${#installed[@]} -eq 0 ]] &&
-        echo "    none"
-
-    echo -e "${red}Uninstalled Packages:${nc}"
-    for upack in "${uninstalled[@]}"; do
-        echo "    $upack"
-    done
-    [[ ${#uninstalled[@]} -eq 0 ]] &&
-        echo "    none"
+    echo ""
+    shopt -s dotglob
 }
 
 unlink_package() {
@@ -232,9 +302,12 @@ main() {
     [[ $1 == [iu]* && -z $2 || $1 == [a]* && -z $3 ]] &&
         die "Missing [package] argument."
     
-    [[ ($1 == [a]* && ! -e $dotfile_location/$3) || ($2 == [iu]* && ! -e $dotfile_location/$2) ]] &&
+    [[ $1 == [a]* && ! -e $dotfile_location/$3 ]] &&
         die "Package $3 does not exist."
     
+    [[ $1 == [iu]* && ! -e $dotfile_location/$2 ]] &&
+        die "Package $2 does not exist."
+
     [[ $1 == [c]* && -z $2 ]] &&
         die "Missing location to set as new dotfile directory."
 
