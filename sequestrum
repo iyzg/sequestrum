@@ -2,10 +2,13 @@
 #
 # sequestrum - dotfile manager
 
-# Add error checking so you aren't allowed to remove packages that are subpackages
 set -e
+shopt -s dotglob
 
 # TODO: CLEan option to clean out directories with dead links
+# TODO: IMPLEMENT THIS CLEANING INTO COMMANDS 
+# TODO: Check that all symlink locations are clear before doing anything .
+
 if [ -e "$HOME/.local/share/sequestrum/.dot_location" ]; then
     source "$HOME/.local/share/sequestrum/.dot_location"
 else
@@ -18,8 +21,8 @@ basename() {
 }
 
 create_symlink() {
-        ln -s "$1" "$2" || die "Cannot create symlink from $1 >> $2."
-}
+        ln -s "$1" "$2" || die "Could not create symlink from $1 >> $2. Cleaning database."
+} 
 
 check_config() {
     printf '%s\n' "Todo: Check to make sure the respective config is valid before going through"
@@ -85,6 +88,7 @@ configure_location() {
 
 # REMEMBER TO DO CHECKS BEFORE EVERYTHING STARTS
 install_package() {
+    # TODO: if a package fails, clean up all the symlinks already made.
     pkgs=()
     if [ "$3" != "metapackage" ]; then
         source "$dotfile_location/$1/.seq_pkg"
@@ -135,7 +139,6 @@ status() {
     nc='\033[0m'
     uninstalled=()
 
-    shopt -s dotglob
     # New way, loop through all packages, if installed then print and if not then save it as a package to look over later.
     any_installed=false;
     echo ""
