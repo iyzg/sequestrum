@@ -5,6 +5,7 @@
 # Add error checking so you aren't allowed to remove packages that are subpackages
 set -e
 
+# TODO: CLEan option to clean out directories with dead links
 if [ -e "$HOME/.local/share/sequestrum/.dot_location" ]; then
     source "$HOME/.local/share/sequestrum/.dot_location"
 else
