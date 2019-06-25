@@ -3,7 +3,6 @@
 # sequestrum - dotfile manager
 
 set -e
-shopt -s dotglob
 
 # TODO: CLEan option to clean out directories with dead links
 # TODO: IMPLEMENT THIS CLEANING INTO COMMANDS 
@@ -61,6 +60,7 @@ die() {
 }
 
 add_location() {
+    shopt -s dotglob
     mv  "$1" "$dotfile_location/$2"
     # TODO: Add support for meta package adding.
     # Check to make sure the package is installed
@@ -88,6 +88,7 @@ configure_location() {
 
 # REMEMBER TO DO CHECKS BEFORE EVERYTHING STARTS
 install_package() {
+    shopt -s dotglob
     # TODO: if a package fails, clean up all the symlinks already made.
     pkgs=()
     if [ "$3" != "metapackage" ]; then
@@ -139,6 +140,8 @@ status() {
     nc='\033[0m'
     uninstalled=()
 
+    shopt -s dotglob
+
     # New way, loop through all packages, if installed then print and if not then save it as a package to look over later.
     any_installed=false;
     echo ""
@@ -158,13 +161,13 @@ status() {
             fi
             
             numofsubpackages=0
-            for subpackage in "$dotfile_location/$(basename "$package")"*; do
+            for subpackage in "$dotfile_location/$(basename "$package")/"*; do
                 numofsubpackages=$((numofsubpackages+1))
             done
             subpackagecount=0
             for subpackage in "$dotfile_location/$(basename "$package")/"*; do
+                subpackagecount=$((subpackagecount+1))
                 if [ "$(basename "$subpackage")"  != ".seq_pkg" ]; then
-                    subpackagecount=$((subpackagecount+1))
                     if [ $subpackagecount -ne $numofsubpackages ]; then
                         if [ $packagecount -eq $numofpackages ]; then
                             symbol="    ├──"
