@@ -2,6 +2,9 @@
 	<h1>Sequestrum</h1>
 </div>
 
+## Important
+No longer being maintained, we'll see if I start work on this again.
+
 ## Description
 A modern, lightweight dotfile manager for the masses. This README.md may look daunting, but trust me on this, it's as easy as pie.
 Promise. Now you may be wondering, why use this over Stow or Dotbot. Simple.Well for starters, the name is better. Do you need any
